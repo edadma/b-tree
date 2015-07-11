@@ -1,14 +1,20 @@
+package ca.hyperreal.btree
+
 import collection.mutable.ArrayBuffer
 
 
 object Main extends App {
+	val tree = new BPlusTree[String, Int]( 3 )
 	
+	tree.insert( "a", 1 )
+	tree.insert( "b", 2 )
+	println( tree.lookup("c") )
 }
 
-class BPlusTree[K <: Ordered[K], V]( order: Int ) {
+class BPlusTree[K <% Ordered[K], V]( order: Int ) {
 	var root: Node = new LeafNode
 	
-	private def lookup( key: K ): (Boolean, LeafNode, Int) = {
+	private [btree] def lookup( key: K ): (Boolean, LeafNode, Int) = {
 		def _lookup( n: Node ): (Boolean, LeafNode, Int) =
 			n match {
 				case i: InternalNode =>

@@ -1,7 +1,7 @@
 import AssemblyKeys._
 
 
-name := "p+tree"
+name := "b-tree"
 
 version := "0.1"
 
@@ -23,7 +23,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.1" % "test"
 
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.11.5" % "test"
 
-mainClass in (Compile, run) := Some( "ca.hyperreal." + name.value + ".Main" )
+mainClass in (Compile, run) := Some( "ca.hyperreal." + "btree" + ".Main" )
 
 assemblySettings
 
