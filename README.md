@@ -1,4 +1,4 @@
-BTree
-=====
+b-tree
+======
 
-BTree is a B+ Tree implementation in Scala.
+b-tree is a B+ Tree implementation in Scala.

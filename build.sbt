@@ -1,17 +1,14 @@
-import AssemblyKeys._
-
-
 name := "b-tree"
 
 version := "0.1"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.8"
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
 
 incOptions := incOptions.value.withNameHashing( true )
 
-organization := "ca.hyperreal"
+organization := "xyz.hyperreal"
 
 //resolvers += Resolver.sonatypeRepo( "snapshots" )
 
@@ -19,19 +16,16 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 
 resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+libraryDependencies ++= Seq(
+	"org.scalatest" %% "scalatest" % "2.2.6" % "test",
+	"org.scalacheck" %% "scalacheck" % "1.12.5" % "test"
+)
 
-libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.11.5" % "test"
+mainClass in (Compile, run) := Some( "xyz.hyperreal." + "btree" + ".Main" )
 
-mainClass in (Compile, run) := Some( "ca.hyperreal." + "btree" + ".Main" )
+mainClass in assembly := Some( "xyz.hyperreal." + "btree" + ".Main" )
 
-assemblySettings
-
-mainClass in assembly := Some( "ca.hyperreal." + name.value + ".Main" )
-
-jarName in assembly := name.value + "-" + version.value + ".jar"
-
-seq(bintraySettings:_*)
+assemblyJarName in assembly := "btree" + "-" + version.value + ".jar"
 
 publishMavenStyle := true
 
