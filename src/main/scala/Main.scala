@@ -1,6 +1,6 @@
 package xyz.hyperreal.btree
 
-import collection.mutable.ArrayBuffer
+import collection.mutable.{HashMap, ArrayBuffer}
 import scala.collection.Searching._
 
 
@@ -12,9 +12,10 @@ object Main extends App {
 	tree.insert( "c", 3 )
  	tree.insert( "d", 4 )
  	tree.insert( "e", 5 )
-	println( tree.lookup("a") )
-	println( tree.lookup("b") )
-	println( tree.lookup("c") )
+	println( tree.lookup("d") )
+	println( tree.lookup("e") )
+// 	println( tree.lookup("b") )
+// 	println( tree.lookup("c") )
 	tree.show
 }
 
@@ -124,9 +125,39 @@ class BPlusTree[K <% Ordered[K], V]( order: Int ) {
 						}
 						
 						while (parent.keys.size == order) {
-							// split internal node
+							val newinternal = new InternalNode( parent.parent )
+							val middle = parent.keys(parent.keys.size/2)
+							
+							parent.keys.view( parent.keys.size/2 + 1, parent.keys.size ) copyToBuffer newinternal.keys
+							
+							val brindex = parent.keys.size/2 + 1
+							val brcount = newinternal.keys.size + 1
+
+							parent.keys.remove( parent.keys.size/2, newinternal.keys.size + 1 )
+							
+							parent.branches.view( brindex, brindex + brcount ) copyToBuffer newinternal.branches
+							parent.branches.remove( brindex, brcount )
+							
 							if (parent.parent eq null) {
-								// 
+								val newroot = new InternalNode( null )
+								
+								newinternal.parent = newroot
+								parent.parent = newroot
+								newroot.keys += middle
+								newroot.branches += parent
+								newroot.branches += newinternal
+								root = newroot
+								parent = newroot
+							} else {
+								parent = parent.parent
+								
+								binarySearch( parent.keys, newinternal.keys.head, internalNodeComparator ) match {
+									case index if index >= 0 => sys.error( "key found in internal node" )
+									case insertion =>
+										val index = -(insertion + 1)
+										parent.keys.insert( index, newinternal.keys.head )
+										parent.branches.insert( index + 1, newinternal )
+								}
 							}
 						}
 					}
@@ -139,12 +170,14 @@ class BPlusTree[K <% Ordered[K], V]( order: Int ) {
 	def delete( key: K ) = {
 		
 	}
-	
-	def show {
+			
+	private def pointer( level: Int, index: Int ) = (if (level > 9 || index > 9) "%02d%02d" else "%01d%01d").format( level, index )
+
+	def display {
+		val map = new HashMap[Node, String]
 		val nodes = new ArrayBuffer[Node]
+		var orphan = 0
 		var level = 0
-		
-		def pointer( level: Int, index: Int ) = "%01d%01d".format( level, index )
 		
 		def printNodes {
 			if (nodes.head isLeaf) {
@@ -163,9 +196,51 @@ class BPlusTree[K <% Ordered[K], V]( order: Int ) {
 						print( " | " + k + " | " + pointer(level + 1, branches) )
 						branches += 1
 					}
+				
+					print( "] " )
 				}
 				
-				print( "] " )
+				val ns = nodes.toList
+				
+				nodes.clear
+				
+				for (n <- ns)
+					nodes ++= n.asInternal.branches
+				
+				level += 1
+				println
+				printNodes
+			}
+		}
+
+		nodes += root
+		printNodes
+	}
+	
+	def show {
+		val nodes = new ArrayBuffer[Node]
+		var level = 0
+		
+		def printNodes {
+			if (nodes.head isLeaf) {
+				for ((n, i) <- nodes zipWithIndex)
+					print( "[" + pointer(level, i) + ": " + n.asLeaf.values.mkString(" ") + "] " )
+				
+				println
+			} else {
+				var branches = 0
+				
+				for ((n, i) <- nodes zipWithIndex) {
+					print( "[" + pointer(level, i) + ": " + pointer(level + 1, branches) )
+					branches += 1
+					
+					for (k <- n.asInternal.keys) {
+						print( " | " + k + " | " + pointer(level + 1, branches) )
+						branches += 1
+					}
+				
+					print( "] " )
+				}
 				
 				val ns = nodes.toList
 				
