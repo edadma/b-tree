@@ -10,10 +10,11 @@ object Main extends App {
 	tree.insert( "a", 1 )
 	tree.insert( "b", 2 )
 	tree.insert( "c", 3 )
-	println( tree.lookup("c") )
-	println( tree.lookup("aa") )
-	println( tree.lookup("A") )
+ 	tree.insert( "d", 4 )
+ 	tree.insert( "e", 5 )
+	println( tree.lookup("a") )
 	println( tree.lookup("b") )
+	println( tree.lookup("c") )
 	tree.show
 }
 
@@ -87,25 +88,51 @@ class BPlusTree[K <% Ordered[K], V]( order: Int ) {
 				leaf.values(index).value = value
 				true
 			case (false, leaf, index) =>
-				if (leaf.values.size < order - 1) {
-					leaf.values.insert( index, Pair(key, value) )
-					false
-				} else {
-					val newroot = new InternalNode( null )
-					val newleaf = new LeafNode( newroot )
-					val oldleaf = root.asLeaf
+				def splitLeafNode( parent: InternalNode ) = {
+					val newleaf = new LeafNode( parent )
 					
-					oldleaf.parent = newroot
-					oldleaf.next = newleaf
-					newleaf.prev = oldleaf
-					oldleaf.values.view( oldleaf.values.size/2, oldleaf.values.size ) copyToBuffer newleaf.values
-					oldleaf.values.remove( oldleaf.values.size/2, newleaf.values.size )
-					newroot.keys += newleaf.values(0).key
-					newroot.branches += oldleaf
-					newroot.branches += newleaf
-					root = newroot
-					false
+					newleaf.next = leaf.next
+					leaf.next = newleaf
+					newleaf.prev = leaf
+					leaf.values.view( leaf.values.size/2, leaf.values.size ) copyToBuffer newleaf.values
+					leaf.values.remove( leaf.values.size/2, newleaf.values.size )
+					newleaf
 				}
+		
+				leaf.values.insert( index, Pair(key, value) )
+				
+				if (leaf.values.size == order) {
+					if (leaf.parent eq null) {
+						val newroot = new InternalNode( null )
+						val newleaf = splitLeafNode( newroot )
+						
+						leaf.parent = newroot
+						newroot.keys += newleaf.values.head.key
+						newroot.branches += leaf
+						newroot.branches += newleaf
+						root = newroot
+					} else {
+						var parent = leaf.parent
+						val newleaf = splitLeafNode( parent )
+						
+						binarySearch( parent.keys, newleaf.values.head.key, internalNodeComparator ) match {
+							case index if index >= 0 => sys.error( "key found in internal node" )
+							case insertion =>
+								val index = -(insertion + 1)
+								parent.keys.insert( index, newleaf.values.head.key )
+								parent.branches.insert( index + 1, newleaf )
+						}
+						
+						while (parent.keys.size == order) {
+							// split internal node
+							if (parent.parent eq null) {
+								// 
+							}
+						}
+					}
+				}
+				
+				false
 		}
 	}
 	
@@ -129,11 +156,11 @@ class BPlusTree[K <% Ordered[K], V]( order: Int ) {
 				var branches = 0
 				
 				for ((n, i) <- nodes zipWithIndex) {
-					print( "[" + pointer(level, i) + ": " + pointer(level + 1, branches) + " | " )
+					print( "[" + pointer(level, i) + ": " + pointer(level + 1, branches) )
 					branches += 1
 					
 					for (k <- n.asInternal.keys) {
-						print( k + " | " + pointer(level + 1, branches) )
+						print( " | " + k + " | " + pointer(level + 1, branches) )
 						branches += 1
 					}
 				}
