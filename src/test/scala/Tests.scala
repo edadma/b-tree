@@ -37,6 +37,33 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 //		interpret( """ (cdr '(a)) """ ) shouldBe SNil
 	}
 	
+	"descending order insertion" in {
+		val tree = new BPlusTree[Char, Null]( 3, ('g', null), ('f', null) )
+	
+		tree.prettyString shouldBe "[n0: (null) f g]"
+		tree.insert( 'e' )
+		tree.prettyString shouldBe
+			"""	|[n0: (null) n1 | f | n2]
+					|[n1: (n0) e] [n2: (n0) f g]""".stripMargin
+		tree.insert( 'd' )
+		tree.prettyString shouldBe
+			"""	|[n0: (null) n1 | f | n2]
+					|[n1: (n0) d e] [n2: (n0) f g]""".stripMargin
+		tree.insert( 'c' )
+		tree.prettyString shouldBe
+			"""	|[n0: (null) n1 | d | n2 | f | n3]
+					|[n1: (n0) c] [n2: (n0) d e] [n3: (n0) f g]""".stripMargin
+		tree.insert( 'b' )
+		tree.prettyString shouldBe
+			"""	|[n0: (null) n1 | d | n2 | f | n3]
+					|[n1: (n0) b c] [n2: (n0) d e] [n3: (n0) f g]""".stripMargin
+		tree.insert( 'a' )
+		tree.prettyString shouldBe
+			"""	|[n0: (null) n1 | d | n2]
+					|[n1: (n0) n3 | b | n4] [n2: (n0) n5 | f | n6]
+					|[n3: (n1) a] [n4: (n1) b c] [n5: (n2) d e] [n6: (n2) f g]""".stripMargin
+	}
+	
 	"random insertion" in	{
 		val tree = new BPlusTree[Char, Null]( 3 )
 	
