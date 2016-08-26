@@ -7,12 +7,20 @@ import scala.collection.Searching._
 object Main extends App {
 	val tree = new BPlusTree[String, Int]( 3 )
 	
-	tree.insert( "a", 1 )
-	tree.insert( "b", 2 )
-	tree.insert( "c", 3 )
-	tree.insert( "d", 4 )
-	tree.insert( "e", 5 )
+// 	tree.insert( "a", 1 )
+// 	tree.insert( "b", 2 )
+// 	tree.insert( "c", 3 )
+// 	tree.insert( "d", 4 )
+// 	tree.insert( "e", 5 )
+// 	tree.insert( "f", 6 )
+// 	tree.insert( "g", 7 )
+	tree.insert( "g", 7 )
 	tree.insert( "f", 6 )
+	tree.insert( "e", 5 )
+	tree.insert( "d", 4 )
+	tree.insert( "c", 3 )
+	tree.insert( "b", 2 )
+	tree.insert( "a", 1 )
  	println( tree.lookup("a") )
 	println( tree.lookup("b") )
 	println( tree.lookup("c") )
@@ -197,7 +205,7 @@ class BPlusTree[K <% Ordered[K], V]( order: Int ) {
 				println
 			} else {
 				for (n <- nodes) {
-					print( "[" + address(n) + ": " + address(n.asInternal.branches.head) )
+					print( "[" + address(n) + ": (" + address(n.parent) + ") " + address(n.asInternal.branches.head) )
 					
 					for ((k, i) <- n.asInternal.keys zipWithIndex) {
 						print( " | " + k + " | " + address(n.asInternal.branches(i + 1)) )
