@@ -3,16 +3,19 @@ package xyz.hyperreal.btree
 import collection.mutable.{HashMap, ArrayBuffer}
 import scala.collection.Searching._
 
-import java.io.PrintStream
+import java.io.{ByteArrayOutputStream, PrintStream}
 
 
-class BPlusTree[K <% Ordered[K], V]( order: Int ) {
+class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 	private var root: Node = new LeafNode( null )
 	
 	private [btree] val leafNodeComparator = (elem: Pair, target: K) => elem.key compare target
 	
 	private [btree] val internalNodeComparator = (elem: K, target: K) => elem compare target
 	
+	for ((k, v) <- elems)
+		insert( k, v )
+		
 	private [btree] def lookup( key: K ): (Boolean, LeafNode, Int) = {
 		def _lookup( n: Node ): (Boolean, LeafNode, Int) =
 			n match {
@@ -50,7 +53,9 @@ class BPlusTree[K <% Ordered[K], V]( order: Int ) {
 			case (true, leaf, index) => Some( leaf.values(index).value )
 			case _ => None
 		}
-		
+	
+	def insert( key: K ): Boolean = insert( key, null.asInstanceOf[V] )
+	
 	def insert( key: K, value: V ): Boolean = {
 		lookup( key ) match {
 			case (true, leaf, index) =>
@@ -142,11 +147,17 @@ class BPlusTree[K <% Ordered[K], V]( order: Int ) {
 		
 	}
 	
-	def pretty {
-		serialize( Console.out )
-	}
+	def prettyPrint = println( serialize("", true) )
 	
-	def serialize( s: PrintStream ) {
+	def prettyPrintKeysOnly = println( serialize("", false) )
+	
+	def prettyString = serialize( "", false )
+	
+	def prettyStringWithValues = serialize( "", true )
+	
+	def serialize( after: String, withValues: Boolean ) = {
+		val bytes = new ByteArrayOutputStream
+		val s = new PrintStream(bytes)
 		val map = new HashMap[Node, String]
 		val nodes = new ArrayBuffer[Node]
 		var count = 0
@@ -166,19 +177,20 @@ class BPlusTree[K <% Ordered[K], V]( order: Int ) {
 		
 		def printNodes {
 			if (nodes.head isLeaf) {
-				for (n <- nodes)
-					s.print( "[" + id(n) + ": (" + id(n.parent) + ") " + n.asLeaf.values.mkString(" ") + "] " )
-				
-				s.println
+				s.print( nodes map (n => "[" + id(n) + ": (" + id(n.parent) + ")" + (if (n.asLeaf.values isEmpty) "" else " ") +
+					(if (withValues) n.asLeaf.values.mkString(" ") else n.asLeaf.values map (p => p.key) mkString " ") + "]") mkString " " )
+				s.print( after )
 			} else {
-				for (n <- nodes) {
+				for ((n, i) <- nodes zipWithIndex) {
 					s.print( "[" + id(n) + ": (" + id(n.parent) + ") " + id(n.asInternal.branches.head) )
 					
-					for ((k, i) <- n.asInternal.keys zipWithIndex) {
+					for ((k, i) <- n.asInternal.keys zipWithIndex)
 						s.print( " | " + k + " | " + id(n.asInternal.branches(i + 1)) )
-					}
 				
-					s.print( "] " )
+					s.print( "]" )
+					
+					if (i < nodes.size - 1)
+						s.print( " " )
 				}
 				
 				val ns = nodes.toList
@@ -195,6 +207,7 @@ class BPlusTree[K <% Ordered[K], V]( order: Int ) {
 
 		nodes += root
 		printNodes
+		bytes toString
 	}
 
 	private object address {
