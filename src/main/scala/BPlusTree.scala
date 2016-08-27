@@ -6,16 +6,14 @@ import scala.collection.Searching._
 import java.io.{ByteArrayOutputStream, PrintStream}
 
 
-class InMemoryBPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) extends BPlusTree[K, V]( order, elems:_* ) {
-	
-}
+// class InMemoryBPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) extends BPlusTree[K, V]( order, elems:_* ) {
+// 	
+// }
 
-abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
+class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 	private var root: Node = new LeafNode( null )
 	
-	private [btree] val leafNodeComparator = (elem: Pair, target: K) => elem.key compare target
-	
-	private [btree] val internalNodeComparator = (elem: K, target: K) => elem compare target
+	private [btree] val keyComparator = (elem: K, target: K) => elem compare target
 	
 	for ((k, v) <- elems)
 		insert( k, v )
@@ -24,12 +22,12 @@ abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 		def _lookup( n: Node ): (Boolean, LeafNode, Int) =
 			n match {
 				case node: InternalNode =>
-					binarySearch( node.keys, key, internalNodeComparator ) match {
+					binarySearch( node.keys, key, keyComparator ) match {
 						case index if index >= 0 => _lookup( node.branches(index + 1) )
 						case index => _lookup( node.branches(-(index + 1)) )
 					}
 				case node: LeafNode =>
-					binarySearch( node.values, key, leafNodeComparator ) match {
+					binarySearch( node.keys, key, keyComparator ) match {
 						case index if index >= 0 => (true, node, index)
 						case index => (false, node, -(index + 1))
 					}
@@ -40,7 +38,7 @@ abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 	
 	def search( key: K ): Option[V] =
 		lookup( key ) match {
-			case (true, leaf, index) => Some( leaf.values(index).value )
+			case (true, leaf, index) => Some( leaf.values(index) )
 			case _ => None
 		}
 	
@@ -49,7 +47,7 @@ abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 	def insert( key: K, value: V ): Boolean = {
 		lookup( key ) match {
 			case (true, leaf, index) =>
-				leaf.values(index).value = value
+				leaf.values(index) = value
 				true
 			case (false, leaf, index) =>
 				def splitLeafNode = {
@@ -58,12 +56,15 @@ abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 					newleaf.next = leaf.next
 					leaf.next = newleaf
 					newleaf.prev = leaf
+					leaf.keys.view( leaf.length/2, leaf.length ) copyToBuffer newleaf.keys
+					leaf.keys.remove( leaf.length/2, newleaf.length )
 					leaf.values.view( leaf.values.size/2, leaf.values.size ) copyToBuffer newleaf.values
 					leaf.values.remove( leaf.values.size/2, newleaf.values.size )
 					newleaf
 				}
 		
-				leaf.values.insert( index, Pair(key, value) )
+				leaf.keys.insert( index, key )
+				leaf.values.insert( index, value )
 				
 				if (leaf.values.size == order) {
 					if (leaf.parent eq null) {
@@ -73,7 +74,7 @@ abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 						
 						val newleaf = splitLeafNode
 						
-						newroot.keys += newleaf.values.head.key
+						newroot.keys += newleaf.keys.head
 						newroot.branches += leaf
 						newroot.branches += newleaf
 						root = newroot
@@ -81,24 +82,24 @@ abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 						var parent = leaf.parent
 						val newleaf = splitLeafNode
 						
-						binarySearch( parent.keys, newleaf.values.head.key, internalNodeComparator ) match {
+						binarySearch( parent.keys, newleaf.keys.head, keyComparator ) match {
 							case index if index >= 0 => sys.error( "key found in internal node" )
 							case insertion =>
 								val index = -(insertion + 1)
-								parent.keys.insert( index, newleaf.values.head.key )
+								parent.keys.insert( index, newleaf.keys.head )
 								parent.branches.insert( index + 1, newleaf )
 						}
 						
-						while (parent.keys.size == order) {
+						while (parent.length == order) {
 							val newinternal = new InternalNode( parent.parent )
-							val middle = parent.keys(parent.keys.size/2)
+							val middle = parent.keys(parent.length/2)
 							
-							parent.keys.view( parent.keys.size/2 + 1, parent.keys.size ) copyToBuffer newinternal.keys
+							parent.keys.view( parent.length/2 + 1, parent.length ) copyToBuffer newinternal.keys
 							
-							val brindex = parent.keys.size/2 + 1
-							val brcount = newinternal.keys.size + 1
+							val brindex = parent.length/2 + 1
+							val brcount = newinternal.length + 1
 
-							parent.keys.remove( parent.keys.size/2, newinternal.keys.size + 1 )
+							parent.keys.remove( parent.length/2, newinternal.length + 1 )
 							parent.branches.view( brindex, brindex + brcount ) copyToBuffer newinternal.branches
 							parent.branches.remove( brindex, brcount )
 							
@@ -117,7 +118,7 @@ abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 								parent = newroot
 							} else {
 								parent = parent.parent
-								binarySearch( parent.keys, middle, internalNodeComparator ) match {
+								binarySearch( parent.keys, middle, keyComparator ) match {
 									case index if index >= 0 => sys.error( "key found in internal node" )
 									case insertion =>
 										val index = -(insertion + 1)
@@ -137,6 +138,40 @@ abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 		
 	}
 	
+	def wellConstructed = {
+		val nodes = new ArrayBuffer[Node]
+		var depth = -1
+		var prev: LeafNode = null
+		
+		def check( n: Node, p: Node, d: Int ): Boolean = {
+			if (!(n.keys.dropRight( 1 ) zip n.keys.drop( 1 ) forall( p => p._1 < p._2 )))
+				return false
+			
+			if (n.parent ne p)
+				return false
+				
+			if (n isLeaf) {
+				if (depth == -1)
+					depth = d
+				else if (d != depth)
+					return false
+			
+				if (prev ne n.asLeaf.prev)
+					return false
+				else
+					prev = n.asLeaf
+			}
+			else
+				for (b <- n.asInternal.branches)
+					if (!check( b, n, d + 1 ))
+						return false
+						
+			true
+		}
+		
+		check( root, null, 0 )
+	}
+	
 	def prettyPrint = println( serialize("", true) )
 	
 	def prettyPrintKeysOnly = println( serialize("", false) )
@@ -147,7 +182,7 @@ abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 	
 	def serialize( after: String, withValues: Boolean ) = {
 		val bytes = new ByteArrayOutputStream
-		val s = new PrintStream(bytes)
+		val s = new PrintStream( bytes )
 		val map = new HashMap[Node, String]
 		val nodes = new ArrayBuffer[Node]
 		var count = 0
@@ -168,7 +203,7 @@ abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 		def printNodes {
 			if (nodes.head isLeaf) {
 				s.print( nodes map (n => "[" + id(n) + ": (" + id(n.parent) + ")" + (if (n.asLeaf.values isEmpty) "" else " ") +
-					(if (withValues) n.asLeaf.values.mkString(" ") else n.asLeaf.values map (p => p.key) mkString " ") + "]") mkString " " )
+					(if (withValues) (n.keys zip n.asLeaf.values) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else n.keys mkString " ") + "]") mkString " " )
 				s.print( after )
 			} else {
 				for ((n, i) <- nodes zipWithIndex) {
@@ -289,12 +324,11 @@ abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 		printNodes
 	}
 	
-	private [btree] case class Pair( key: K, var value: V ) {
-		override def toString = "<" + key + ", " + value + ">"
-	}
-	
 	private [btree] abstract class Node {
 		var parent: InternalNode
+		val keys = new ArrayBuffer[K]
+		
+		def length = keys.size
 		
 		def isLeaf: Boolean
 		
@@ -305,13 +339,12 @@ abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 	
 	private [btree] class InternalNode( var parent: InternalNode ) extends Node {
 		val isLeaf = false
-		val keys = new ArrayBuffer[K]
 		val branches = new ArrayBuffer[Node]
 	}
 	
 	private [btree] class LeafNode( var parent: InternalNode ) extends Node {
 		val isLeaf = true
-		val values = new ArrayBuffer[Pair]
+		val values = new ArrayBuffer[V]
 		var prev: LeafNode = null
 		var next: LeafNode = null
 	}

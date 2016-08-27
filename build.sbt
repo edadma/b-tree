@@ -21,6 +21,8 @@ libraryDependencies ++= Seq(
 	"org.scalacheck" %% "scalacheck" % "1.12.5" % "test"
 )
 
+libraryDependencies += "xyz.hyperreal" %% "ramfile" % "0.1"
+
 mainClass in (Compile, run) := Some( "xyz.hyperreal." + "btree" + ".Main" )
 
 mainClass in assembly := Some( "xyz.hyperreal." + "btree" + ".Main" )
