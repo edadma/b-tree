@@ -167,11 +167,17 @@ class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 				else
 					nextptr = n.asLeaf.next
 			}
-			else
+			else {
+				if (n.asInternal.branches.head.keys.last >= n.keys.head)
+					return false
+					
+				n.keys drop 1 zip n.asInternal.branches drop 1 forall (p => p._2.keys.head < p._1)
+				
 				for (b <- n.asInternal.branches)
 					if (!check( b, n, d + 1 ))
 						return false
-						
+			}
+			
 			true
 		}
 		
