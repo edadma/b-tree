@@ -6,7 +6,11 @@ import scala.collection.Searching._
 import java.io.{ByteArrayOutputStream, PrintStream}
 
 
-class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
+class InMemoryBPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) extends BPlusTree[K, V]( order, elems:_* ) {
+	
+}
+
+abstract class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 	private var root: Node = new LeafNode( null )
 	
 	private [btree] val leafNodeComparator = (elem: Pair, target: K) => elem.key compare target
@@ -24,25 +28,11 @@ class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 						case index if index >= 0 => _lookup( node.branches(index + 1) )
 						case index => _lookup( node.branches(-(index + 1)) )
 					}
-// 					if (key < node.keys.head)
-// 						_lookup( node.branches.head )
-// 					else if (key >= i.keys.last)
-// 						_lookup( i.branches.last )
-// 					else
-// 						_lookup( i.branches(i.keys.view(1, i.keys.size - 1) indexWhere (key >= _)) )	// probably needs to be +1
 				case node: LeafNode =>
 					binarySearch( node.values, key, leafNodeComparator ) match {
 						case index if index >= 0 => (true, node, index)
 						case index => (false, node, -(index + 1))
 					}
-// 					l.values indexWhere (key <= _.key) match {
-// 						case -1 => (false, l, l.values.size)
-// 						case index =>
-// 							if (key == l.values(index).key)
-// 								(true, l, index)
-// 							else
-// 								(false, l, index)
-// 					}
 			}
 			
 		_lookup( root )
