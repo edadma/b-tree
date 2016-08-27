@@ -138,10 +138,11 @@ class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 		
 	}
 	
-	def wellConstructed = {
+	def wellConstructed: Boolean = {
 		val nodes = new ArrayBuffer[Node]
 		var depth = -1
 		var prev: LeafNode = null
+		var nextptr: LeafNode = null
 		
 		def check( n: Node, p: Node, d: Int ): Boolean = {
 			if (!(n.keys.dropRight( 1 ) zip n.keys.drop( 1 ) forall( p => p._1 < p._2 )))
@@ -160,6 +161,11 @@ class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 					return false
 				else
 					prev = n.asLeaf
+					
+				if ((nextptr ne null) && (nextptr ne n))
+					return false
+				else
+					nextptr = n.asLeaf.next
 			}
 			else
 				for (b <- n.asInternal.branches)
@@ -169,7 +175,13 @@ class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 			true
 		}
 		
-		check( root, null, 0 )
+		if (!check( root, null, 0 ))
+			return false
+			
+		if (nextptr ne null)
+			return false
+			
+		true
 	}
 	
 	def prettyPrint = println( serialize("", true) )
