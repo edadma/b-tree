@@ -138,56 +138,61 @@ class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 		
 	}
 	
-	def wellConstructed: Boolean = {
+	def wellConstructed: String = {
 		val nodes = new ArrayBuffer[Node]
 		var depth = -1
 		var prev: LeafNode = null
 		var nextptr: LeafNode = null
 		
-		def check( n: Node, p: Node, d: Int ): Boolean = {
+		def check( n: Node, p: Node, d: Int ): String = {
 			if (!(n.keys.dropRight( 1 ) zip n.keys.drop( 1 ) forall( p => p._1 < p._2 )))
-				return false
+				return "false"
 			
 			if (n.parent ne p)
-				return false
+				return "false"
 				
 			if (n isLeaf) {
 				if (depth == -1)
 					depth = d
 				else if (d != depth)
-					return false
+					return "false"
 			
 				if (prev ne n.asLeaf.prev)
-					return false
+					return "prev pointer incorrect"
 				else
 					prev = n.asLeaf
 					
 				if ((nextptr ne null) && (nextptr ne n))
-					return false
+					return "next pointer incorrect"
 				else
 					nextptr = n.asLeaf.next
 			}
 			else {
 				if (n.asInternal.branches.head.keys.last >= n.keys.head)
-					return false
+					return "left internal node branch"
 					
-				n.keys drop 1 zip n.asInternal.branches drop 1 forall (p => p._2.keys.head < p._1)
+				if (!(n.keys drop 1 zip n.asInternal.branches drop 1 forall (p => p._2.keys.head < p._1)))
+					return "right internal node branch"
 				
 				for (b <- n.asInternal.branches)
-					if (!check( b, n, d + 1 ))
-						return false
+					check( b, n, d + 1 ) match {
+						case "true" =>
+						case error => return error
+					}
 			}
 			
-			true
+			"true"
 		}
 		
-		if (!check( root, null, 0 ))
-			return false
+		check( root, null, 0 ) match {
+			case "true" =>
+			case error => return error
+		}
 			
 		if (nextptr ne null)
-			return false
+			return "rightmost next pointer not null"
 			
-		true
+		"true"
 	}
 	
 	def prettyPrint = println( serialize("", true) )

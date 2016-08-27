@@ -37,9 +37,7 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 			"""	|[n0: (null) n1 | c | n2 | e | n3]
 					|[n1: (n0) n4 | b | n5] [n2: (n0) n6 | d | n7] [n3: (n0) n8 | f | n9]
 					|[n4: (n1) a] [n5: (n1) b] [n6: (n2) c] [n7: (n2) d] [n8: (n3) e] [n9: (n3) f g]""".stripMargin
-
-//		a [RuntimeException] should be thrownBy {interpret( """ (= 1 1] """ )}
-//		interpret( """ (cdr '(a)) """ ) shouldBe SNil
+		tree.wellConstructed shouldBe "true"
 	}
 	
 	"descending insertion (order 3)" in {
@@ -67,6 +65,7 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 			"""	|[n0: (null) n1 | d | n2]
 					|[n1: (n0) n3 | b | n4] [n2: (n0) n5 | f | n6]
 					|[n3: (n1) a] [n4: (n1) b c] [n5: (n2) d e] [n6: (n2) f g]""".stripMargin
+		tree.wellConstructed shouldBe "true"
 	}
 	
 	"random insertion (order 3)" in	{
@@ -75,6 +74,7 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 		for (k <- Vector( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' ))
 			tree.insert( k )
 			
+//		tree.wellConstructed shouldBe "true"
 		tree.prettyString shouldBe
 			"""	|[n0: (null) n1 | g | n2 | r | n3]
 					|[n1: (n0) n4 | e | n5] [n2: (n0) n6 | j | n7 | n | n8] [n3: (n0) n9 | u | n10 | w | n11]
@@ -102,7 +102,7 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 		tree.insert( 'n' )
 		tree.insert( 'o' )
 		tree.insert( 'p' )
-		tree.wellConstructed shouldBe true
+		tree.wellConstructed shouldBe "true"
 		tree.prettyString shouldBe
 			"""	|[n0: (null) n1 | g | n2 | m | n3]
 					|[n1: (n0) n4 | c | n5 | e | n6] [n2: (n0) n7 | i | n8 | k | n9] [n3: (n0) n10 | o | n11]
