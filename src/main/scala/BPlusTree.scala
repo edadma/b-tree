@@ -38,7 +38,10 @@ class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 			case _ => None
 		}
 	
-	def insert( key: K ): Boolean = insert( key, null.asInstanceOf[V] )
+	def insert( keys: K* ) {
+		for (k <- keys)
+			insert( k, null.asInstanceOf[V] )
+	}
 	
 	def insert( key: K, value: V ): Boolean = {
 		lookup( key ) match {

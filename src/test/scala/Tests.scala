@@ -108,4 +108,16 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 					|[n1: (n0) n4 | c | n5 | e | n6] [n2: (n0) n7 | i | n8 | k | n9] [n3: (n0) n10 | o | n11]
 					|[n4: (null, n1, n5) a b] [n5: (n4, n1, n6) c d] [n6: (n5, n1, n7) e f] [n7: (n6, n2, n8) g h] [n8: (n7, n2, n9) i j] [n9: (n8, n2, n10) k l] [n10: (n9, n3, n11) m n] [n11: (n10, n3, null) o p]""".stripMargin
 	}
+	
+	"descending insertion (order 4)" in {
+		val tree = new BPlusTree[Char, Null]( 4 )
+	
+		tree.insert( 'p', 'o', 'n', 'm', 'l', 'k', 'j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a' )
+		tree.wellConstructed shouldBe "true"
+		tree.prettyString shouldBe
+			"""	|[n0: (null) n1 | i | n2 | m | n3]
+					|[n1: (n0) n4 | c | n5 | e | n6 | g | n7] [n2: (n0) n8 | k | n9] [n3: (n0) n10 | o | n11]
+					|[n4: (null, n1, n5) a b] [n5: (n4, n1, n6) c d] [n6: (n5, n1, n7) e f] [n7: (n6, n1, n8) g h] [n8: (n7, n2, n9) i j] [n9: (n8, n2, n10) k l] [n10: (n9, n3, n11) m n] [n11: (n10, n3, null) o p]""".stripMargin
+	}
+	
 }
