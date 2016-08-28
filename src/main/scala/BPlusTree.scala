@@ -54,6 +54,10 @@ class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 					val newleaf = new LeafNode( leaf.parent )
 					
 					newleaf.next = leaf.next
+					
+					if (leaf.next ne null)
+						leaf.next.prev = newleaf
+						
 					leaf.next = newleaf
 					newleaf.prev = leaf
 					leaf.keys.view( leaf.length/2, leaf.length ) copyToBuffer newleaf.keys
@@ -195,9 +199,9 @@ class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 		"true"
 	}
 	
-	def prettyPrint = println( serialize("", true) )
+	def prettyPrint = println( prettyStringWithValues )
 	
-	def prettyPrintKeysOnly = println( serialize("", false) )
+	def prettyPrintKeysOnly = println( prettyString )
 	
 	def prettyString = serialize( "", false )
 	
@@ -225,7 +229,7 @@ class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 		
 		def printNodes {
 			if (nodes.head isLeaf) {
-				s.print( nodes map (n => "[" + id(n) + ": (" + id(n.parent) + ")" + (if (n.asLeaf.values isEmpty) "" else " ") +
+				s.print( nodes map (n => "[" + id(n) + ": (" + id(n.asLeaf.prev) + ", " + id(n.parent) + ", " + id(n.asLeaf.next) + ")" + (if (n.asLeaf.values isEmpty) "" else " ") +
 					(if (withValues) (n.keys zip n.asLeaf.values) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else n.keys mkString " ") + "]") mkString " " )
 				s.print( after )
 			} else {
