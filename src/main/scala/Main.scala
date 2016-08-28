@@ -27,7 +27,7 @@ object Main extends App {
 	tree.insert( 'c' )
 	tree.insert( 'b' )
 	tree.insert( 'a' )
-//  	println( tree.lookup("a") )
+ 	println( tree.prettySearch('h') )
 // 	println( tree.lookup("b") )
 // 	println( tree.lookup("c") )
 // 	println( tree.lookup("d") )

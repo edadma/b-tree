@@ -198,6 +198,37 @@ class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 		"true"
 	}
 	
+	def prettySearch( key: K ) = {
+		val nodes = new ArrayBuffer[Node]
+		val map = new HashMap[Node, String]
+		var count = 0
+		
+		def traverse {
+			for (n <- nodes) {
+				map(n) = "n" + count
+				count += 1
+			}
+			
+			if (!nodes.head.isLeaf) {	
+				val ns = nodes.toList
+				
+				nodes.clear
+				
+				for (n <- ns)
+					nodes ++= n.asInternal.branches
+				
+				traverse
+			}
+		}
+		
+		nodes += root
+		traverse
+		lookup( key ) match {
+			case (true, leaf, index) => map(leaf) + " " + leaf.values(index) + " " + index
+			case _ => "not found"
+		}
+	}
+	
 	def prettyPrint = println( prettyStringWithValues )
 	
 	def prettyPrintKeysOnly = println( prettyString )
