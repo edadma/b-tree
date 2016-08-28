@@ -6,10 +6,6 @@ import scala.collection.Searching._
 import java.io.{ByteArrayOutputStream, PrintStream}
 
 
-// class InMemoryBPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) extends BPlusTree[K, V]( order, elems:_* ) {
-// 	
-// }
-
 class BPlusTree[K <% Ordered[K], V]( order: Int, elems: (K, V)* ) {
 	private var root: Node = new LeafNode( null )
 	

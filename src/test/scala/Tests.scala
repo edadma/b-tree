@@ -74,7 +74,7 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 		for (k <- Vector( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' ))
 			tree.insert( k )
 			
-//		tree.wellConstructed shouldBe "true"
+	tree.wellConstructed shouldBe "true"
 		tree.prettyString shouldBe
 			"""	|[n0: (null) n1 | g | n2 | r | n3]
 					|[n1: (n0) n4 | e | n5] [n2: (n0) n6 | j | n7 | n | n8] [n3: (n0) n9 | u | n10 | w | n11]
