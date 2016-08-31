@@ -20,14 +20,15 @@ object Main extends App {
 // 	tree.insert( 'n' )
 // 	tree.insert( 'o' )
 // 	tree.insert( 'p' )
-	tree.insert( 'p', 'o', 'n', 'm', 'l', 'k', 'j', 'i', 'h', 'g' )
+// 	tree.insert( 'p', 'o', 'n', 'm', 'l', 'k', 'j', 'i', 'h' )
+	tree.insert( 'g' )
 	tree.insert( 'f' )
 	tree.insert( 'e' )
-	tree.insert( 'd' )
-	tree.insert( 'c' )
-	tree.insert( 'b' )
-	tree.insert( 'a' )
- 	println( tree.prettySearch('h') )
+// 	tree.insert( 'd' )
+// 	tree.insert( 'c' )
+// 	tree.insert( 'b' )
+// 	tree.insert( 'a' )
+//  	println( tree.prettySearch('h') )
 // 	println( tree.lookup("b") )
 // 	println( tree.lookup("c") )
 // 	println( tree.lookup("d") )
@@ -38,5 +39,5 @@ object Main extends App {
 // 		tree.insert( k )
 
 	println( tree.wellConstructed )
-	tree.prettyPrintKeysOnly
+	tree.prettyPrint
 }

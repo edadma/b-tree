@@ -42,8 +42,9 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 	}
 	
 	"descending insertion (order 3)" in {
-		val tree = new BPlusTree[Char, Null]( 3, ('g', null), ('f', null) )
+		val tree = new BPlusTree[Char, Null]( 3 )
 	
+		tree.insert( 'g', 'f' )
 		tree.prettyString shouldBe "[n0: (null, null, null) f g]"
 		tree.insert( 'e' )
 		tree.prettyString shouldBe
