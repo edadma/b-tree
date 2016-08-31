@@ -56,13 +56,10 @@ class BPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTree[K, V
 	def length( node: Node[K, V] ) = node.keys.length
 	
 	def moveInternal( src: Node[K, V], begin: Int, end: Int, dst: Node[K, V] ) {
-// 							val brindex = mid + 1
-// 							val brcount = len - mid
-// 							
-		src.keys.view( mid + 1, len ) copyToBuffer newinternal.keys
-		src.keys.remove( mid, brcount + 1 )
-		src.branches.view( brindex, brindex + brcount ) copyToBuffer newinternal.branches
-		src.branches.remove( brindex, brcount )
+		src.keys.view( begin, end ) copyToBuffer dst.keys
+		src.keys.remove( begin - 1, end - begin + 1 )
+		src.asInternal.branches.view( begin, end + 1 ) copyToBuffer dst.asInternal.branches
+		src.asInternal.branches.remove( begin, end - begin + 1 )
 	}
 	
 	def moveLeaf( src: Node[K, V], begin: Int, end: Int, dst: Node[K, V] ) {
@@ -72,7 +69,18 @@ class BPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTree[K, V
 		src.asLeaf.values.remove( begin, end - begin )
 	}
 	
-	def newInternal( parent: Node[K, V] ) = new InternalNode( parent )
+	def newInternal( parent: Node[K, V] ) = new InternalNode( parent.asInternal )
+	
+	def newLeaf( parent: Node[K, V] ) = new LeafNode( parent.asInternal )
+	
+	def newRoot( branch: Node[K, V] ) = {
+		val res = new InternalNode[K, V]( null )
+		
+		res.branches(0) = branch
+		res
+	}
+	
+	def next( node: Node[K, V], p: Node[K, V] ) = node.asLeaf.next = p.asLeaf
 }
 
 abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
