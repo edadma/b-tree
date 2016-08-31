@@ -6,74 +6,143 @@ import scala.collection.Searching._
 import java.io.{ByteArrayOutputStream, PrintStream}
 
 
-class BPlusTree[K <% Ordered[K], V, N]( order: Int ) {
+// getKey(n: xyz.hyperreal.btree.Node[K,V],index: Int): K = ???
+// getValue(n: xyz.hyperreal.btree.Node[K,V],index: Int): V = ???
+// insert(n: xyz.hyperreal.btree.Node[K,V],index: Int,key: K,b: xyz.hyperreal.btree.Node[K,V]): Unit = ???
+// insert(n: xyz.hyperreal.btree.Node[K,V],index: Int,key: K,value: V): Unit = ???
+// isLeaf(n: xyz.hyperreal.btree.Node[K,V]): Boolean = ???
+// keys(n: xyz.hyperreal.btree.Node[K,V]): List[K] = ???
+// length(n: xyz.hyperreal.btree.Node[K,V]): Int = ???
+// moveInternal(src: xyz.hyperreal.btree.Node[K,V],begin: Int,end: Int,dst: xyz.hyperreal.btree.Node[K,V]): Unit = ???
+// moveLeaf(src: xyz.hyperreal.btree.Node[K,V],begin: Int,end: Int,dst: xyz.hyperreal.btree.Node[K,V]): Unit = ???
+// newInternal(par: xyz.hyperreal.btree.Node[K,V]): xyz.hyperreal.btree.Node[K,V] = ???
+// newLeaf(par: xyz.hyperreal.btree.Node[K,V]): xyz.hyperreal.btree.Node[K,V] = ???
+// newRoot(b: xyz.hyperreal.btree.Node[K,V]): xyz.hyperreal.btree.Node[K,V] = ???
+// next(n: xyz.hyperreal.btree.Node[K,V],p: xyz.hyperreal.btree.Node[K,V]): xyz.hyperreal.btree.Node[K,V] = ???
+// next(n: xyz.hyperreal.btree.Node[K,V]): xyz.hyperreal.btree.Node[K,V] = ???
+// nul: xyz.hyperreal.btree.Node[K,V] = ???
+// parent(n: xyz.hyperreal.btree.Node[K,V],p: xyz.hyperreal.btree.Node[K,V]): xyz.hyperreal.btree.Node[K,V] = ???
+// parent(n: xyz.hyperreal.btree.Node[K,V]): xyz.hyperreal.btree.Node[K,V] = ???
+// prev(n: xyz.hyperreal.btree.Node[K,V],p: xyz.hyperreal.btree.Node[K,V]): xyz.hyperreal.btree.Node[K,V] = ???
+// prev(n: xyz.hyperreal.btree.Node[K,V]): xyz.hyperreal.btree.Node[K,V] = ???
+// setValue(n: xyz.hyperreal.btree.Node[K,V],index: Int,v: V): Unit = ???
+// values(n: xyz.hyperreal.btree.Node[K,V]): List[V] = ???
+
+class BPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTree[K, V, Node[K, V]]( order ) {
+	def branch( n: Node[K, V], index: Int ) = n.asInternal.branches( index )
+	
+	def branches( n: Node[K, V] ) = n.asInternal.branches
+	
+	def comparator( key: K, target: K ) = key compare target
+	
+	def getKey( n: Node[K, V], index: Int ) = n.keys( index )
+	
+	def getValue( n: Node[K, V], index: Int ) = n.asLeaf.values( index )
+	
+	def insert( n: Node[K, V], index: Int, key: K, value: V ) {
+		n.keys.insert( index, key )
+		n.asLeaf.values.insert( index, value )
+	}
+	
+	def insert( n: Node[K, V], index: Int, key: K, branch: Node[K, V] ) {
+		n.keys.insert( index, key )
+		n.asInternal.branches.insert( index + 1, branch )
+	}
+	
+	def isLeaf( node: Node[K, V] ) = node.isLeaf
+	
+	def keys( node: Node[K, V] ) = node.keys
+	
+	def length( node: Node[K, V] ) = node.keys.length
+	
+	def moveInternal( src: Node[K, V], begin: Int, end: Int, dst: Node[K, V] ) {
+// 							val brindex = mid + 1
+// 							val brcount = len - mid
+// 							
+		src.keys.view( mid + 1, len ) copyToBuffer newinternal.keys
+		src.keys.remove( mid, brcount + 1 )
+		src.branches.view( brindex, brindex + brcount ) copyToBuffer newinternal.branches
+		src.branches.remove( brindex, brcount )
+	}
+	
+	def moveLeaf( src: Node[K, V], begin: Int, end: Int, dst: Node[K, V] ) {
+		src.keys.view( begin, end ) copyToBuffer dst.keys
+		src.keys.remove( begin, end - begin )
+		src.asLeaf.values.view( begin, end ) copyToBuffer dst.asLeaf.values
+		src.asLeaf.values.remove( begin, end - begin )
+	}
+	
+	def newInternal( parent: Node[K, V] ) = new InternalNode( parent )
+}
+
+abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 	protected var root: N
 	
-	protected val comparator = (elem: K, target: K) => elem compare target
+	protected def branch( node: N, index: Int ): N
 	
-	protected def nul: N
+	protected def branches( node: N ): Seq[N]
+	
+	protected def comparator( key: K, target: K ): Int
 		
-	protected def isLeaf( n: N ): Boolean
+	protected def getKey( node: N, index: Int ): K
 	
-	protected def newLeaf( par: N ): N
-		
-	protected def getKey( n: N, index: Int ): K
+	protected def getValue( node: N, index: Int ): V
 	
-	protected def getValue( n: N, index: Int ): V
+	protected def insert( node: N, index: Int, key: K, value: V ): Unit
 	
-	protected def length( n: N ): Int
-		
-	protected def branch( n: N, index: Int ): N
-		
-	protected def set( n: N, index: Int, v: V ): Unit
+	protected def insert( node: N, index: Int, key: K, branch: N ): Unit
 	
-	protected def parent( n: N ): N
+	protected def isLeaf( node: N ): Boolean
 	
-	protected def prev( n: N ): N
+	protected def keys( node: N ): Seq[K]
 	
-	protected def next( n: N ): N
+	protected def length( node: N ): Int
 	
-	protected def parent( n: N, p: N ): N
-	
-	protected def prev( n: N, p: N ): N
-	
-	protected def next( n: N, p: N ): N
+	protected def moveInternal( src: N, begin: Int, end: Int, dst: N ): Unit
 	
 	protected def moveLeaf( src: N, begin: Int, end: Int, dst: N ): Unit
 	
-	protected def insert( n: N, index: Int, key: K, value: V ): Unit
+	protected def newInternal( parent: N ): N
 	
-	protected def insert( n: N, index: Int, key: K, b: N ): Unit
+	protected def newLeaf( parent: N ): N
 	
-	protected def newInternal( par: N ): N
-		
-	protected def keys( n: N ): List[K]
-		
-	protected def values( n: N ): List[V]
-		
-	protected def branches( n: N ): List[N]
+	protected def newRoot( branch: N ): N
 	
-	protected def first( n: N, b: N ): Unit
+	protected def next( node: N, p: N ): N
 	
-	protected def newRoot( b: N ): N
+	protected def next( node: N ): N
+	
+	protected def nul: N
+	
+	protected def parent( node: N, p: N ): N
+	
+	protected def parent( node: N ): N
+	
+	protected def prev( node: N, p: N ): N
+	
+	protected def prev( node: N ): N
 		
-	private [btree] def binarySearch( n: N, target: K ): Int = {
+	protected def setValue( node: N, index: Int, v: V ): Unit
+		
+	protected def values( node: N ): List[V]
+		
+	private [btree] def binarySearch( node: N, target: K ): Int = {
 		def search( start: Int, end: Int ): Int = {
 			if (start > end)
 				-start - 1
 			else {
 				val mid = start + (end-start + 1)/2
 				
-				if (comparator( getKey(n, mid), target ) == 0)
+				if (comparator( getKey(node, mid), target ) == 0)
 					mid
-				else if (comparator( getKey(n, mid), target ) > 0)
+				else if (comparator( getKey(node, mid), target ) > 0)
 					search( start, mid - 1 )
 				else
 					search( mid + 1, end )
 			}
 		}
 		
-		search( 0, length(n) - 1 )
+		search( 0, length(node) - 1 )
 	}
 	
 	private [btree] def lookup( key: K ): (Boolean, N, Int) = {
@@ -108,7 +177,7 @@ class BPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 	def insert( key: K, value: V ): Boolean = {
 		lookup( key ) match {
 			case (true, leaf, index) =>
-				set( leaf, index, value )
+				setValue( leaf, index, value )
 				true
 			case (false, leaf, index) =>
 				if (length( leaf ) + 1 == order) {
@@ -127,10 +196,6 @@ class BPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 					val nlen = len - mid
 					
 					moveLeaf( leaf, mid, len, newleaf )
-// 					leaf.keys.view( len/2, len ) copyToBuffer newleaf.keys
-// 					leaf.keys.remove( len/2, nlen )
-// 					leaf.values.view( len/2, len ) copyToBuffer newleaf.values
-// 					leaf.values.remove( len/2, nlen )
 		
 					if (index < mid)
 						insert( leaf, index, key, value )
@@ -158,17 +223,11 @@ class BPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 						
 						while (length( par ) == order) {
 							val newinternal = newInternal( parent(par) )
-							val mid = length( par )/2
+							val len = length( par )
+							val mid = len/2
 							val middle = getKey( par, mid )
 							
-							par.keys.view( mid + 1, length(par) ) copyToBuffer newinternal.keys
-							
-							val brindex = par.length/2 + 1
-							val brcount = newinternal.length + 1
-
-							par.keys.remove( par.length/2, newinternal.length + 1 )
-							par.branches.view( brindex, brindex + brcount ) copyToBuffer newinternal.branches
-							par.branches.remove( brindex, brcount )
+							moveInternal( par, mid + 1, len, newinternal )
 							
 							for (child <- branches( newinternal ))
 								parent( child, newinternal )
@@ -178,8 +237,8 @@ class BPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 								
 								parent( newinternal, root )
 								parent( par, root )
-								insert( newroot, 0, middle, newinternal )
-								par = newroot
+								insert( root, 0, middle, newinternal )
+								par = root
 							} else {
 								par = parent( par )
 								binarySearch( par, middle ) match {
