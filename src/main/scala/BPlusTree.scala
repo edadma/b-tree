@@ -207,7 +207,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 							
 					moveLeaf( leaf, adjusted, len, newleaf )
 						
-					if (index <= adjusted)
+					if (index < mid)
 						insertValue( leaf, index, key, value )
 					else
 						insertValue( newleaf, index - adjusted, key, value )
