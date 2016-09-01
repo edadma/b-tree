@@ -197,14 +197,20 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 					
 					val len = length( leaf )
 					val mid = len/2
-					val nlen = len - mid
-					
-					moveLeaf( leaf, mid, len, newleaf )
-		
-					if (index < mid)
+					val adjusted =
+						if (len%2 == 0 && index < mid)
+							mid - 1
+						else if (len%2 == 1 && index >= mid)
+							mid + 1
+						else
+							mid
+							
+					moveLeaf( leaf, adjusted, len, newleaf )
+						
+					if (index <= adjusted)
 						insertValue( leaf, index, key, value )
 					else
-						insertValue( newleaf, index - mid, key, value )
+						insertValue( newleaf, index - adjusted, key, value )
 				
 					if (parent( leaf ) == nul) {
 						root = newRoot( leaf )
@@ -295,6 +301,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 					nextptr = next( n )
 			}
 			else {
+				if (keys( branch(n, 0) ) isEmpty)
+					return "empty internal node"
+					
+				if (keys( n ) isEmpty)
+					return "empty internal node"
+					
 				if (keys( branch(n, 0) ).last >= keys( n ).head)
 					return "left internal node branch"
 					

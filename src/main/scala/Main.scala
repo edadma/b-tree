@@ -39,5 +39,5 @@ object Main extends App {
 // 		tree.insert( k )
 
 	println( tree.wellConstructed )
-	tree.prettyPrint
+	tree.prettyPrintKeysOnly
 }
