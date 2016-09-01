@@ -10,8 +10,6 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	
 	def branches( n: Node[K, V] ) = n.asInternal.branches
 	
-	def comparator( key: K, target: K ) = key compare target
-	
 	def getKey( n: Node[K, V], index: Int ) = n.keys( index )
 	
 	def getValue( n: Node[K, V], index: Int ) = n.asLeaf.values( index )

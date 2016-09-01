@@ -11,8 +11,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 	protected def branch( node: N, index: Int ): N
 	
 	protected def branches( node: N ): Seq[N]
-	
-	protected def comparator( key: K, target: K ): Int
 		
 	protected def getKey( node: N, index: Int ): K
 	
@@ -63,9 +61,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 			else {
 				val mid = start + (end-start + 1)/2
 				
-				if (comparator( getKey(node, mid), target ) == 0)
+				if (getKey( node, mid ) == target)
 					mid
-				else if (comparator( getKey(node, mid), target ) > 0)
+				else if (getKey(node, mid) > target)
 					search( start, mid - 1 )
 				else
 					search( mid + 1, end )
