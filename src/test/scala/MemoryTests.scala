@@ -4,10 +4,10 @@ import org.scalatest._
 import prop.PropertyChecks
 
 
-class Tests extends FreeSpec with PropertyChecks with Matchers {
+class MemoryTests extends FreeSpec with PropertyChecks with Matchers {
 	
 	"ascending insertion (order 3)" in {
-		val tree = new BPlusTree[Char, Int]( 3 )
+		val tree = new MemoryBPlusTree[Char, Int]( 3 )
 	
 		tree.prettyString shouldBe "[n0: (null, null, null)]"
 		tree.insert( 'a', 1 )
@@ -42,7 +42,7 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 	}
 	
 	"descending insertion (order 3)" in {
-		val tree = new BPlusTree[Char, Null]( 3 )
+		val tree = new MemoryBPlusTree[Char, Null]( 3 )
 	
 		tree.insert( 'g', 'f' )
 		tree.prettyString shouldBe "[n0: (null, null, null) f g]"
@@ -72,7 +72,7 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 	}
 	
 	"random insertion (order 3)" in	{
-		val tree = new BPlusTree[Char, Null]( 3 )
+		val tree = new MemoryBPlusTree[Char, Null]( 3 )
 	
 		for (k <- Vector( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' ))
 			tree.insert( k )
@@ -87,7 +87,7 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 	}
 	
 	"ascending insertion (order 4)" in {
-		val tree = new BPlusTree[Char, Null]( 4 )
+		val tree = new MemoryBPlusTree[Char, Null]( 4 )
 	
 		tree.prettyString shouldBe "[n0: (null, null, null)]"
 		tree.insert( 'a' )
@@ -115,7 +115,7 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 	}
 	
 	"descending insertion (order 4)" in {
-		val tree = new BPlusTree[Char, Null]( 4 )
+		val tree = new MemoryBPlusTree[Char, Null]( 4 )
 	
 		tree.insert( 'p', 'o', 'n', 'm', 'l', 'k', 'j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a' )
 		tree.wellConstructed shouldBe "true"
