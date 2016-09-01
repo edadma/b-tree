@@ -1,8 +1,8 @@
 package xyz.hyperreal.btree
 
 
-object Main extends App {
-//	val tree = new BPlusTree[Char, Null]( 3 )
+object TestMain extends App {
+val tree = new MemoryBPlusTree[Char, Null]( 4 )
 	
 // 	tree.insert( 'a' )
 // 	tree.insert( 'b' )
@@ -35,9 +35,9 @@ object Main extends App {
 // 	println( tree.lookup("e") )
 // 	println( tree.lookup("f") )
 	
-// 	for (k <- Vector( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' ))
-// 		tree.insert( k )
+	for (k <- Vector( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' ))
+		tree.insert( k )
 
-// 	println( tree.wellConstructed )
-// 	tree.prettyPrintKeysOnly
+	println( tree.wellConstructed )
+	tree.prettyPrintKeysOnly
 }

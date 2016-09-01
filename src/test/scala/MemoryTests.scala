@@ -126,4 +126,18 @@ class MemoryTests extends FreeSpec with PropertyChecks with Matchers {
 		tree.prettySearch( 'h' ) shouldBe "n7 null 1"
 	}
 	
+	"random insertion (order 4)" in	{
+		val tree = new MemoryBPlusTree[Char, Null]( 4 )
+	
+		for (k <- Vector( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' ))
+			tree.insert( k )
+			
+		tree.wellConstructed shouldBe "true"
+		tree.prettyString shouldBe
+			"""	|[n0: (null) n1 | h | n2 | n | n3 | u | n4]
+					|[n1: (n0) n5 | c | n6 | f | n7] [n2: (n0) n8 | j | n9 | l | n10] [n3: (n0) n11 | p | n12 | s | n13] [n4: (n0) n14 | w | n15 | y | n16]
+					|[n5: (null, n1, n6) a b] [n6: (n5, n1, n7) c d e] [n7: (n6, n1, n8) f g] [n8: (n7, n2, n9) h i] [n9: (n8, n2, n10) j k] [n10: (n9, n2, n11) l m] [n11: (n10, n3, n12) n o] [n12: (n11, n3, n13) p q r] [n13: (n12, n3, n14) s t] [n14: (n13, n4, n15) u v] [n15: (n14, n4, n16) w x] [n16: (n15, n4, null) y z]""".stripMargin
+		tree.prettySearch( 'i' ) shouldBe "n8 null 1"
+	}
+	
 }

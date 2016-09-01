@@ -126,18 +126,26 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 					val adjusted =
 						if (len%2 == 0 && index < mid)
 							mid - 1
-						else if (len%2 == 1 && index >= mid)
+						else if (len%2 == 1 && index > mid)
 							mid + 1
 						else
 							mid
 							
 					moveLeaf( leaf, adjusted, len, newleaf )
 						
-					if (index < mid)
-						insertValue( leaf, index, key, value )
+					if (len%2 == 0)
+						if (index < mid)
+							insertValue( leaf, index, key, value )
+						else
+							insertValue( newleaf, index - adjusted, key, value )
 					else
-						insertValue( newleaf, index - adjusted, key, value )
+						if (index <= mid)
+							insertValue( leaf, index, key, value )
+						else
+							insertValue( newleaf, index - adjusted, key, value )
 				
+// 						if ((length(leaf) - length(newleaf)).abs >= 2)
+// 							println("uneven split")
 					if (parent( leaf ) == nul) {
 						root = newRoot( leaf )
 						parent( leaf, root )
@@ -151,8 +159,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 							case insertion =>
 								val index = -(insertion + 1)
 								insertBranch( par, index, keys(newleaf).head, newleaf )
-// 								par.keys.insert( index, newleaf.keys.head )
-// 								par.branches.insert( index + 1, newleaf )
 						}
 						
 						while (length( par ) == order) {
@@ -180,8 +186,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 									case insertion =>
 										val index = -(insertion + 1)
 										insertBranch( par, index, middle, newinternal )
-// 										par.keys.insert( index, middle )
-// 										par.branches.insert( index + 1, newinternal )
 								}
 							}
 						}
