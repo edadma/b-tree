@@ -195,7 +195,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 					next( leaf, newleaf )
 					prev( newleaf, leaf )
 					
-					val len = length( leaf )
+					val len = order - 1
 					val mid = len/2
 					val adjusted =
 						if (len%2 == 0 && index < mid)
