@@ -6,6 +6,8 @@ import scala.io.Codec
 
 
 class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( order ) {
+	val NULL = 0
+	
 	val LEAF_NODE = 0
 	val INTERNAL_NODE = 1
 	
@@ -258,15 +260,40 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	}
 	
 	private def alloc = {
-		val addr = file.length
+		file seek FILE_FREE_PTR
 		
-		file seek addr
+		file.readLong match {
+			case NULL =>
+				val addr = file.length
+				
+				file seek addr
+				
+				for (_ <- 1 to BLOCK_SIZE)
+					file write 0
+				
+				file seek addr
+				addr
+			case p =>
+				file seek p
+				
+				val n = file readLong
+				
+				file seek FILE_FREE_PTR
+				file writeLong n
+				file seek p
+				p
+		}
+	}
+	
+	private def free( block: Long ) {
+		file seek FILE_FREE_PTR
 		
-		for (_ <- 1 to BLOCK_SIZE)
-			file write 0
+		val next = file readLong
 		
-		file seek addr
-		addr
+		file seek block
+		file writeLong next
+		file seek FILE_FREE_PTR
+		file writeLong block
 	}
 	
 	def newLeaf( parent: Long ): Long = {

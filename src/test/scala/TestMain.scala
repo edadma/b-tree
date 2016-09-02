@@ -43,6 +43,6 @@ object TestMain extends App {
 	tree.insert( "jkl" )
 	tree.insert( "mno" )
  	println( tree.wellConstructed )
-//	tree.prettyPrintKeysOnly
+	tree.prettyPrintKeysOnly
 	tree.file.dump
 }
