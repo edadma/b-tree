@@ -24,7 +24,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 	
 	protected def keys( node: N ): Seq[K]
 	
-	protected def length( node: N ): Int
+	protected def nodeLength( node: N ): Int
 	
 	protected def moveInternal( src: N, begin: Int, end: Int, dst: N ): Unit
 	
@@ -70,7 +70,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 			}
 		}
 		
-		search( 0, length(node) - 1 )
+		search( 0, nodeLength(node) - 1 )
 	}
 	
 	private [btree] def lookup( key: K ): (Boolean, N, Int) = {
@@ -108,7 +108,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 				setValue( leaf, index, value )
 				true
 			case (false, leaf, index) =>
-				if (length( leaf ) + 1 == order) {
+				if (nodeLength( leaf ) + 1 == order) {
 					val newleaf = newLeaf( parent(leaf) )
 						
 					next( newleaf, next(leaf) )
@@ -142,7 +142,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 						else
 							insertValue( newleaf, index - adjusted, key, value )
 				
-// 						if ((length(leaf) - length(newleaf)).abs >= 2)
+// 						if ((nodeLength(leaf) - nodeLength(newleaf)).abs >= 2)
 // 							println("uneven split")
 					if (parent( leaf ) == nul) {
 						root = newRoot( leaf )
@@ -159,9 +159,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 								insertBranch( par, index, keys(newleaf).head, newleaf )
 						}
 						
-						while (length( par ) == order) {
+						while (nodeLength( par ) == order) {
 							val newinternal = newInternal( parent(par) )
-							val len = length( par )
+							val len = nodeLength( par )
 							val mid = len/2
 							val middle = getKey( par, mid )
 							
@@ -323,7 +323,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 		
 		def printNodes {
 			if (isLeaf( nodes.head )) {
-				s.print( nodes map (n => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(next(n)) + ")" + (if (length(n) == 0) "" else " ") +
+				s.print( nodes map (n => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(next(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") +
 					(if (withValues) (keys(n) zip values(n)) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else keys(n) mkString " ") + "]") mkString " " )
 				s.print( after )
 			} else {

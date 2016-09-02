@@ -20,120 +20,209 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	val FILE_ORDER = FILE_HEADER + 12
 	val FILE_FREE_PTR = FILE_ORDER + 2
 	val FILE_ROOT_PTR = FILE_FREE_PTR + 8
+	val FILE_BLOCKS = FILE_ROOT_PTR + 8
 	
 	val NODE_TYPE = 0
-	val NODE_LENGTH = NODE_TYPE + 1
-	val NODE_HEAD_PTR = NODE_LENGTH + 4
-	val NODE_KEYS = NODE_HEAD_PTR + 8
+	val NODE_PARENT_PTR = NODE_TYPE + 4
+	val NODE_LENGTH = NODE_PARENT_PTR + 1
+	val NODE_KEYS = NODE_LENGTH + 8
+	
+	val DATUM_SIZE = 1 + 8		// type + datum
+	
+	val DATA_ARRAY_SIZE = (order - 1)*DATUM_SIZE
+	
+	val LEAF_PREV_PTR = NODE_KEYS + DATA_ARRAY_SIZE
+	val LEAF_NEXT_PTR = LEAF_PREV_PTR + 8
+	val LEAF_VALUES = LEAF_PREV_PTR + 8
+	
+	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
 	
 	val NUL = 0
 	
-	val btree = new RamFile( "btree" )
+	val file = new RamFile( "btree" )
 	
 	var root =
-		if (btree.length == 0) {
-			btree writeBytes "B+ Tree v0.1"
-			btree writeLong NUL
-			btree writeLong btree.length
-
-			val res = btree.length
-			
-			// write root leaf
+		if (file.length == 0) {
+			file writeBytes "B+ Tree v0.1"
+			file writeLong NUL
+			file writeLong FILE_BLOCKS
+			newLeaf( NUL )
 		} else {
-			btree seek FILE_ROOT_PTR
-			btree readLong
+			file seek FILE_ROOT_PTR
+			file readLong
 		}
 	
 	def branch( node: Long, index: Int ): Long = {
-		0
+		ni
 	}
 	
 	def branches( node: Long ): Seq[Long] = {
-		Seq( 0L )
+		ni
 	}
 	
-	def getKey( node: Long, index: Int ): String = {
-		btree seek (node + NODE_KEYS)
-		
-	}
+	def getKey( node: Long, index: Int ) = readString( node + NODE_KEYS + index*DATUM_SIZE )
 	
-	def getValue( node: Long, index: Int ): Any = {
-		
-	}
+	def getValue( node: Long, index: Int ) = readDatum( node + NODE_KEYS + nodeLength( node )*DATUM_SIZE + LEAF_VALUES )
 	
 	def insertBranch( node: Long, index: Int, key: String, branch: Long ) {
-		
+		ni
 	}
 	
 	def insertValue( node: Long, index: Int, key: String, value: Any ) {
+		val len = nodeLength( node )
+		
+		file seek NODE_LENGTH
+		file writeLong (len + 1)
+		
+		if (index < len) {
+			val keydata = new Array[Byte]( (len - index)*DATUM_SIZE )
+			
+			file seek (NODE_KEYS + index*DATUM_SIZE)
+			file readFully keydata
+			file seek (NODE_KEYS + (index + 1)*DATUM_SIZE)
+			file write keydata
+		}
+		
+		file seek (NODE_KEYS + index*DATUM_SIZE)
 		
 	}
 	
 	def isLeaf( node: Long ): Boolean = {
-		btree seek node
-		btree.read == LEAF_NODE
+		file seek node
+		file.read == LEAF_NODE
 	}
 	
-	private def readData( addr: Long ) = {
+	private def readDatum( addr: Long ) = {
 		def readUTF8( len: Int ) = {
 			val a = new Array[Byte]( len )
 			
-			btree readFully a
+			file readFully a
 			new String( Codec fromUTF8 a )
 		}
 		
-		btree seek addr
+		file seek addr
 		
-		btree read match {
+		file read match {
 			case len if len <= 0x08 => readUTF8( len )
 			case TYPE_STRING => 
-				btree seek btree.readLong
-				readUTF8( btree readInt )
-			case TYPE_INT => btree readInt
+				file seek file.readLong
+				readUTF8( file readInt )
+			case TYPE_INT => file readInt
 		}
 	}
 	
-	private def readString( addr: Long ) = readData.asInstanceOf[String]
+	private def readString( addr: Long ) = readDatum( addr ).asInstanceOf[String]
+	
+	private def writeDatum( addr: Long, datum: Any ) = {
+		
+	}
 	
 	def keys( node: Long ): Seq[String] =
 		new Seq[String] {
-			def apply( idx: Int ) = 
+			def apply( idx: Int ) = getKey( node, idx )
 			
 			def iterator =
 				new Iterator[String] {
-					def hasNext =
+					var len = nodeLength( node )
+					var index = 0
 					
-					def next = 
+					def hasNext = index < len
+					
+					def next = {
+						if (!hasNext) throw new NoSuchElementException( "no more keys" )
+							
+						val res = getKey( node, index )
+						
+						index += 1
+						res
+					}
 				}
 				
 			def length = {
-				btree seek (node + 1)
-				btree.readInt
+				file seek (node + NODE_LENGTH)
+				file.readInt
 			}
 		}
 	
-	def length( node: Long ): Int = 
+	def nodeLength( node: Long ) = {
+		file seek (node + NODE_LENGTH)
+		file.readShort.toInt
+	}
+	
 	def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
-		
+		ni
 	}
 	
 	def moveLeaf( src: Long, begin: Int, end: Int, dst: Long ) {
-	def newInternal( parent: Long ): Long = 0
-	def newLeaf( parent: Long ): Long = 
-	def newRoot( branch: Long ): Long = 
-	def next( node: Long ): Long = 
-	def next( node: Long, p: Long ) {
+		ni
+	}
+	
+	def newInternal( parent: Long ): Long = {
+		ni
+	}
+	
+	private def alloc = {
+		val addr = file.length
 		
+		file seek addr
+		
+		for (_ <- 1 to BLOCK_SIZE)
+			file write 0
+		
+		file seek addr
+		addr
+	}
+	
+	def newLeaf( parent: Long ): Long = {
+		val node = alloc
+		
+		file write LEAF_NODE
+		file writeLong parent
+		node
+	}
+	
+	def newRoot( branch: Long ): Long = {
+		ni
+	}
+	
+	def next( node: Long ): Long = {
+		file seek LEAF_NEXT_PTR
+		file readLong
+	}
+	
+	def next( node: Long, p: Long ) {
+		ni
 	}
 	
 	def nul: Long = 0
 	
-	def parent( node: Long ): Long = 
+	def parent( node: Long ): Long = {
+		file seek NODE_PARENT_PTR
+		file readLong
+	}
+	
 	def parent( node: Long, p: Long ) {
-	def prev( node: Long ): Long = 
+		ni
+	}
+	
+	def prev( node: Long ): Long = {
+		file seek LEAF_PREV_PTR
+		file readLong
+	}
+	
 	def prev( node: Long, p: Long ) {
+		ni
+	}
+	
 	def setValue( node: Long, index: Int, v: Any ) {
-	def values( node: Long ): Seq[Any] = 
+		ni
+	}
+	
+	def values( node: Long ): Seq[Any] = {
+		ni
+	}
+
+	private def ni = sys.error( "not implemented" )
 
 }
 
@@ -148,8 +237,8 @@ root node pointer						long (8)
 Leaf Node
 ------------------------------------
 type												0 (1)
+parent pointer							long (8)
 length											short (2)
-head pointer								long (8)
 key/value array
 	key type									byte (1)
 	key data									(8)
