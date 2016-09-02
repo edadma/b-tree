@@ -157,35 +157,35 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 							case insertion =>
 								val index = -(insertion + 1)
 								insertBranch( par, index, getKey(newleaf, 0), newleaf )
-						}
 						
-						while (nodeLength( par ) == order) {
-							val newinternal = newInternal( parent(par) )
-							val len = nodeLength( par )
-							val mid = len/2
-							val middle = getKey( par, mid )
-							
-							moveInternal( par, mid + 1, len, newinternal )
-							
-							for (child <- branches( newinternal ))
-								parent( child, newinternal )
-								
-							if (parent( par ) == nul) {
-								root = newRoot( par )
-								
-								parent( newinternal, root )
-								parent( par, root )
-								insertBranch( root, 0, middle, newinternal )
-								par = root
-							} else {
-								par = parent( par )
-								binarySearch( par, middle ) match {
-									case index if index >= 0 => sys.error( "key found in internal node" )
-									case insertion =>
-										val index = -(insertion + 1)
-										insertBranch( par, index, middle, newinternal )
+								while (nodeLength( par ) == order) {
+									val newinternal = newInternal( parent(par) )
+									val len = nodeLength( par )
+									val mid = len/2
+									val middle = getKey( par, mid )
+									
+									moveInternal( par, mid + 1, len, newinternal )
+									
+									for (child <- branches( newinternal ))
+										parent( child, newinternal )
+										
+									if (parent( par ) == nul) {
+										root = newRoot( par )
+										
+										parent( newinternal, root )
+										parent( par, root )
+										insertBranch( root, 0, middle, newinternal )
+										par = root
+									} else {
+										par = parent( par )
+										binarySearch( par, middle ) match {
+											case index if index >= 0 => sys.error( "key found in internal node" )
+											case insertion =>
+												val index = -(insertion + 1)
+												insertBranch( par, index, middle, newinternal )
+										}
+									}
 								}
-							}
 						}
 					}
 				} else

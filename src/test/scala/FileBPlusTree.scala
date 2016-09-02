@@ -235,13 +235,13 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
 		copyKeys( src, begin, end, dst, 0 )
 		nodeLength( src, nodeLength(src) - (end - begin) - 1 )
-		file seek (src + INTERNAL_BRANCHES + begin*POINTER_SIZE)
 		
 		val data = new Array[Byte]( (end - begin + 1)*POINTER_SIZE )
 		
-		file readFully (data, 0, (end - begin + 1)*POINTER_SIZE)
+		file seek (src + INTERNAL_BRANCHES + begin*POINTER_SIZE)
+		file readFully data
 		file seek (dst + INTERNAL_BRANCHES)
-		file write (data, 0, (end - begin + 1)*POINTER_SIZE)
+		file write data
 		nodeLength( dst, end - begin )
 	}
 	
