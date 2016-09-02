@@ -9,11 +9,13 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	val LEAF_NODE = 0
 	val INTERNAL_NODE = 1
 	
-	val TYPE_STRING = 0x10
+	val TYPE_BOOLEAN = 0x10
+		val TYPE_BOOLEAN_FALSE = 0x10
+		val TYPE_BOOLEAN_TRUE = 0x18
 	val TYPE_INT = 0x11
 	val TYPE_LONG = 0x12
 	val TYPE_DOUBLE = 0x13
-	val TYPE_BOOLEAN = 0x14
+	val TYPE_STRING = 0x14
 	val TYPE_NULL = 0x15
 	
 	val FILE_HEADER = 0
@@ -75,16 +77,20 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		file writeLong (len + 1)
 		
 		if (index < len) {
-			val keydata = new Array[Byte]( (len - index)*DATUM_SIZE )
+			val data = new Array[Byte]( (len - index)*DATUM_SIZE )
 			
 			file seek (NODE_KEYS + index*DATUM_SIZE)
-			file readFully keydata
+			file readFully data
 			file seek (NODE_KEYS + (index + 1)*DATUM_SIZE)
-			file write keydata
+			file write data
+			file seek (LEAF_VALUES + index*DATUM_SIZE)
+			file readFully data
+			file seek (LEAF_VALUES + (index + 1)*DATUM_SIZE)
+			file write data
 		}
 		
-		file seek (NODE_KEYS + index*DATUM_SIZE)
-		
+		writeDatum( NODE_KEYS + index*DATUM_SIZE, key )
+		writeDatum( LEAF_VALUES + index*DATUM_SIZE, value )
 	}
 	
 	def isLeaf( node: Long ): Boolean = {
@@ -114,7 +120,34 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	private def readString( addr: Long ) = readDatum( addr ).asInstanceOf[String]
 	
 	private def writeDatum( addr: Long, datum: Any ) = {
+		file seek addr
 		
+		datum match {
+			case null => file write TYPE_NULL
+			case d: false => file write TYPE_BOOLEAN_FALSE
+			case d: true => file write TYPE_BOOLEAN_TRUE
+			case d: Long =>
+				file write TYPE_LONG
+				file writeLong d
+			case d: Int =>
+				file write TYPE_INT
+				file writeInt d
+			case d: Double =>
+				file write TYPE_DOUBLE
+				file writeDouble d
+			case d: String =>
+				val utf = Codec.toUTF8( d )
+				
+				if (utf.length > 8) {
+					file write TYPE_STRING
+					ni
+				} else {
+					file write utf.length
+					file write utf
+				}
+				
+			case _ => sys.error( "type not supported: " + datum )
+		}
 	}
 	
 	def keys( node: Long ): Seq[String] =
