@@ -148,15 +148,15 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 						root = newRoot( leaf )
 						parent( leaf, root )
 						parent( newleaf, root )
-						insertBranch( root, 0, keys(newleaf).head, newleaf )
+						insertBranch( root, 0, getKey(newleaf, 0), newleaf )
 					} else {
 						var par = parent( leaf )
 						
-						binarySearch( par, keys(newleaf).head ) match {
+						binarySearch( par, getKey(newleaf, 0) ) match {
 							case index if index >= 0 => sys.error( "key found in internal node" )
 							case insertion =>
 								val index = -(insertion + 1)
-								insertBranch( par, index, keys(newleaf).head, newleaf )
+								insertBranch( par, index, getKey(newleaf, 0), newleaf )
 						}
 						
 						while (nodeLength( par ) == order) {
@@ -238,10 +238,10 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 				if (keys( n ) isEmpty)
 					return "empty internal node"
 					
-				if (keys( branch(n, 0) ).last >= keys( n ).head)
+				if (keys( branch(n, 0) ).last >= getKey( n, 0 ))
 					return "left internal node branch not strictly less than"
 					
-				if (!(keys( n ) drop 1 zip branches( n ) drop 1 forall (p => keys( p._2 ).head < p._1)))
+				if (!(keys( n ) drop 1 zip branches( n ) drop 1 forall (p => getKey( p._2, 0 ) < p._1)))
 					return "right internal node branch not greater than or equal"
 				
 				for (b <- branches( n ))

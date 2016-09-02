@@ -161,10 +161,15 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		
 		file read match {
 			case len if len <= 0x08 => readUTF8( len )
+			case TYPE_BOOLEAN_FALSE => false
+			case TYPE_BOOLEAN_TRUE => true
+			case TYPE_INT => file readInt
+			case TYPE_LONG => file readLong
+			case TYPE_DOUBLE => file readDouble
 			case TYPE_STRING => 
 				file seek file.readLong
 				readUTF8( file readInt )
-			case TYPE_INT => file readInt
+			case TYPE_NULL => null
 		}
 	}
 	
@@ -226,7 +231,16 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		}
 	
 	def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
-		ni
+		copyKeys( src, begin, end, dst, 0 )
+		nodeLength( src, nodeLength(src) - (end - begin) - 1 )
+		file seek (src + INTERNAL_BRANCHES + begin*POINTER_SIZE)
+		
+		val data = new Array[Byte]( (end - begin + 1)*POINTER_SIZE )
+		
+		file readFully (data, 0, (end - begin + 1)*POINTER_SIZE)
+		file seek (dst + INTERNAL_BRANCHES)
+		file write (data, 0, (end - begin + 1)*POINTER_SIZE)
+		nodeLength( dst, end - begin )
 	}
 	
 	def moveLeaf( src: Long, begin: Int, end: Int, dst: Long ) {
