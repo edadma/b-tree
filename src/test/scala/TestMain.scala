@@ -3,6 +3,7 @@ package xyz.hyperreal.btree
 
 object TestMain extends App {
 	val tree = new FileBPlusTree( 3 )
+//	val tree = new MemoryBPlusTree[String, Any]( 3 )
 	
 // 	tree.insert( 'a' )
 // 	tree.insert( 'b' )
@@ -40,6 +41,6 @@ object TestMain extends App {
 	tree.insert( "def", 0x456 )
 	tree.insert( "ghi", 0x789 )
  	println( tree.wellConstructed )
-//	tree.prettyPrint//KeysOnly
+	tree.prettyPrint//KeysOnly
 	tree.file.dump
 }

@@ -219,16 +219,19 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 					return "false"
 			
 				if (prevnode != prev( n ))
-					return "prev pointer incorrect"
+					return "incorrect prev pointer"
 				else
 					prevnode = n
 					
 				if ((nextptr != nul) && (nextptr != n))
-					return "next pointer incorrect"
+					return "incorrect next pointer"
 				else
 					nextptr = next( n )
 			}
 			else {
+				if (branches( n ) exists (p => p == nul))
+					return "null branch pointer"
+					
 				if (keys( branch(n, 0) ) isEmpty)
 					return "empty internal node"
 					
@@ -236,10 +239,10 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 					return "empty internal node"
 					
 				if (keys( branch(n, 0) ).last >= keys( n ).head)
-					return "left internal node branch"
+					return "left internal node branch not strictly less than"
 					
 				if (!(keys( n ) drop 1 zip branches( n ) drop 1 forall (p => keys( p._2 ).head < p._1)))
-					return "right internal node branch"
+					return "right internal node branch not greater than or equal"
 				
 				for (b <- branches( n ))
 					check( b, n, d + 1 ) match {

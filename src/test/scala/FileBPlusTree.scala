@@ -98,13 +98,13 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 			val data = copyKeys( node, index, len, node, index + 1 )
 		
 			file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
-			file readFully (data, 0, (len - index)*POINTER_SIZE)
+			file readFully (data, 0, (len - index + 1)*POINTER_SIZE)
 			file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
-			file write (data, 0, (len - index + 1)*POINTER_SIZE)
+			file write (data, 0, (len - index + 2)*POINTER_SIZE)
 		}
 		
 		writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
-		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
+		file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
 		file writeLong branch
 	}
 	
@@ -268,6 +268,8 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		
 		file seek (node + INTERNAL_BRANCHES)
 		file writeLong branch
+		file seek FILE_ROOT_PTR
+		file writeLong node
 		node
 	}
 	
@@ -283,7 +285,7 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	
 	def nodeLength( node: Long ) = {
 		file seek (node + NODE_LENGTH)
-		file.readShort.toInt
+		file.readShort
 	}
 	
 	def nul = 0
