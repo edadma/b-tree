@@ -25,9 +25,9 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	val FILE_BLOCKS = FILE_ROOT_PTR + 8
 	
 	val NODE_TYPE = 0
-	val NODE_PARENT_PTR = NODE_TYPE + 4
-	val NODE_LENGTH = NODE_PARENT_PTR + 1
-	val NODE_KEYS = NODE_LENGTH + 8
+	val NODE_PARENT_PTR = NODE_TYPE + 1
+	val NODE_LENGTH = NODE_PARENT_PTR + 8
+	val NODE_KEYS = NODE_LENGTH + 2
 	
 	val DATUM_SIZE = 1 + 8		// type + datum
 	
@@ -35,20 +35,19 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	
 	val LEAF_PREV_PTR = NODE_KEYS + DATA_ARRAY_SIZE
 	val LEAF_NEXT_PTR = LEAF_PREV_PTR + 8
-	val LEAF_VALUES = LEAF_PREV_PTR + 8
+	val LEAF_VALUES = LEAF_NEXT_PTR + 8
 	
 	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
 	
-	val NUL = 0
+	private [btree] val file = new RamFile( "btree" )
 	
-	val file = new RamFile( "btree" )
-	
-	var root =
+	protected [btree] var root =
 		if (file.length == 0) {
 			file writeBytes "B+ Tree v0.1"
-			file writeLong NUL
+			file writeShort order
+			file writeLong nul
 			file writeLong FILE_BLOCKS
-			newLeaf( NUL )
+			newLeaf( nul )
 		} else {
 			file seek FILE_ROOT_PTR
 			file readLong
@@ -64,7 +63,7 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	
 	def getKey( node: Long, index: Int ) = readString( node + NODE_KEYS + index*DATUM_SIZE )
 	
-	def getValue( node: Long, index: Int ) = readDatum( node + NODE_KEYS + nodeLength( node )*DATUM_SIZE + LEAF_VALUES )
+	def getValue( node: Long, index: Int ) = readDatum( node + LEAF_VALUES + index*DATUM_SIZE )
 	
 	def insertBranch( node: Long, index: Int, key: String, branch: Long ) {
 		ni
@@ -73,24 +72,24 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	def insertValue( node: Long, index: Int, key: String, value: Any ) {
 		val len = nodeLength( node )
 		
-		file seek NODE_LENGTH
-		file writeLong (len + 1)
+		file seek (node + NODE_LENGTH)
+		file writeShort (len + 1)
 		
 		if (index < len) {
 			val data = new Array[Byte]( (len - index)*DATUM_SIZE )
 			
-			file seek (NODE_KEYS + index*DATUM_SIZE)
+			file seek (node + NODE_KEYS + index*DATUM_SIZE)
 			file readFully data
-			file seek (NODE_KEYS + (index + 1)*DATUM_SIZE)
+			file seek (node + NODE_KEYS + (index + 1)*DATUM_SIZE)
 			file write data
-			file seek (LEAF_VALUES + index*DATUM_SIZE)
+			file seek (node + LEAF_VALUES + index*DATUM_SIZE)
 			file readFully data
-			file seek (LEAF_VALUES + (index + 1)*DATUM_SIZE)
+			file seek (node + LEAF_VALUES + (index + 1)*DATUM_SIZE)
 			file write data
 		}
 		
-		writeDatum( NODE_KEYS + index*DATUM_SIZE, key )
-		writeDatum( LEAF_VALUES + index*DATUM_SIZE, value )
+		writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
+		writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, value )
 	}
 	
 	def isLeaf( node: Long ): Boolean = {
@@ -124,8 +123,8 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		
 		datum match {
 			case null => file write TYPE_NULL
-			case d: false => file write TYPE_BOOLEAN_FALSE
-			case d: true => file write TYPE_BOOLEAN_TRUE
+			case false => file write TYPE_BOOLEAN_FALSE
+			case true => file write TYPE_BOOLEAN_TRUE
 			case d: Long =>
 				file write TYPE_LONG
 				file writeLong d
@@ -171,16 +170,8 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 					}
 				}
 				
-			def length = {
-				file seek (node + NODE_LENGTH)
-				file.readInt
-			}
+			def length = nodeLength( node )
 		}
-	
-	def nodeLength( node: Long ) = {
-		file seek (node + NODE_LENGTH)
-		file.readShort.toInt
-	}
 	
 	def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
 		ni
@@ -219,7 +210,7 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	}
 	
 	def next( node: Long ): Long = {
-		file seek LEAF_NEXT_PTR
+		file seek (node + LEAF_NEXT_PTR)
 		file readLong
 	}
 	
@@ -227,10 +218,15 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		ni
 	}
 	
-	def nul: Long = 0
+	def nodeLength( node: Long ) = {
+		file seek (node + NODE_LENGTH)
+		file.readShort.toInt
+	}
+	
+	def nul = 0
 	
 	def parent( node: Long ): Long = {
-		file seek NODE_PARENT_PTR
+		file seek (node + NODE_PARENT_PTR)
 		file readLong
 	}
 	
@@ -239,7 +235,7 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	}
 	
 	def prev( node: Long ): Long = {
-		file seek LEAF_PREV_PTR
+		file seek (node + LEAF_PREV_PTR)
 		file readLong
 	}
 	
@@ -251,9 +247,29 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		ni
 	}
 	
-	def values( node: Long ): Seq[Any] = {
-		ni
-	}
+	def values( node: Long ) =
+		new Seq[Any] {
+			def apply( idx: Int ) = getValue( node, idx )
+			
+			def iterator =
+				new Iterator[Any] {
+					var len = nodeLength( node )
+					var index = 0
+					
+					def hasNext = index < len
+					
+					def next = {
+						if (!hasNext) throw new NoSuchElementException( "no more keys" )
+							
+						val res = getValue( node, index )
+						
+						index += 1
+						res
+					}
+				}
+				
+			def length = nodeLength( node )
+		}
 
 	private def ni = sys.error( "not implemented" )
 

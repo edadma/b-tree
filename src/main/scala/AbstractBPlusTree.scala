@@ -24,8 +24,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 	
 	protected def keys( node: N ): Seq[K]
 	
-	protected def nodeLength( node: N ): Int
-	
 	protected def moveInternal( src: N, begin: Int, end: Int, dst: N ): Unit
 	
 	protected def moveLeaf( src: N, begin: Int, end: Int, dst: N ): Unit
@@ -39,6 +37,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 	protected def next( node: N, p: N ): Unit
 	
 	protected def next( node: N ): N
+	
+	protected def nodeLength( node: N ): Int
 	
 	protected def nul: N
 	
@@ -210,7 +210,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 				return "false"
 			
 			if (parent( n ) != p)
-				return "false"
+				return "incorrect parent pointer in level " + d
 				
 			if (isLeaf( n )) {
 				if (depth == -1)

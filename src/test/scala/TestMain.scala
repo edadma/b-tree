@@ -2,7 +2,7 @@ package xyz.hyperreal.btree
 
 
 object TestMain extends App {
-val tree = new MemoryBPlusTree[Char, Null]( 4 )
+	val tree = new FileBPlusTree( 3 )
 	
 // 	tree.insert( 'a' )
 // 	tree.insert( 'b' )
@@ -35,7 +35,9 @@ val tree = new MemoryBPlusTree[Char, Null]( 4 )
 // 	println( tree.lookup("e") )
 // 	println( tree.lookup("f") )
 	
-	tree.insert( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' )
-	println( tree.wellConstructed )
-	tree.prettyPrintKeysOnly
+// 	tree.insert( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' )
+	tree.insert( "a", 0x1234 )
+ 	println( tree.wellConstructed )
+	tree.prettyPrint//KeysOnly
+	tree.file.dump
 }
