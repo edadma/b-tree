@@ -18,24 +18,26 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	val TYPE_STRING = 0x14
 	val TYPE_NULL = 0x15
 	
+	val DATUM_SIZE = 1 + 8		// type + datum
+	val POINTER_SIZE = 8
+	val DATA_ARRAY_SIZE = (order - 1)*DATUM_SIZE
+	
 	val FILE_HEADER = 0
 	val FILE_ORDER = FILE_HEADER + 12
 	val FILE_FREE_PTR = FILE_ORDER + 2
-	val FILE_ROOT_PTR = FILE_FREE_PTR + 8
-	val FILE_BLOCKS = FILE_ROOT_PTR + 8
+	val FILE_ROOT_PTR = FILE_FREE_PTR + POINTER_SIZE
+	val FILE_BLOCKS = FILE_ROOT_PTR + POINTER_SIZE
 	
 	val NODE_TYPE = 0
 	val NODE_PARENT_PTR = NODE_TYPE + 1
-	val NODE_LENGTH = NODE_PARENT_PTR + 8
+	val NODE_LENGTH = NODE_PARENT_PTR + POINTER_SIZE
 	val NODE_KEYS = NODE_LENGTH + 2
 	
-	val DATUM_SIZE = 1 + 8		// type + datum
-	
-	val DATA_ARRAY_SIZE = (order - 1)*DATUM_SIZE
-	
 	val LEAF_PREV_PTR = NODE_KEYS + DATA_ARRAY_SIZE
-	val LEAF_NEXT_PTR = LEAF_PREV_PTR + 8
-	val LEAF_VALUES = LEAF_NEXT_PTR + 8
+	val LEAF_NEXT_PTR = LEAF_PREV_PTR + POINTER_SIZE
+	val LEAF_VALUES = LEAF_NEXT_PTR + POINTER_SIZE
+	
+	val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
 	
 	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
 	
@@ -53,12 +55,34 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 			file readLong
 		}
 	
-	def branch( node: Long, index: Int ): Long = {
-		ni
+	def branch( node: Long, index: Int ) = {
+		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
+		file readLong
 	}
 	
 	def branches( node: Long ): Seq[Long] = {
-		ni
+		new Seq[Long] {
+			def apply( idx: Int ) = branch( node, idx )
+			
+			def iterator =
+				new Iterator[Long] {
+					var len = nodeLength( node ) + 1
+					var index = 0
+					
+					def hasNext = index < len
+					
+					def next = {
+						if (!hasNext) throw new NoSuchElementException( "no more branches" )
+							
+						val res = branch( node, index )
+						
+						index += 1
+						res
+					}
+				}
+				
+			def length = nodeLength( node ) + 1
+		}
 	}
 	
 	def getKey( node: Long, index: Int ) = readString( node + NODE_KEYS + index*DATUM_SIZE )
@@ -66,27 +90,55 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	def getValue( node: Long, index: Int ) = readDatum( node + LEAF_VALUES + index*DATUM_SIZE )
 	
 	def insertBranch( node: Long, index: Int, key: String, branch: Long ) {
-		ni
+		val len = nodeLength( node )
+		
+		nodeLength( node, len + 1 )
+		
+		if (index < len) {
+			val data = copyKeys( node, index, len, node, index + 1 )
+		
+			file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
+			file readFully (data, 0, (len - index)*POINTER_SIZE)
+			file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
+			file write (data, 0, (len - index + 1)*POINTER_SIZE)
+		}
+		
+		writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
+		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
+		file writeLong branch
+	}
+	
+	private def copyKeys( src: Long, begin: Int, end: Int, dst: Long, index: Int ) = {
+		val data = new Array[Byte]( (end - begin)*DATUM_SIZE )
+		
+		file seek (src + NODE_KEYS + begin*DATUM_SIZE)
+		file readFully data
+		file seek (dst + NODE_KEYS + index*DATUM_SIZE)
+		file write data
+		data
+	}
+	
+	private def copy( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
+		val data = copyKeys( src, begin, end, dst, index )
+		
+		file seek (src + LEAF_VALUES + begin*DATUM_SIZE)
+		file readFully data
+		file seek (dst + LEAF_VALUES + index*DATUM_SIZE)
+		file write data
+	}
+	
+	private def nodeLength( node: Long, len: Int ) {
+		file seek (node + NODE_LENGTH)
+		file writeShort len
 	}
 	
 	def insertValue( node: Long, index: Int, key: String, value: Any ) {
 		val len = nodeLength( node )
 		
-		file seek (node + NODE_LENGTH)
-		file writeShort (len + 1)
+		nodeLength( node, len + 1 )
 		
-		if (index < len) {
-			val data = new Array[Byte]( (len - index)*DATUM_SIZE )
-			
-			file seek (node + NODE_KEYS + index*DATUM_SIZE)
-			file readFully data
-			file seek (node + NODE_KEYS + (index + 1)*DATUM_SIZE)
-			file write data
-			file seek (node + LEAF_VALUES + index*DATUM_SIZE)
-			file readFully data
-			file seek (node + LEAF_VALUES + (index + 1)*DATUM_SIZE)
-			file write data
-		}
+		if (index < len)
+			copy( node, index, len, node, index + 1 )
 		
 		writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
 		writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, value )
@@ -155,9 +207,9 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 			
 			def iterator =
 				new Iterator[String] {
-					var len = nodeLength( node )
+					val len = nodeLength( node )
 					var index = 0
-					
+
 					def hasNext = index < len
 					
 					def next = {
@@ -178,11 +230,17 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	}
 	
 	def moveLeaf( src: Long, begin: Int, end: Int, dst: Long ) {
-		ni
+		copy( src, begin, end, dst, 0 )
+		nodeLength( src, nodeLength(src) - (end - begin) )
+		nodeLength( dst, end - begin )
 	}
 	
 	def newInternal( parent: Long ): Long = {
-		ni
+		val node = alloc
+		
+		file write INTERNAL_NODE
+		file writeLong parent
+		node
 	}
 	
 	private def alloc = {
@@ -206,7 +264,11 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	}
 	
 	def newRoot( branch: Long ): Long = {
-		ni
+		val node = newInternal( nul )
+		
+		file seek (node + INTERNAL_BRANCHES)
+		file writeLong branch
+		node
 	}
 	
 	def next( node: Long ): Long = {
@@ -215,7 +277,8 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	}
 	
 	def next( node: Long, p: Long ) {
-		ni
+		file seek (node + LEAF_NEXT_PTR)
+		file writeLong p
 	}
 	
 	def nodeLength( node: Long ) = {
@@ -231,7 +294,8 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	}
 	
 	def parent( node: Long, p: Long ) {
-		ni
+		file seek (node + NODE_PARENT_PTR)
+		file writeLong p
 	}
 	
 	def prev( node: Long ): Long = {
@@ -240,7 +304,8 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	}
 	
 	def prev( node: Long, p: Long ) {
-		ni
+		file seek (node + LEAF_PREV_PTR)
+		file writeLong p
 	}
 	
 	def setValue( node: Long, index: Int, v: Any ) {

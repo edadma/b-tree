@@ -36,8 +36,10 @@ object TestMain extends App {
 // 	println( tree.lookup("f") )
 	
 // 	tree.insert( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' )
-	tree.insert( "a", 0x1234 )
+	tree.insert( "abc", 0x123 )
+	tree.insert( "def", 0x456 )
+	tree.insert( "ghi", 0x789 )
  	println( tree.wellConstructed )
-	tree.prettyPrint//KeysOnly
+//	tree.prettyPrint//KeysOnly
 	tree.file.dump
 }
