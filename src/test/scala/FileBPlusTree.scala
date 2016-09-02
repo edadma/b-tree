@@ -9,18 +9,38 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	val LEAF_NODE = 0
 	val INTERNAL_NODE = 1
 	
-	val BIG_STRING = 0x10
+	val TYPE_STRING = 0x10
+	val TYPE_INT = 0x11
+	val TYPE_LONG = 0x12
+	val TYPE_DOUBLE = 0x13
+	val TYPE_BOOLEAN = 0x14
+	val TYPE_NULL = 0x15
+	
+	val FILE_HEADER = 0
+	val FILE_ORDER = FILE_HEADER + 12
+	val FILE_FREE_PTR = FILE_ORDER + 2
+	val FILE_ROOT_PTR = FILE_FREE_PTR + 8
+	
+	val NODE_TYPE = 0
+	val NODE_LENGTH = NODE_TYPE + 1
+	val NODE_HEAD_PTR = NODE_LENGTH + 4
+	val NODE_KEYS = NODE_HEAD_PTR + 8
+	
+	val NUL = 0
 	
 	val btree = new RamFile( "btree" )
 	
 	var root =
 		if (btree.length == 0) {
 			btree writeBytes "B+ Tree v0.1"
-			btree writeLong 0
-			btree writeLong 28
-			28
+			btree writeLong NUL
+			btree writeLong btree.length
+
+			val res = btree.length
+			
+			// write root leaf
 		} else {
-			btree seek 20
+			btree seek FILE_ROOT_PTR
 			btree readLong
 		}
 	
@@ -33,7 +53,8 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	}
 	
 	def getKey( node: Long, index: Int ): String = {
-		btree seek (node + )
+		btree seek (node + NODE_KEYS)
+		
 	}
 	
 	def getValue( node: Long, index: Int ): Any = {
@@ -53,11 +74,11 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		btree.read == LEAF_NODE
 	}
 	
-	private def readKey( addr: Long ) = {
+	private def readData( addr: Long ) = {
 		def readUTF8( len: Int ) = {
 			val a = new Array[Byte]( len )
 			
-			btree readFully( a )
+			btree readFully a
 			new String( Codec fromUTF8 a )
 		}
 		
@@ -65,11 +86,14 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		
 		btree read match {
 			case len if len <= 0x08 => readUTF8( len )
-			case BIG_STRING => 
+			case TYPE_STRING => 
 				btree seek btree.readLong
 				readUTF8( btree readInt )
+			case TYPE_INT => btree readInt
 		}
 	}
+	
+	private def readString( addr: Long ) = readData.asInstanceOf[String]
 	
 	def keys( node: Long ): Seq[String] =
 		new Seq[String] {
@@ -124,7 +148,7 @@ root node pointer						long (8)
 Leaf Node
 ------------------------------------
 type												0 (1)
-length											int (4)
+length											short (2)
 head pointer								long (8)
 key/value array
 	key type									byte (1)
