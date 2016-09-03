@@ -39,9 +39,9 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	val LEAF_NEXT_PTR = LEAF_PREV_PTR + POINTER_SIZE
 	val LEAF_VALUES = LEAF_NEXT_PTR + POINTER_SIZE
 	
-	val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
+	val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE 		+ DATUM_SIZE
 	
-	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
+	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE 					+ POINTER_SIZE
 	
 	private [btree] val file = new RamFile( "btree" )
 	
@@ -91,23 +91,25 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	
 	def getValue( node: Long, index: Int ) = readDatum( node + LEAF_VALUES + index*DATUM_SIZE )
 	
-	def insertBranch( node: Long, index: Int, key: String, branch: Long ) {
+	def insertBranch( node: Long, index: Int, key: String, br: Long ) {
 		val len = nodeLength( node )
 		
 		nodeLength( node, len + 1 )
 		
 		if (index < len) {
-			val data = copyKeys( node, index, len, node, index + 1 )
+			copyKeys( node, index, len, node, index + 1 )
 		
-			file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
-			file readFully (data, 0, (len - index + 1)*POINTER_SIZE)
+			val data = new Array[Byte]( (len - index + 1)*POINTER_SIZE )
+		
 			file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
-			file write (data, 0, (len - index + 2)*POINTER_SIZE)
+			file readFully data
+			file seek (node + INTERNAL_BRANCHES + (index + 2)*POINTER_SIZE)
+			file write data
 		}
 		
 		writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
 		file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
-		file writeLong branch
+		file writeLong br
 	}
 	
 	private def copyKeys( src: Long, begin: Int, end: Int, dst: Long, index: Int ) = {
@@ -380,6 +382,8 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		}
 
 	private def ni = sys.error( "not implemented" )
+	
+	private def hex( n: Long* ) = println( n map (a => "%h" format a) mkString ("(", ", ", ")") )
 
 }
 

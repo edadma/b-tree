@@ -42,7 +42,7 @@ object TestMain extends App {
 	tree.insert( "ghi" )
 	tree.insert( "jkl" )
 	tree.insert( "mno" )
-	tree.file.dump
- 	println( tree.wellConstructed )
+//	tree.file.dump
+	println( tree.wellConstructed )
 	tree.prettyPrintKeysOnly
 }
