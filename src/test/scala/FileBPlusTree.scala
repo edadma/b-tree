@@ -2,7 +2,8 @@ package xyz.hyperreal.btree
 
 import xyz.hyperreal.ramfile.RamFile
 
-import scala.io.Codec
+import io.Codec
+import collection.mutable.ArrayBuffer
 
 
 class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( order ) {
@@ -39,9 +40,9 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	val LEAF_NEXT_PTR = LEAF_PREV_PTR + POINTER_SIZE
 	val LEAF_VALUES = LEAF_NEXT_PTR + POINTER_SIZE
 	
-	val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE 		+ DATUM_SIZE
+	val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
 	
-	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE 					+ POINTER_SIZE
+	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
 	
 	private [btree] val file = new RamFile( "btree" )
 	
@@ -57,14 +58,14 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 			file readLong
 		}
 	
-	def branch( node: Long, index: Int ) = {
+	def getBranch( node: Long, index: Int ) = {
 		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
 		file readLong
 	}
 	
-	def branches( node: Long ): Seq[Long] = {
+	def getBranches( node: Long ): Seq[Long] = {
 		new Seq[Long] {
-			def apply( idx: Int ) = branch( node, idx )
+			def apply( idx: Int ) = getBranch( node, idx )
 			
 			def iterator =
 				new Iterator[Long] {
@@ -76,7 +77,7 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 					def next = {
 						if (!hasNext) throw new NoSuchElementException( "no more branches" )
 							
-						val res = branch( node, index )
+						val res = getBranch( node, index )
 						
 						index += 1
 						res
@@ -87,29 +88,75 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		}
 	}
 	
-	def getKey( node: Long, index: Int ) = readString( node + NODE_KEYS + index*DATUM_SIZE )
+	def getKey( node: Long, index: Int ) =
+		if (savedPosition == node)
+			savedKeys(index)
+		else
+			readString( node + NODE_KEYS + index*DATUM_SIZE )
+	
+	def getKeys( node: Long ): Seq[String] =
+		new Seq[String] {
+			def apply( idx: Int ) = getKey( node, idx )
+			
+			def iterator =
+				new Iterator[String] {
+					val len = nodeLength( node )
+					var index = 0
+
+					def hasNext = index < len
+					
+					def next = {
+						if (!hasNext) throw new NoSuchElementException( "no more keys" )
+							
+						val res = getKey( node, index )
+						
+						index += 1
+						res
+					}
+				}
+				
+			def length = nodeLength( node )
+		}
 	
 	def getValue( node: Long, index: Int ) = readDatum( node + LEAF_VALUES + index*DATUM_SIZE )
 	
-	def insertBranch( node: Long, index: Int, key: String, br: Long ) {
+	private var savedPosition: Long = NULL
+	private var savedKeys = new ArrayBuffer[String]
+	private var savedValues = new ArrayBuffer[Any]
+	private var savedBranches = new ArrayBuffer[Long]
+	
+	def insertInternal( node: Long, index: Int, key: String, branch: Long ) {
 		val len = nodeLength( node )
 		
-		nodeLength( node, len + 1 )
-		
-		if (index < len) {
-			copyKeys( node, index, len, node, index + 1 )
-		
-			val data = new Array[Byte]( (len - index + 1)*POINTER_SIZE )
-		
+		if (len < order - 1) {
+			nodeLength( node, len + 1 )
+			
+			if (index < len) {
+				copyKeys( node, index, len, node, index + 1 )
+			
+				val data = new Array[Byte]( (len - index + 1)*POINTER_SIZE )
+			
+				file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
+				file readFully data
+				file seek (node + INTERNAL_BRANCHES + (index + 2)*POINTER_SIZE)
+				file write data
+			}
+			
+			writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
 			file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
-			file readFully data
-			file seek (node + INTERNAL_BRANCHES + (index + 2)*POINTER_SIZE)
-			file write data
+			file writeLong branch
+		} else {
+			if (savedPosition != NULL)
+				sys.error( "a node is already being saved" )
+				
+			savedKeys.clear
+			savedBranches.clear
+			savedKeys ++= getKeys( node )
+			savedBranches ++= getBranches( node )
+			savedKeys.insert( index, key )
+			savedBranches.insert( index + 1, branch )
+			savedPosition = node
 		}
-		
-		writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
-		file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
-		file writeLong br
 	}
 	
 	private def copyKeys( src: Long, begin: Int, end: Int, dst: Long, index: Int ) = {
@@ -136,7 +183,7 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		file writeShort len
 	}
 	
-	def insertValue( node: Long, index: Int, key: String, value: Any ) {
+	def insertLeaf( node: Long, index: Int, key: String, value: Any ) {
 		val len = nodeLength( node )
 		
 		nodeLength( node, len + 1 )
@@ -210,41 +257,50 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		}
 	}
 	
-	def keys( node: Long ): Seq[String] =
-		new Seq[String] {
-			def apply( idx: Int ) = getKey( node, idx )
-			
-			def iterator =
-				new Iterator[String] {
-					val len = nodeLength( node )
-					var index = 0
-
-					def hasNext = index < len
-					
-					def next = {
-						if (!hasNext) throw new NoSuchElementException( "no more keys" )
-							
-						val res = getKey( node, index )
-						
-						index += 1
-						res
-					}
-				}
-				
-			def length = nodeLength( node )
-		}
+	private def putKey( node: Long, index: Int, key: String ) = writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
 	
+	private def putBranch( node: Long, index: Int, branch: Long ) {
+		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
+		file writeLong branch
+	}
+		
 	def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
-		copyKeys( src, begin, end, dst, 0 )
-		nodeLength( src, nodeLength(src) - (end - begin) - 1 )
-		
-		val data = new Array[Byte]( (end - begin + 1)*POINTER_SIZE )
-		
-		file seek (src + INTERNAL_BRANCHES + begin*POINTER_SIZE)
-		file readFully data
-		file seek (dst + INTERNAL_BRANCHES)
-		file write data
-		nodeLength( dst, end - begin )
+		if (savedPosition == NULL) {
+			copyKeys( src, begin, end, dst, 0 )
+			nodeLength( src, nodeLength(src) - (end - begin) - 1 )
+			
+			val data = new Array[Byte]( (end - begin + 1)*POINTER_SIZE )
+			
+			file seek (src + INTERNAL_BRANCHES + begin*POINTER_SIZE)
+			file readFully data
+			file seek (dst + INTERNAL_BRANCHES)
+			file write data
+			nodeLength( dst, end - begin )
+		} else {
+			val dstKeys = new ArrayBuffer[String]
+			val dstBranches = new ArrayBuffer[Long]
+			
+			savedKeys.view( begin, end ) copyToBuffer dstKeys
+			savedKeys.remove( begin - 1, end - begin + 1 )
+			savedBranches.view( begin, end + 1 ) copyToBuffer dstBranches
+			savedBranches.remove( begin, end - begin + 1 )
+			
+			for ((k, i) <- savedKeys zipWithIndex)
+				putKey( src, i, k )
+				
+			for ((k, i) <- dstKeys zipWithIndex)
+				putKey( dst, i, k )
+
+			for ((b, i) <- savedBranches zipWithIndex)
+				putBranch( src, i, b )
+
+			for ((b, i) <- dstBranches zipWithIndex)
+				putBranch( dst, i, b )
+				
+			nodeLength( src, savedKeys.length )
+			nodeLength( dst, end - begin )
+			savedPosition = NULL
+		}
 	}
 	
 	def moveLeaf( src: Long, begin: Int, end: Int, dst: Long ) {
@@ -326,10 +382,12 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		file writeLong p
 	}
 	
-	def nodeLength( node: Long ) = {
-		file seek (node + NODE_LENGTH)
-		file.readShort
-	}
+	def nodeLength( node: Long ) =
+		if (savedPosition == NULL) {
+			file seek (node + NODE_LENGTH)
+			file.readShort
+		} else
+			savedKeys.length
 	
 	def nul = 0
 	

@@ -8,21 +8,21 @@ import java.io.{ByteArrayOutputStream, PrintStream}
 abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 	protected var root: N
 	
-	protected def branch( node: N, index: Int ): N
+	protected def getBranch( node: N, index: Int ): N
 	
-	protected def branches( node: N ): Seq[N]
+	protected def getBranches( node: N ): Seq[N]
 		
 	protected def getKey( node: N, index: Int ): K
 	
+	protected def getKeys( node: N ): Seq[K]
+	
 	protected def getValue( node: N, index: Int ): V
 	
-	protected def insertValue( node: N, index: Int, key: K, value: V ): Unit
+	protected def insertInternal( node: N, index: Int, key: K, branch: N ): Unit
 	
-	protected def insertBranch( node: N, index: Int, key: K, branch: N ): Unit
+	protected def insertLeaf( node: N, index: Int, key: K, value: V ): Unit
 	
 	protected def isLeaf( node: N ): Boolean
-	
-	protected def keys( node: N ): Seq[K]
 	
 	protected def moveInternal( src: N, begin: Int, end: Int, dst: N ): Unit
 	
@@ -82,8 +82,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 				}
 			else
 				binarySearch( n, key ) match {
-					case index if index >= 0 => _lookup( branch(n, index + 1) )
-					case index => _lookup( branch(n, -(index + 1)) )
+					case index if index >= 0 => _lookup( getBranch(n, index + 1) )
+					case index => _lookup( getBranch(n, -(index + 1)) )
 				}
 			
 		_lookup( root )
@@ -133,14 +133,14 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 						
 					if (len%2 == 0)
 						if (index < mid)
-							insertValue( leaf, index, key, value )
+							insertLeaf( leaf, index, key, value )
 						else
-							insertValue( newleaf, index - adjusted, key, value )
+							insertLeaf( newleaf, index - adjusted, key, value )
 					else
 						if (index <= mid)
-							insertValue( leaf, index, key, value )
+							insertLeaf( leaf, index, key, value )
 						else
-							insertValue( newleaf, index - adjusted, key, value )
+							insertLeaf( newleaf, index - adjusted, key, value )
 				
 // 						if ((nodeLength(leaf) - nodeLength(newleaf)).abs >= 2)
 // 							println("uneven split")
@@ -148,7 +148,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 						root = newRoot( leaf )
 						parent( leaf, root )
 						parent( newleaf, root )
-						insertBranch( root, 0, getKey(newleaf, 0), newleaf )
+						insertInternal( root, 0, getKey(newleaf, 0), newleaf )
 					} else {
 						var par = parent( leaf )
 						
@@ -156,7 +156,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 							case index if index >= 0 => sys.error( "key found in internal node" )
 							case insertion =>
 								val index = -(insertion + 1)
-								insertBranch( par, index, getKey(newleaf, 0), newleaf )
+								insertInternal( par, index, getKey(newleaf, 0), newleaf )
 						
 								while (nodeLength( par ) == order) {
 									val newinternal = newInternal( parent(par) )
@@ -166,7 +166,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 									
 									moveInternal( par, mid + 1, len, newinternal )
 									
-									for (child <- branches( newinternal ))
+									for (child <- getBranches( newinternal ))
 										parent( child, newinternal )
 										
 									if (parent( par ) == nul) {
@@ -174,7 +174,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 										
 										parent( newinternal, root )
 										parent( par, root )
-										insertBranch( root, 0, middle, newinternal )
+										insertInternal( root, 0, middle, newinternal )
 										par = root
 									} else {
 										par = parent( par )
@@ -182,14 +182,14 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 											case index if index >= 0 => sys.error( "key found in internal node" )
 											case insertion =>
 												val index = -(insertion + 1)
-												insertBranch( par, index, middle, newinternal )
+												insertInternal( par, index, middle, newinternal )
 										}
 									}
 								}
 						}
 					}
 				} else
-					insertValue( leaf, index, key, value )
+					insertLeaf( leaf, index, key, value )
 				
 				false
 		}
@@ -206,7 +206,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 		var nextptr: N = nul
 		
 		def check( n: N, p: N, d: Int ): String = {
-			if (!(keys( n ).dropRight( 1 ) zip keys( n ).drop( 1 ) forall( p => p._1 < p._2 )))
+			if (!(getKeys( n ).dropRight( 1 ) zip getKeys( n ).drop( 1 ) forall( p => p._1 < p._2 )))
 				return "false"
 			
 			if (parent( n ) != p)
@@ -229,22 +229,22 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 					nextptr = next( n )
 			}
 			else {
-				if (branches( n ) exists (p => p == nul))
+				if (getBranches( n ) exists (p => p == nul))
 					return "null branch pointer"
 					
-				if (keys( branch(n, 0) ) isEmpty)
+				if (getKeys( getBranch(n, 0) ) isEmpty)
 					return "empty internal node"
 					
-				if (keys( n ) isEmpty)
+				if (getKeys( n ) isEmpty)
 					return "empty internal node"
 					
-				if (keys( branch(n, 0) ).last >= getKey( n, 0 ))
+				if (getKeys( getBranch(n, 0) ).last >= getKey( n, 0 ))
 					return "left internal node branch not strictly less than"
 					
-				if (!(keys( n ) drop 1 zip branches( n ) drop 1 forall (p => getKey( p._2, 0 ) < p._1)))
+				if (!(getKeys( n ) drop 1 zip getBranches( n ) drop 1 forall (p => getKey( p._2, 0 ) < p._1)))
 					return "right internal node branch not greater than or equal"
 				
-				for (b <- branches( n ))
+				for (b <- getBranches( n ))
 					check( b, n, d + 1 ) match {
 						case "true" =>
 						case error => return error
@@ -282,7 +282,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 				nodes.clear
 				
 				for (n <- ns)
-					nodes ++= branches( n )
+					nodes ++= getBranches( n )
 				
 				traverse
 			}
@@ -327,14 +327,14 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 		def printNodes {
 			if (isLeaf( nodes.head )) {
 				s.print( nodes map (n => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(next(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") +
-					(if (withValues) (keys(n) zip values(n)) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else keys(n) mkString " ") + "]") mkString " " )
+					(if (withValues) (getKeys(n) zip values(n)) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else getKeys(n) mkString " ") + "]") mkString " " )
 				s.print( after )
 			} else {
 				for ((n, i) <- nodes zipWithIndex) {
-					s.print( "[" + id(n) + ": (" + id(parent(n)) + ") " + id(branch(n, 0)) )
+					s.print( "[" + id(n) + ": (" + id(parent(n)) + ") " + id(getBranch(n, 0)) )
 					
-					for ((k, i) <- keys( n ) zipWithIndex)
-						s.print( " | " + k + " | " + id(branch(n, i + 1)) )
+					for ((k, i) <- getKeys( n ) zipWithIndex)
+						s.print( " | " + k + " | " + id(getBranch(n, i + 1)) )
 				
 					s.print( "]" )
 					
@@ -347,7 +347,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 				nodes.clear
 				
 				for (n <- ns)
-					nodes ++= branches( n )
+					nodes ++= getBranches( n )
 				
 				s.println
 				printNodes
