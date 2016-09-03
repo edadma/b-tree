@@ -44,7 +44,7 @@ class MemoryTests extends FreeSpec with PropertyChecks with Matchers {
 	"descending insertion (order 3)" in {
 		val tree = new MemoryBPlusTree[Char, Null]( 3 )
 	
-		tree.insert( 'g', 'f' )
+		tree.insertKeys( 'g', 'f' )
 		tree.prettyString shouldBe "[n0: (null, null, null) f g]"
 		tree.insert( 'e' )
 		tree.prettyString shouldBe
@@ -117,7 +117,7 @@ class MemoryTests extends FreeSpec with PropertyChecks with Matchers {
 	"descending insertion (order 4)" in {
 		val tree = new MemoryBPlusTree[Char, Null]( 4 )
 	
-		tree.insert( 'p', 'o', 'n', 'm', 'l', 'k', 'j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a' )
+		tree.insertKeys( 'p', 'o', 'n', 'm', 'l', 'k', 'j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a' )
 		tree.wellConstructed shouldBe "true"
 		tree.prettyString shouldBe
 			"""	|[n0: (null) n1 | i | n2 | m | n3]

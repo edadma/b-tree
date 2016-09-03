@@ -95,14 +95,14 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 			case _ => None
 		}
 	
-	def insert( keys: K* ) {
+	def insertKeys( keys: K* ) {
 		for (k <- keys)
 			insert( k, null.asInstanceOf[V] )
 	}
 	
 	// def insertIfNotFound
 	
-	def insert( key: K, value: V ): Boolean = {
+	def insert( key: K, value: V = null.asInstanceOf[V] ): Boolean = {
 		lookup( key ) match {
 			case (true, leaf, index) =>
 				setValue( leaf, index, value )

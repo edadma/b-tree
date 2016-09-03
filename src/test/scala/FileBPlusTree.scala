@@ -192,7 +192,7 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 			copy( node, index, len, node, index + 1 )
 		
 		writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
-		writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, value )
+		setValue( node, index, value )
 	}
 	
 	def isLeaf( node: Long ): Boolean = {
@@ -411,9 +411,7 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 		file writeLong p
 	}
 	
-	def setValue( node: Long, index: Int, v: Any ) {
-		ni
-	}
+	def setValue( node: Long, index: Int, v: Any ) = writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, v )
 	
 	def values( node: Long ) =
 		new Seq[Any] {
