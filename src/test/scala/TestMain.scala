@@ -2,7 +2,7 @@ package xyz.hyperreal.btree
 
 
 object TestMain extends App {
-	val tree = new FileBPlusTree( 3 )
+	val tree = new FileBPlusTree( "btree", 3 )
 //	val tree = new MemoryBPlusTree[String, Any]( 3 )
 	
 // 	tree.insert( 'a' )

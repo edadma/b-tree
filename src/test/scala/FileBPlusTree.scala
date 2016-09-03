@@ -6,7 +6,7 @@ import io.Codec
 import collection.mutable.ArrayBuffer
 
 
-class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( order ) {
+class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) extends AbstractBPlusTree[String, Any, Long]( order ) {
 	val NULL = 0
 	
 	val LEAF_NODE = 0
@@ -44,7 +44,10 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 	
 	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
 	
-	private [btree] val file = new RamFile( "btree" )
+	if (newfile)
+		RamFile.delete( filename )
+		
+	private [btree] val file = new RamFile( filename )
 	
 	protected [btree] var root =
 		if (file.length == 0) {
@@ -54,6 +57,11 @@ class FileBPlusTree( order: Int ) extends AbstractBPlusTree[String, Any, Long]( 
 			file writeLong FILE_BLOCKS
 			newLeaf( nul )
 		} else {
+			file seek FILE_ORDER
+			
+			if (file.readShort != order)
+				sys.error( "order not the same as on disk" )
+				
 			file seek FILE_ROOT_PTR
 			file readLong
 		}
