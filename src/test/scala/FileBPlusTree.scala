@@ -36,13 +36,18 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	val NODE_LENGTH = NODE_PARENT_PTR + POINTER_SIZE
 	val NODE_KEYS = NODE_LENGTH + 2
 	
-	val LEAF_PREV_PTR = NODE_KEYS + DATA_ARRAY_SIZE
+	val LEAF_PREV_PTR = NODE_KEYS + DATA_ARRAY_SIZE					+ DATUM_SIZE
 	val LEAF_NEXT_PTR = LEAF_PREV_PTR + POINTER_SIZE
 	val LEAF_VALUES = LEAF_NEXT_PTR + POINTER_SIZE
 	
 	val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
 	
-	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
+	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE					+ 2*DATUM_SIZE
+	
+	private var savedNode: Long = NULL
+	private var savedKeys = new ArrayBuffer[String]
+	private var savedValues = new ArrayBuffer[Any]
+	private var savedBranches = new ArrayBuffer[Long]
 	
 	if (newfile)
 		RamFile.delete( filename )
@@ -97,7 +102,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	}
 	
 	def getKey( node: Long, index: Int ) =
-		if (savedPosition == node)
+		if (savedNode == node)
 			savedKeys(index)
 		else
 			readString( node + NODE_KEYS + index*DATUM_SIZE )
@@ -128,10 +133,29 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	
 	def getValue( node: Long, index: Int ) = readDatum( node + LEAF_VALUES + index*DATUM_SIZE )
 	
-	private var savedPosition: Long = NULL
-	private var savedKeys = new ArrayBuffer[String]
-	private var savedValues = new ArrayBuffer[Any]
-	private var savedBranches = new ArrayBuffer[Long]
+	def getValues( node: Long ) =
+		new Seq[Any] {
+			def apply( idx: Int ) = getValue( node, idx )
+			
+			def iterator =
+				new Iterator[Any] {
+					var len = nodeLength( node )
+					var index = 0
+					
+					def hasNext = index < len
+					
+					def next = {
+						if (!hasNext) throw new NoSuchElementException( "no more keys" )
+							
+						val res = getValue( node, index )
+						
+						index += 1
+						res
+					}
+				}
+				
+			def length = nodeLength( node )
+		}
 	
 	def insertInternal( node: Long, index: Int, key: String, branch: Long ) {
 		val len = nodeLength( node )
@@ -154,16 +178,16 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 			file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
 			file writeLong branch
 		} else {
-			if (savedPosition != NULL)
+			if (savedNode != NULL)
 				sys.error( "a node is already being saved" )
 				
 			savedKeys.clear
 			savedBranches.clear
 			savedKeys ++= getKeys( node )
-			savedBranches ++= getBranches( node )
+			savedValues ++= getValues( node )
 			savedKeys.insert( index, key )
-			savedBranches.insert( index + 1, branch )
-			savedPosition = node
+			savedValues.insert( index + 1, branch )
+			savedNode = node
 		}
 	}
 	
@@ -194,13 +218,26 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	def insertLeaf( node: Long, index: Int, key: String, value: Any ) {
 		val len = nodeLength( node )
 		
-		nodeLength( node, len + 1 )
-		
-		if (index < len)
-			copy( node, index, len, node, index + 1 )
-		
-		writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
-		setValue( node, index, value )
+		if (len < order - 1) {
+			nodeLength( node, len + 1 )
+			
+			if (index < len)
+				copy( node, index, len, node, index + 1 )
+			
+			writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
+			setValue( node, index, value )
+		} else {
+			if (savedNode != NULL)
+				sys.error( "a node is already being saved" )
+				
+			savedKeys.clear
+			savedValues.clear
+			savedKeys ++= getKeys( node )
+			savedValues ++= getValues( node )
+			savedKeys.insert( index, key )
+			savedValues.insert( index, value )
+			savedNode = node
+		}
 	}
 	
 	def isLeaf( node: Long ): Boolean = {
@@ -273,7 +310,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	}
 		
 	def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
-		if (savedPosition == NULL) {
+		if (savedNode == NULL) {
 			copyKeys( src, begin, end, dst, 0 )
 			nodeLength( src, nodeLength(src) - (end - begin) - 1 )
 			
@@ -307,14 +344,39 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 				
 			nodeLength( src, savedKeys.length )
 			nodeLength( dst, end - begin )
-			savedPosition = NULL
+			savedNode = NULL
 		}
 	}
 	
 	def moveLeaf( src: Long, begin: Int, end: Int, dst: Long ) {
-		copy( src, begin, end, dst, 0 )
-		nodeLength( src, nodeLength(src) - (end - begin) )
-		nodeLength( dst, end - begin )
+		if (savedNode == NULL) {
+			copy( src, begin, end, dst, 0 )
+			nodeLength( src, nodeLength(src) - (end - begin) )
+			nodeLength( dst, end - begin )
+		} else {
+			val dstKeys = new ArrayBuffer[String]
+			val dstValues = new ArrayBuffer[Any]
+			val len = end - begin
+			
+			savedKeys.view( begin, end ) copyToBuffer dstKeys
+			savedKeys.remove( begin, len )
+			savedValues.view( begin, end ) copyToBuffer dstValues
+			savedValues.remove( begin, len )
+			
+			for (((k, v), i) <- savedKeys zip savedValues zipWithIndex) {
+				putKey( src, i, k )
+				setValue( src, i, v )
+			}
+			
+			for (((k, v), i) <- dstKeys zip dstValues zipWithIndex) {
+				putKey( dst, i, k )
+				setValue( dst, i, v )
+			}
+				
+			nodeLength( src, savedKeys.length )
+			nodeLength( dst, len )
+			savedNode = NULL
+		}
 	}
 	
 	def newInternal( parent: Long ): Long = {
@@ -391,7 +453,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	}
 	
 	def nodeLength( node: Long ) =
-		if (savedPosition == NULL) {
+		if (savedNode == NULL) {
 			file seek (node + NODE_LENGTH)
 			file.readShort
 		} else
@@ -420,30 +482,6 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	}
 	
 	def setValue( node: Long, index: Int, v: Any ) = writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, v )
-	
-	def values( node: Long ) =
-		new Seq[Any] {
-			def apply( idx: Int ) = getValue( node, idx )
-			
-			def iterator =
-				new Iterator[Any] {
-					var len = nodeLength( node )
-					var index = 0
-					
-					def hasNext = index < len
-					
-					def next = {
-						if (!hasNext) throw new NoSuchElementException( "no more keys" )
-							
-						val res = getValue( node, index )
-						
-						index += 1
-						res
-					}
-				}
-				
-			def length = nodeLength( node )
-		}
 
 	private def ni = sys.error( "not implemented" )
 	

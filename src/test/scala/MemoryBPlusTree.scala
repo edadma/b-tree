@@ -15,6 +15,8 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	def getKeys( node: Node[K, V] ) = node.keys
 	
 	def getValue( n: Node[K, V], index: Int ) = n.asLeaf.values( index )
+		
+	def getValues( node: Node[K, V] ) = node.asLeaf.values
 	
 	def insertInternal( n: Node[K, V], index: Int, key: K, branch: Node[K, V] ) {
 		n.keys.insert( index, key )
@@ -69,9 +71,7 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	
 	def prev( node: Node[K, V] ) = node.asLeaf.prev
 		
-	protected def setValue( node: Node[K, V], index: Int, v: V ) = node.asLeaf.values(index) = v
-		
-	protected def values( node: Node[K, V] ) = node.asLeaf.values
+	def setValue( node: Node[K, V], index: Int, v: V ) = node.asLeaf.values(index) = v
 }
 
 abstract class Node[K, V] {
@@ -97,4 +97,6 @@ class LeafNode[K, V]( var parent: InternalNode[K, V] ) extends Node[K, V] {
 	val values = new ArrayBuffer[V]
 	var prev: LeafNode[K, V] = null
 	var next: LeafNode[K, V] = null
+	
+	override def toString = keys.mkString( "keys: ", ", ", "| ") + values.mkString( "values: ", ", ", "" )
 }

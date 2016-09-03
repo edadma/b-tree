@@ -18,6 +18,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 	
 	protected def getValue( node: N, index: Int ): V
 	
+	protected def getValues( node: N ): Seq[V]
+	
 	protected def insertInternal( node: N, index: Int, key: K, branch: N ): Unit
 	
 	protected def insertLeaf( node: N, index: Int, key: K, value: V ): Unit
@@ -51,8 +53,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 	protected def prev( node: N ): N
 		
 	protected def setValue( node: N, index: Int, v: V ): Unit
-		
-	protected def values( node: N ): Seq[V]
 		
 	private [btree] def binarySearch( node: N, target: K ): Int = {
 		def search( start: Int, end: Int ): Int = {
@@ -108,9 +108,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 				setValue( leaf, index, value )
 				true
 			case (false, leaf, index) =>
-				if (nodeLength( leaf ) + 1 == order) {
+				def split = {
 					val newleaf = newLeaf( parent(leaf) )
-						
+					
 					next( newleaf, next(leaf) )
 					
 					if (next( leaf ) != nul)
@@ -119,38 +119,26 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 					next( leaf, newleaf )
 					prev( newleaf, leaf )
 					
-					val len = order - 1
+					val len = nodeLength( leaf )
 					val mid = len/2
-					val adjusted =
-						if (len%2 == 0 && index < mid)
-							mid - 1
-						else if (len%2 == 1 && index > mid)
-							mid + 1
-						else
-							mid
-							
-					moveLeaf( leaf, adjusted, len, newleaf )
-						
-					if (len%2 == 0)
-						if (index < mid)
-							insertLeaf( leaf, index, key, value )
-						else
-							insertLeaf( newleaf, index - adjusted, key, value )
-					else
-						if (index <= mid)
-							insertLeaf( leaf, index, key, value )
-						else
-							insertLeaf( newleaf, index - adjusted, key, value )
+					
+					moveLeaf( leaf, mid, len, newleaf )
+					newleaf
+				}
 				
-// 						if ((nodeLength(leaf) - nodeLength(newleaf)).abs >= 2)
-// 							println("uneven split")
+				insertLeaf( leaf, index, key, value )
+				
+				if (nodeLength( leaf ) == order) {
 					if (parent( leaf ) == nul) {
 						root = newRoot( leaf )
 						parent( leaf, root )
-						parent( newleaf, root )
+						
+						val newleaf = split
+						
 						insertInternal( root, 0, getKey(newleaf, 0), newleaf )
 					} else {
 						var par = parent( leaf )
+						val newleaf = split
 						
 						binarySearch( par, getKey(newleaf, 0) ) match {
 							case index if index >= 0 => sys.error( "key found in internal node" )
@@ -188,8 +176,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 								}
 						}
 					}
-				} else
-					insertLeaf( leaf, index, key, value )
+				}
 				
 				false
 		}
@@ -207,7 +194,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 		
 		def check( n: N, p: N, d: Int ): String = {
 			if (!(getKeys( n ).dropRight( 1 ) zip getKeys( n ).drop( 1 ) forall( p => p._1 < p._2 )))
-				return "false"
+				return "incorrectly ordered keys"
 			
 			if (parent( n ) != p)
 				return "incorrect parent pointer in level " + d
@@ -216,7 +203,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 				if (depth == -1)
 					depth = d
 				else if (d != depth)
-					return "false"
+					return "leaf nodes not at same depth"
 			
 				if (prevnode != prev( n ))
 					return "incorrect prev pointer"
@@ -327,7 +314,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 		def printNodes {
 			if (isLeaf( nodes.head )) {
 				s.print( nodes map (n => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(next(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") +
-					(if (withValues) (getKeys(n) zip values(n)) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else getKeys(n) mkString " ") + "]") mkString " " )
+					(if (withValues) (getKeys(n) zip getValues(n)) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else getKeys(n) mkString " ") + "]") mkString " " )
 				s.print( after )
 			} else {
 				for ((n, i) <- nodes zipWithIndex) {
