@@ -1,7 +1,5 @@
 package xyz.hyperreal.btree
 
-import collection.mutable.{HashMap, ArrayBuffer}
-
 
 class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTree[K, V, Node[K, V]]( order ) {
 	protected var root: Node[K, V] = new LeafNode[K, V]( null )
@@ -72,29 +70,4 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	protected def setValue( node: Node[K, V], index: Int, v: V ) = node.asLeaf.values(index) = v
 		
 	protected def values( node: Node[K, V] ) = node.asLeaf.values
-}
-
-abstract class Node[K, V] {
-	var parent: InternalNode[K, V]
-	val keys = new ArrayBuffer[K]
-	
-	def length = keys.size
-	
-	def isLeaf: Boolean
-	
-	def asInternal = asInstanceOf[InternalNode[K, V]]
-	
-	def asLeaf = asInstanceOf[LeafNode[K, V]]
-}
-
-class InternalNode[K, V]( var parent: InternalNode[K, V] ) extends Node[K, V] {
-	val isLeaf = false
-	val branches = new ArrayBuffer[Node[K, V]]
-}
-
-class LeafNode[K, V]( var parent: InternalNode[K, V] ) extends Node[K, V] {
-	val isLeaf = true
-	val values = new ArrayBuffer[V]
-	var prev: LeafNode[K, V] = null
-	var next: LeafNode[K, V] = null
 }
