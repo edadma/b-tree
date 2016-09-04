@@ -36,13 +36,13 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	val NODE_LENGTH = NODE_PARENT_PTR + POINTER_SIZE
 	val NODE_KEYS = NODE_LENGTH + 2
 	
-	val LEAF_PREV_PTR = NODE_KEYS + DATA_ARRAY_SIZE					+ DATUM_SIZE
+	val LEAF_PREV_PTR = NODE_KEYS + DATA_ARRAY_SIZE	
 	val LEAF_NEXT_PTR = LEAF_PREV_PTR + POINTER_SIZE
 	val LEAF_VALUES = LEAF_NEXT_PTR + POINTER_SIZE
 	
 	val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
 	
-	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE					+ 2*DATUM_SIZE
+	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
 	
 	private var savedNode: Long = NULL
 	private var savedKeys = new ArrayBuffer[String]
@@ -184,9 +184,9 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 			savedKeys.clear
 			savedBranches.clear
 			savedKeys ++= getKeys( node )
-			savedValues ++= getValues( node )
+			savedBranches ++= getBranches( node )
 			savedKeys.insert( index, key )
-			savedValues.insert( index + 1, branch )
+			savedBranches.insert( index + 1, branch )
 			savedNode = node
 		}
 	}
@@ -349,7 +349,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	}
 	
 	def moveLeaf( src: Long, begin: Int, end: Int, dst: Long ) {
-		if (savedNode == NULL) {
+	if (savedNode == NULL) {
 			copy( src, begin, end, dst, 0 )
 			nodeLength( src, nodeLength(src) - (end - begin) )
 			nodeLength( dst, end - begin )
