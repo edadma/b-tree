@@ -4,6 +4,7 @@ import xyz.hyperreal.ramfile.RamFile
 
 import io.Codec
 import collection.mutable.ArrayBuffer
+import collection.AbstractSeq
 
 
 class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) extends AbstractBPlusTree[String, Any, Long]( order ) {
@@ -203,30 +204,12 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file readLong
 	}
 	
-	protected def getBranches( node: Long ): Seq[Long] = {
-		new Seq[Long] {
+	protected def getBranches( node: Long ): Seq[Long] =
+		new AbstractSeq[Long] with IndexedSeq[Long] {
 			def apply( idx: Int ) = getBranch( node, idx )
 			
-			def iterator =
-				new Iterator[Long] {
-					var len = nodeLength( node ) + 1
-					var index = 0
-					
-					def hasNext = index < len
-					
-					def next = {
-						if (!hasNext) throw new NoSuchElementException( "no more branches" )
-							
-						val res = getBranch( node, index )
-						
-						index += 1
-						res
-					}
-				}
-				
 			def length = nodeLength( node ) + 1
 		}
-	}
 	
 	protected def getKey( node: Long, index: Int ) =
 		if (savedNode == node)
@@ -235,25 +218,8 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 			readString( node + NODE_KEYS + index*DATUM_SIZE )
 	
 	protected def getKeys( node: Long ): Seq[String] =
-		new Seq[String] {
+		new AbstractSeq[String] with IndexedSeq[String] {
 			def apply( idx: Int ) = getKey( node, idx )
-			
-			def iterator =
-				new Iterator[String] {
-					val len = nodeLength( node )
-					var index = 0
-
-					def hasNext = index < len
-					
-					def next = {
-						if (!hasNext) throw new NoSuchElementException( "no more keys" )
-							
-						val res = getKey( node, index )
-						
-						index += 1
-						res
-					}
-				}
 				
 			def length = nodeLength( node )
 		}
@@ -261,25 +227,8 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	protected def getValue( node: Long, index: Int ) = readDatum( node + LEAF_VALUES + index*DATUM_SIZE )
 	
 	protected def getValues( node: Long ) =
-		new Seq[Any] {
+		new AbstractSeq[Any] with IndexedSeq[Any] {
 			def apply( idx: Int ) = getValue( node, idx )
-			
-			def iterator =
-				new Iterator[Any] {
-					var len = nodeLength( node )
-					var index = 0
-					
-					def hasNext = index < len
-					
-					def next = {
-						if (!hasNext) throw new NoSuchElementException( "no more keys" )
-							
-						val res = getValue( node, index )
-						
-						index += 1
-						res
-					}
-				}
 				
 			def length = nodeLength( node )
 		}
