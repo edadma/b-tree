@@ -5,11 +5,11 @@ object TestMain extends App {
 	val tree = new FileBPlusTree( "btree", 3 )
 //	val tree = new MemoryBPlusTree[String, Any]( 3 )
 	
- 	tree.insert( "a" )
- 	tree.insert( "b" )
- 	tree.insert( "c" )
- 	tree.insert( "d" )
- 	tree.insert( "e" )
+// 	tree.insert( "a" )
+//  	tree.insert( "b" )
+//  	tree.insert( "c" )
+//  	tree.insert( "d" )
+//  	tree.insert( "e" )
 // 	tree.insert( "f" )
 // 	tree.insert( "g" )
 // 	tree.insert( "h" )
@@ -45,4 +45,5 @@ object TestMain extends App {
 //	tree.file.dump
 	println( tree.wellConstructed )
 	tree.prettyPrintKeysOnly
+	println( tree.iterator.toList )
 }

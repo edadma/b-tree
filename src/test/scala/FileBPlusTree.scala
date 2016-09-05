@@ -29,7 +29,8 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	val FILE_ORDER = FILE_HEADER + 12
 	val FILE_FREE_PTR = FILE_ORDER + 2
 	val FILE_ROOT_PTR = FILE_FREE_PTR + POINTER_SIZE
-	val FILE_BLOCKS = FILE_ROOT_PTR + POINTER_SIZE
+	val FILE_FIRST_PTR = FILE_ROOT_PTR + POINTER_SIZE
+	val FILE_BLOCKS = FILE_FIRST_PTR + POINTER_SIZE
 	
 	val NODE_TYPE = 0
 	val NODE_PARENT_PTR = NODE_TYPE + 1
@@ -52,31 +53,157 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	if (newfile)
 		RamFile.delete( filename )
 		
-	private [btree] val file = new RamFile( filename )
+	protected val file = new RamFile( filename )
 	
-	protected [btree] var root =
-		if (file.length == 0) {
-			file writeBytes "B+ Tree v0.1"
-			file writeShort order
-			file writeLong nul
-			file writeLong FILE_BLOCKS
-			newLeaf( nul )
-		} else {
-			file seek FILE_ORDER
+	protected var first: Long = _
+	protected var root: Long = _
+		
+	if (file.length == 0) {
+		file writeBytes "B+ Tree v0.1"
+		file writeShort order
+		file writeLong nul
+		file writeLong FILE_BLOCKS
+		file writeLong FILE_BLOCKS
+		root = newLeaf( nul )
+		first = FILE_BLOCKS
+	} else {
+		file seek FILE_ORDER
+		
+		if (file.readShort != order)
+			sys.error( "order not the same as on disk" )
 			
-			if (file.readShort != order)
-				sys.error( "order not the same as on disk" )
-				
-			file seek FILE_ROOT_PTR
-			file readLong
-		}
+		file seek FILE_ROOT_PTR
+		root = file.readLong
+		first = file.readLong
+	}
+		
+	protected def copy( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
+		val data = copyKeys( src, begin, end, dst, index )
+		
+		file seek (src + LEAF_VALUES + begin*DATUM_SIZE)
+		file readFully data
+		file seek (dst + LEAF_VALUES + index*DATUM_SIZE)
+		file write data
+	}
 	
-	def getBranch( node: Long, index: Int ) = {
+	protected def nodeLength( node: Long, len: Int ) {
+		file seek (node + NODE_LENGTH)
+		file writeShort len
+	}
+	
+	protected def readDatum( addr: Long ) = {
+		def readUTF8( len: Int ) = {
+			val a = new Array[Byte]( len )
+			
+			file readFully a
+			new String( Codec fromUTF8 a )
+		}
+		
+		file seek addr
+		
+		file read match {
+			case len if len <= 0x08 => readUTF8( len )
+			case TYPE_BOOLEAN_FALSE => false
+			case TYPE_BOOLEAN_TRUE => true
+			case TYPE_INT => file readInt
+			case TYPE_LONG => file readLong
+			case TYPE_DOUBLE => file readDouble
+			case TYPE_STRING => 
+				file seek file.readLong
+				readUTF8( file readInt )
+			case TYPE_NULL => null
+		}
+	}
+	
+	protected def readString( addr: Long ) = readDatum( addr ).asInstanceOf[String]
+	
+	protected def writeDatum( addr: Long, datum: Any ) = {
+		file seek addr
+		
+		datum match {
+			case null => file write TYPE_NULL
+			case false => file write TYPE_BOOLEAN_FALSE
+			case true => file write TYPE_BOOLEAN_TRUE
+			case d: Long =>
+				file write TYPE_LONG
+				file writeLong d
+			case d: Int =>
+				file write TYPE_INT
+				file writeInt d
+			case d: Double =>
+				file write TYPE_DOUBLE
+				file writeDouble d
+			case d: String =>
+				val utf = Codec.toUTF8( d )
+				
+				if (utf.length > 8) {
+					file write TYPE_STRING
+					sys.error( "long strings not supported" )
+				} else {
+					file write utf.length
+					file write utf
+				}
+				
+			case _ => sys.error( "type not supported: " + datum )
+		}
+	}
+	
+	protected def putKey( node: Long, index: Int, key: String ) = writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
+	
+	protected def putBranch( node: Long, index: Int, branch: Long ) {
+		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
+		file writeLong branch
+	}
+	
+	protected def alloc = {
+		file seek FILE_FREE_PTR
+		
+		file.readLong match {
+			case NULL =>
+				val addr = file.length
+				
+				file seek addr
+				
+				for (_ <- 1 to BLOCK_SIZE)
+					file write 0
+				
+				file seek addr
+				addr
+			case p =>
+				file seek p
+				
+				val n = file readLong
+				
+				file seek FILE_FREE_PTR
+				file writeLong n
+				file seek p
+				p
+		}
+	}
+	
+	protected def free( block: Long ) {
+		file seek FILE_FREE_PTR
+		
+		val next = file readLong
+		
+		file seek block
+		file writeLong next
+		file seek FILE_FREE_PTR
+		file writeLong block
+	}
+	
+	protected def setFirst( leaf: Long ) {
+		first = leaf
+		file seek FILE_FIRST_PTR
+		file writeLong leaf
+	}
+	
+	protected def getBranch( node: Long, index: Int ) = {
 		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
 		file readLong
 	}
 	
-	def getBranches( node: Long ): Seq[Long] = {
+	protected def getBranches( node: Long ): Seq[Long] = {
 		new Seq[Long] {
 			def apply( idx: Int ) = getBranch( node, idx )
 			
@@ -101,13 +228,13 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		}
 	}
 	
-	def getKey( node: Long, index: Int ) =
+	protected def getKey( node: Long, index: Int ) =
 		if (savedNode == node)
 			savedKeys(index)
 		else
 			readString( node + NODE_KEYS + index*DATUM_SIZE )
 	
-	def getKeys( node: Long ): Seq[String] =
+	protected def getKeys( node: Long ): Seq[String] =
 		new Seq[String] {
 			def apply( idx: Int ) = getKey( node, idx )
 			
@@ -131,9 +258,9 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 			def length = nodeLength( node )
 		}
 	
-	def getValue( node: Long, index: Int ) = readDatum( node + LEAF_VALUES + index*DATUM_SIZE )
+	protected def getValue( node: Long, index: Int ) = readDatum( node + LEAF_VALUES + index*DATUM_SIZE )
 	
-	def getValues( node: Long ) =
+	protected def getValues( node: Long ) =
 		new Seq[Any] {
 			def apply( idx: Int ) = getValue( node, idx )
 			
@@ -157,7 +284,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 			def length = nodeLength( node )
 		}
 	
-	def insertInternal( node: Long, index: Int, key: String, branch: Long ) {
+	protected def insertInternal( node: Long, index: Int, key: String, branch: Long ) {
 		val len = nodeLength( node )
 		
 		if (len < order - 1) {
@@ -191,7 +318,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		}
 	}
 	
-	private def copyKeys( src: Long, begin: Int, end: Int, dst: Long, index: Int ) = {
+	protected def copyKeys( src: Long, begin: Int, end: Int, dst: Long, index: Int ) = {
 		val data = new Array[Byte]( (end - begin)*DATUM_SIZE )
 		
 		file seek (src + NODE_KEYS + begin*DATUM_SIZE)
@@ -199,20 +326,6 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file seek (dst + NODE_KEYS + index*DATUM_SIZE)
 		file write data
 		data
-	}
-	
-	private def copy( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
-		val data = copyKeys( src, begin, end, dst, index )
-		
-		file seek (src + LEAF_VALUES + begin*DATUM_SIZE)
-		file readFully data
-		file seek (dst + LEAF_VALUES + index*DATUM_SIZE)
-		file write data
-	}
-	
-	private def nodeLength( node: Long, len: Int ) {
-		file seek (node + NODE_LENGTH)
-		file writeShort len
 	}
 	
 	def insertLeaf( node: Long, index: Int, key: String, value: Any ) {
@@ -243,70 +356,6 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	def isLeaf( node: Long ): Boolean = {
 		file seek node
 		file.read == LEAF_NODE
-	}
-	
-	private def readDatum( addr: Long ) = {
-		def readUTF8( len: Int ) = {
-			val a = new Array[Byte]( len )
-			
-			file readFully a
-			new String( Codec fromUTF8 a )
-		}
-		
-		file seek addr
-		
-		file read match {
-			case len if len <= 0x08 => readUTF8( len )
-			case TYPE_BOOLEAN_FALSE => false
-			case TYPE_BOOLEAN_TRUE => true
-			case TYPE_INT => file readInt
-			case TYPE_LONG => file readLong
-			case TYPE_DOUBLE => file readDouble
-			case TYPE_STRING => 
-				file seek file.readLong
-				readUTF8( file readInt )
-			case TYPE_NULL => null
-		}
-	}
-	
-	private def readString( addr: Long ) = readDatum( addr ).asInstanceOf[String]
-	
-	private def writeDatum( addr: Long, datum: Any ) = {
-		file seek addr
-		
-		datum match {
-			case null => file write TYPE_NULL
-			case false => file write TYPE_BOOLEAN_FALSE
-			case true => file write TYPE_BOOLEAN_TRUE
-			case d: Long =>
-				file write TYPE_LONG
-				file writeLong d
-			case d: Int =>
-				file write TYPE_INT
-				file writeInt d
-			case d: Double =>
-				file write TYPE_DOUBLE
-				file writeDouble d
-			case d: String =>
-				val utf = Codec.toUTF8( d )
-				
-				if (utf.length > 8) {
-					file write TYPE_STRING
-					ni
-				} else {
-					file write utf.length
-					file write utf
-				}
-				
-			case _ => sys.error( "type not supported: " + datum )
-		}
-	}
-	
-	private def putKey( node: Long, index: Int, key: String ) = writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
-	
-	private def putBranch( node: Long, index: Int, branch: Long ) {
-		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
-		file writeLong branch
 	}
 		
 	def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
@@ -387,43 +436,6 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		node
 	}
 	
-	private def alloc = {
-		file seek FILE_FREE_PTR
-		
-		file.readLong match {
-			case NULL =>
-				val addr = file.length
-				
-				file seek addr
-				
-				for (_ <- 1 to BLOCK_SIZE)
-					file write 0
-				
-				file seek addr
-				addr
-			case p =>
-				file seek p
-				
-				val n = file readLong
-				
-				file seek FILE_FREE_PTR
-				file writeLong n
-				file seek p
-				p
-		}
-	}
-	
-	private def free( block: Long ) {
-		file seek FILE_FREE_PTR
-		
-		val next = file readLong
-		
-		file seek block
-		file writeLong next
-		file seek FILE_FREE_PTR
-		file writeLong block
-	}
-	
 	def newLeaf( parent: Long ): Long = {
 		val node = alloc
 		
@@ -442,12 +454,12 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		node
 	}
 	
-	def next( node: Long ): Long = {
+	def getNext( node: Long ): Long = {
 		file seek (node + LEAF_NEXT_PTR)
 		file readLong
 	}
 	
-	def next( node: Long, p: Long ) {
+	def setNext( node: Long, p: Long ) {
 		file seek (node + LEAF_NEXT_PTR)
 		file writeLong p
 	}
@@ -482,8 +494,6 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	}
 	
 	def setValue( node: Long, index: Int, v: Any ) = writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, v )
-
-	private def ni = sys.error( "not implemented" )
 	
 	private def hex( n: Long* ) = println( n map (a => "%h" format a) mkString ("(", ", ", ")") )
 

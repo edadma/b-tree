@@ -7,6 +7,7 @@ import java.io.{ByteArrayOutputStream, PrintStream}
 
 abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 	protected var root: N
+	protected var first: N
 	
 	protected def getBranch( node: N, index: Int ): N
 	
@@ -36,9 +37,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 	
 	protected def newRoot( branch: N ): N
 	
-	protected def next( node: N, p: N ): Unit
+	protected def setNext( node: N, p: N ): Unit
 	
-	protected def next( node: N ): N
+	protected def getNext( node: N ): N
 	
 	protected def nodeLength( node: N ): Int
 	
@@ -95,28 +96,61 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 			case _ => None
 		}
 	
+	def iterator: Iterator[(K, V)] =
+		new Iterator[(K, V)] {
+			var leaf = first
+			var index = 0
+			
+			def hasNext = leaf != nul && index < nodeLength( leaf )
+			
+			def next =
+				if (hasNext) {
+					val res = (getKey( leaf, index ), getValue( leaf, index ))
+					
+					if (index == nodeLength( leaf ) - 1) {
+						index = 0
+						leaf = getNext( leaf )
+					} else
+						index += 1
+					
+					res
+				} else
+					throw new NoSuchElementException( "no more keys" )
+		}
+		
 	def insertKeys( keys: K* ) {
 		for (k <- keys)
 			insert( k, null.asInstanceOf[V] )
 	}
 	
-	// def insertIfNotFound
-	
-	def insert( key: K, value: V = null.asInstanceOf[V] ): Boolean = {
-		lookup( key ) match {
+	def insert( key: K, value: V = null.asInstanceOf[V] ) =
+		_insert( key, value ) match {
 			case (true, leaf, index) =>
 				setValue( leaf, index, value )
 				true
-			case (false, leaf, index) =>
+			case (false, _, _) =>
+				false
+		}
+	
+	def insertIfNotFound( key: K, value: V ) =
+		_insert( key, value ) match {
+			case (true, _, _) => true
+			case (false, _, _) => false
+		}
+		
+	private def _insert( key: K, value: V = null.asInstanceOf[V] ): (Boolean, N, Int) =
+		lookup( key ) match {
+			case t@(true, _, _) => t
+			case f@(false, leaf, index) =>
 				def split = {
 					val newleaf = newLeaf( parent(leaf) )
 					
-					next( newleaf, next(leaf) )
+					setNext( newleaf, getNext(leaf) )
 					
-					if (next( leaf ) != nul)
-						prev( next(leaf), newleaf )
+					if (getNext( leaf ) != nul)
+						prev( getNext(leaf), newleaf )
 						
-					next( leaf, newleaf )
+					setNext( leaf, newleaf )
 					prev( newleaf, leaf )
 					
 					val len = nodeLength( leaf )
@@ -177,10 +211,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 						}
 					}
 				}
-				
-				false
+
+				f
 		}
-	}
 	
 	def delete( key: K ) = {
 		
@@ -213,7 +246,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 				if ((nextptr != nul) && (nextptr != n))
 					return "incorrect next pointer"
 				else
-					nextptr = next( n )
+					nextptr = getNext( n )
 			}
 			else {
 				if (getBranches( n ) exists (p => p == nul))
@@ -313,7 +346,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 		
 		def printNodes {
 			if (isLeaf( nodes.head )) {
-				s.print( nodes map (n => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(next(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") +
+				s.print( nodes map (n => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") +
 					(if (withValues) (getKeys(n) zip getValues(n)) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else getKeys(n) mkString " ") + "]") mkString " " )
 				s.print( after )
 			} else {
