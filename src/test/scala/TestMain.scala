@@ -46,5 +46,5 @@ object TestMain extends App {
 // 	println( tree.wellConstructed )
 // 	tree.prettyPrintKeysOnly
 //	println( tree.iterator.toList )
-	println( tree.boundedIterator(('>, "d"), ('<=, "d")) map {case (k, _) => k} toList )
+	println( tree.boundedIterator(('>, "a"), ('<, "d")) map {case (k, _) => k} toList )
 }

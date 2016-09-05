@@ -6,7 +6,9 @@ import collection.immutable.ListMap
 import java.io.{ByteArrayOutputStream, PrintStream}
 
 
-abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
+abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
+	type N
+	
 	protected var root: N
 	protected var first: N
 	
@@ -170,7 +172,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 					else
 						(translate( 0 ), translate( 1 ), bounds(0), bounds(1))
 						
-				if (klo > khi || (klo == khi && (slo != '>=) || (shi != '<=)))
+				if (klo > khi || klo == khi && ((slo != '>=) || (shi != '<=)))
 					(lo, lo)
 				else
 					(lo, hi)

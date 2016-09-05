@@ -3,7 +3,9 @@ package xyz.hyperreal.btree
 import collection.mutable.ArrayBuffer
 
 
-class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTree[K, V, Node[K, V]]( order ) {
+class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTree[K, V]( order ) {
+	type N = Node[K, V]
+	
 	protected var first: Node[K, V] = new LeafNode[K, V]( null )
 	protected var root: Node[K, V] = first
 	

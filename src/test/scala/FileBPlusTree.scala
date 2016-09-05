@@ -7,7 +7,9 @@ import collection.mutable.ArrayBuffer
 import collection.AbstractSeq
 
 
-class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) extends AbstractBPlusTree[String, Any, Long]( order ) {
+class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) extends AbstractBPlusTree[String, Any]( order ) {
+	type N = Long
+	
 	val NULL = 0
 	
 	val LEAF_NODE = 0
