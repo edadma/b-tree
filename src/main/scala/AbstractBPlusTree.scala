@@ -164,10 +164,16 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 			if (bounds.length == 2) {
 				require( bounds(0)._1 != bounds(1)._1, "boundedIterator: expected bounds symbols to be different" )
 
-				if (order( bounds(0)._1 ) > order( bounds(1)._1 ))
-					(translate( 1 ), translate( 0 ))
+				val (lo, hi, (slo, klo), (shi, khi)) =
+					if (order( bounds(0)._1 ) > order( bounds(1)._1 ))
+						(translate( 1 ), translate( 0 ), bounds(1), bounds(0))
+					else
+						(translate( 0 ), translate( 1 ), bounds(0), bounds(1))
+						
+				if (klo > khi || (klo == khi && (slo != '>=) || (shi != '<=)))
+					(lo, lo)
 				else
-					(translate( 0 ), translate( 1 ))
+					(lo, hi)
 			} else if (order( bounds(0)._1 ) < 2)
 				(translate( 0 ), (nul, 0))
 			else
