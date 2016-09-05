@@ -96,6 +96,13 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 			case _ => None
 		}
 	
+	private def nextLeaf( leaf: N, index: Int ) =
+		if (index == nodeLength( leaf ) - 1)
+			(getNext( leaf ), 0)
+		else
+			(leaf, index + 1)
+		
+	
 	def iterator: Iterator[(K, V)] =
 		new Iterator[(K, V)] {
 			var leaf = first
@@ -106,22 +113,50 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 			def next =
 				if (hasNext) {
 					val res = (getKey( leaf, index ), getValue( leaf, index ))
-					
-					if (index == nodeLength( leaf ) - 1) {
-						index = 0
-						leaf = getNext( leaf )
-					} else
-						index += 1
-					
+	
+					nextLeaf( leaf, index ) match {
+						case (nl, ni) =>
+							leaf = nl
+							index = ni
+						}
+						
 					res
 				} else
 					throw new NoSuchElementException( "no more keys" )
 		}
 		
-	def insertKeys( keys: K* ) {
+	def boundedIterator( bounds: (Symbol, K)* ): Iterator[(K, V)] = {
+		require( bounds.length == 1 || bounds.length == 2, "boundedIterator: one or two bounds" )
+			
+		val symbols = List( '>, '>=, '<, '<= )
+		
+		require( bounds forall {case (s, _) => symbols contains s}, "boundedIterator: expected one of '<, '<=, '>, '>=" )
+		
+		def order( s: Symbol ) = symbols indexOf s
+		
+		val (lower, upper) =
+			if (bounds.length == 2) {
+				require( bounds(0)._1 != bounds(1)._1, "boundedIterator: expected bounds symbols to be different" )
+				
+				if (order( bounds(0)._1 ) > order( bounds(1)._1 ))
+					(Some( bounds(1) ), Some( bounds(0) ))
+				else
+					(Some( bounds(0) ), Some( bounds(1) ))
+			} else if (order( bounds(0)._1 ) < 2)
+				(Some( bounds(0) ), None)
+			else
+				(None, Some( bounds(1) ))
+		
+		new Iterator[(K, V)] {
+			def hasNext = false
+			
+			def next = sys.error("")
+		}
+	}
+		
+	def insertKeys( keys: K* ) =
 		for (k <- keys)
 			insert( k, null.asInstanceOf[V] )
-	}
 	
 	def insert( key: K, value: V = null.asInstanceOf[V] ) =
 		_insert( key, value ) match {

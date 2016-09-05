@@ -43,6 +43,7 @@ object TestMain extends App {
 // 	tree.insert( "jkl" )
 // 	tree.insert( "mno" )
 //	tree.file.dump
+	tree.boundedIterator( ('<, "m"), ('>, "a") )
 	println( tree.wellConstructed )
 	tree.prettyPrintKeysOnly
 	println( tree.iterator.toList )
