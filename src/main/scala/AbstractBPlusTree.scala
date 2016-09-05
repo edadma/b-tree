@@ -1,6 +1,7 @@
 package xyz.hyperreal.btree
 
 import collection.mutable.{HashMap, ArrayBuffer}
+import collection.immutable.ListMap
 
 import java.io.{ByteArrayOutputStream, PrintStream}
 
@@ -96,64 +97,101 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 			case _ => None
 		}
 	
-	private def nextLeaf( leaf: N, index: Int ) =
-		if (index == nodeLength( leaf ) - 1)
-			(getNext( leaf ), 0)
-		else
-			(leaf, index + 1)
+	protected def nextLeaf( leaf: N, index: Int ) = {
+		val kv = (getKey( leaf, index ), getValue( leaf, index ))
 		
+		if (index == nodeLength( leaf ) - 1)
+			(kv, getNext( leaf ), 0)
+		else
+			(kv, leaf, index + 1)
+	}
 	
 	def iterator: Iterator[(K, V)] =
 		new Iterator[(K, V)] {
 			var leaf = first
 			var index = 0
 			
-			def hasNext = leaf != nul && index < nodeLength( leaf )
+			def hasNext = leaf != nul
 			
 			def next =
-				if (hasNext) {
-					val res = (getKey( leaf, index ), getValue( leaf, index ))
-	
+				if (hasNext)
 					nextLeaf( leaf, index ) match {
-						case (nl, ni) =>
+						case (kv, nl, ni) =>
 							leaf = nl
 							index = ni
+							kv
 						}
-						
-					res
-				} else
+				else
 					throw new NoSuchElementException( "no more keys" )
 		}
-		
+	
+	protected def lookupGTE( key: K ) =
+		lookup( key ) match {
+			case t@(true, _, _) => t
+			case f@(false, leaf, index) =>
+				if (index < nodeLength( leaf ))
+					f
+				else
+					(false, getNext( leaf ), 0)
+		}
+	
 	def boundedIterator( bounds: (Symbol, K)* ): Iterator[(K, V)] = {
+		def gte( key: K ) =
+			lookupGTE( key ) match {
+				case (_, leaf, index) => (leaf, index)
+			}
+
+		def gt( key: K ) =
+			lookupGTE( key ) match {
+				case (true, leaf, index) =>
+					nextLeaf( leaf, index ) match {
+						case (_, nl, ni) => (nl, ni)
+						}
+				case (false, leaf, index) => (leaf, index)
+			}
+
 		require( bounds.length == 1 || bounds.length == 2, "boundedIterator: one or two bounds" )
 			
-		val symbols = List( '>, '>=, '<, '<= )
+		val symbols = ListMap[Symbol, K => (N, Int)]( '> -> gt, '>= -> gte, '< -> gte, '<= -> gt )
 		
 		require( bounds forall {case (s, _) => symbols contains s}, "boundedIterator: expected one of '<, '<=, '>, '>=" )
 		
-		def order( s: Symbol ) = symbols indexOf s
+		def translate( bound: Int ) = symbols(bounds(bound)._1)(bounds(bound)._2)
 		
-		val (lower, upper) =
+		def order( s: Symbol ) = symbols.keys.toList indexOf s
+		
+		val ((loleaf, loindex), (upleaf, upindex)) =
 			if (bounds.length == 2) {
 				require( bounds(0)._1 != bounds(1)._1, "boundedIterator: expected bounds symbols to be different" )
-				
+
 				if (order( bounds(0)._1 ) > order( bounds(1)._1 ))
-					(Some( bounds(1) ), Some( bounds(0) ))
+					(translate( 1 ), translate( 0 ))
 				else
-					(Some( bounds(0) ), Some( bounds(1) ))
+					(translate( 0 ), translate( 1 ))
 			} else if (order( bounds(0)._1 ) < 2)
-				(Some( bounds(0) ), None)
+				(translate( 0 ), (nul, 0))
 			else
-				(None, Some( bounds(1) ))
+				((first, 0), translate( 0 ))
 		
 		new Iterator[(K, V)] {
-			def hasNext = false
-			
-			def next = sys.error("")
+			var leaf: N = loleaf
+			var index: Int = loindex
+
+			def hasNext = leaf != upleaf || index < upindex
+
+			def next =
+				if (hasNext)
+					nextLeaf( leaf, index ) match {
+						case (kv, nl, ni) =>
+							leaf = nl
+							index = ni
+							kv
+						}
+				else
+					throw new NoSuchElementException( "no more keys" )
 		}
 	}
-		
+	
 	def insertKeys( keys: K* ) =
 		for (k <- keys)
 			insert( k, null.asInstanceOf[V] )

@@ -99,5 +99,5 @@ class LeafNode[K, V]( var parent: InternalNode[K, V] ) extends Node[K, V] {
 	var prev: LeafNode[K, V] = null
 	var next: LeafNode[K, V] = null
 	
-	override def toString = keys.mkString( "keys: ", ", ", "| ") + values.mkString( "values: ", ", ", "" )
+	override def toString = keys.mkString( "[keys: ", ", ", "| ") + values.mkString( "values: ", ", ", "]" )
 }
