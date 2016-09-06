@@ -26,9 +26,49 @@ class IteratorTests extends FreeSpec with PropertyChecks with Matchers {
 		
 		("iterator: " + storage + ", order " + order) in {
 		
-			t.iterator shouldBe "empty iterator"
-			t.insertKeys( "v", "t", "u", "j", "g", "w", "y", "c", "n", "l", "a", "r", "b", "s", "e", "f", "i", "z", "h", "d", "p", "x", "m", "k", "o", "q" )
-			t.iterator.map( {case (k, _) => k} ).mkString shouldBe "abcdefghijklmnopqrstuvwxyz"
+			t.iterator.isEmpty shouldBe true
+			t.boundedIterator( ('>=, "a") ).isEmpty shouldBe true
+			t.boundedIterator( ('>=, "a"), ('<=, "z") ).isEmpty shouldBe true
+			t.boundedIterator( ('<=, "z") ).isEmpty shouldBe true
+			t.insertKeys( "v", "t", "u", "j", "g", "w", "y", "c", "n", "a", "r", "b", "s", "e", "f", "i", "z", "d", "p", "x", "m", "k", "o", "q" )
+			t.iteratorOverKeys.mkString shouldBe "abcdefgijkmnopqrstuvwxyz"
+			t.boundedIteratorOverKeys( ('>=, "a") ).mkString shouldBe "abcdefgijkmnopqrstuvwxyz"
+			t.boundedIteratorOverKeys( ('>, "a") ).mkString shouldBe "bcdefgijkmnopqrstuvwxyz"
+			t.boundedIteratorOverKeys( ('>=, "A") ).mkString shouldBe "abcdefgijkmnopqrstuvwxyz"
+			t.boundedIteratorOverKeys( ('>, "A") ).mkString shouldBe "abcdefgijkmnopqrstuvwxyz"
+			t.boundedIteratorOverKeys( ('<=, "z") ).mkString shouldBe "abcdefgijkmnopqrstuvwxyz"
+			t.boundedIteratorOverKeys( ('<, "z") ).mkString shouldBe "abcdefgijkmnopqrstuvwxy"
+			t.boundedIteratorOverKeys( ('<=, "{") ).mkString shouldBe "abcdefgijkmnopqrstuvwxyz"
+			t.boundedIteratorOverKeys( ('<, "{") ).mkString shouldBe "abcdefgijkmnopqrstuvwxyz"
+			t.boundedIteratorOverKeys( ('>=, "a"), ('<=, "d") ).mkString shouldBe "abcd"
+			t.boundedIteratorOverKeys( ('>, "a"), ('<=, "d") ).mkString shouldBe "bcd"
+			t.boundedIteratorOverKeys( ('>=, "a"), ('<, "d") ).mkString shouldBe "abc"
+			t.boundedIteratorOverKeys( ('>, "a"), ('<, "d") ).mkString shouldBe "bc"
+			t.boundedIteratorOverKeys( ('<, "d"), ('>, "a") ).mkString shouldBe "bc"
+			t.boundedIteratorOverKeys( ('>, "a"), ('<, "a") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>=, "a"), ('<, "a") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>, "a"), ('<=, "a") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>=, "a"), ('<=, "a") ).mkString shouldBe "a"
+			t.boundedIteratorOverKeys( ('>=, "c"), ('<=, "a") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>, "c"), ('<=, "a") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>=, "c"), ('<, "a") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>, "c"), ('<, "a") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>, "h"), ('<, "h") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>=, "h"), ('<, "h") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>, "h"), ('<=, "h") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>=, "h"), ('<=, "h") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>=, "h"), ('<=, "a") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>, "h"), ('<=, "a") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>=, "h"), ('<, "a") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>, "h"), ('<, "a") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>=, "k"), ('<=, "h") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>, "k"), ('<=, "h") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>=, "k"), ('<, "h") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>, "k"), ('<, "h") ).mkString shouldBe ""
+			t.boundedIteratorOverKeys( ('>=, "h"), ('<=, "l") ).mkString shouldBe "ijk"
+			t.boundedIteratorOverKeys( ('>, "h"), ('<=, "l") ).mkString shouldBe "ijk"
+			t.boundedIteratorOverKeys( ('>=, "h"), ('<, "l") ).mkString shouldBe "ijk"
+			t.boundedIteratorOverKeys( ('>, "h"), ('<, "l") ).mkString shouldBe "ijk"
 		}
 	}
 	

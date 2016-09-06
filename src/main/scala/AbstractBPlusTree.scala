@@ -113,7 +113,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 			var leaf = first
 			var index = 0
 			
-			def hasNext = leaf != nul
+			def hasNext = leaf != nul && index < nodeLength( leaf )
 			
 			def next =
 				if (hasNext)
@@ -127,6 +127,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 					throw new NoSuchElementException( "no more keys" )
 		}
 	
+	def iteratorOverKeys = iterator map {case (k, _) => k}
+	
 	protected def lookupGTE( key: K ) =
 		lookup( key ) match {
 			case t@(true, _, _) => t
@@ -136,6 +138,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 				else
 					(false, getNext( leaf ), 0)
 		}
+	
+	def boundedIteratorOverKeys( bounds: (Symbol, K)* ) = boundedIterator( bounds: _* ) map {case (k, _) => k}
 	
 	def boundedIterator( bounds: (Symbol, K)* ): Iterator[(K, V)] = {
 		def gte( key: K ) =
@@ -180,12 +184,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 				(translate( 0 ), (nul, 0))
 			else
 				((first, 0), translate( 0 ))
-		
+			
 		new Iterator[(K, V)] {
 			var leaf: N = loleaf
 			var index: Int = loindex
 
-			def hasNext = leaf != upleaf || index < upindex
+			def hasNext = leaf != nul && index < nodeLength( leaf ) && (leaf != upleaf || index < upindex)
 
 			def next =
 				if (hasNext)
