@@ -7,7 +7,9 @@ import collection.mutable.ArrayBuffer
 import collection.AbstractSeq
 
 
-class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) extends AbstractBPlusTree[String, Any, Long]( order ) {
+class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) extends AbstractBPlusTree[String, Any]( order ) {
+	type N = Long
+	
 	val NULL = 0
 	
 	val LEAF_NODE = 0
@@ -198,12 +200,6 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file writeLong block
 	}
 	
-	protected def setFirst( leaf: Long ) {
-		first = leaf
-		file seek FILE_FIRST_PTR
-		file writeLong leaf
-	}
-	
 	protected def getBranch( node: Long, index: Int ) = {
 		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
 		file readLong
@@ -282,7 +278,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		data
 	}
 	
-	def insertLeaf( node: Long, index: Int, key: String, value: Any ) {
+	protected def insertLeaf( node: Long, index: Int, key: String, value: Any ) {
 		val len = nodeLength( node )
 		
 		if (len < order - 1) {
@@ -307,12 +303,12 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		}
 	}
 	
-	def isLeaf( node: Long ): Boolean = {
+	protected def isLeaf( node: Long ): Boolean = {
 		file seek node
 		file.read == LEAF_NODE
 	}
 		
-	def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
+	protected def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
 		if (savedNode == NULL) {
 			copyKeys( src, begin, end, dst, 0 )
 			nodeLength( src, nodeLength(src) - (end - begin) - 1 )
@@ -351,7 +347,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		}
 	}
 	
-	def moveLeaf( src: Long, begin: Int, end: Int, dst: Long ) {
+	protected def moveLeaf( src: Long, begin: Int, end: Int, dst: Long ) {
 	if (savedNode == NULL) {
 			copy( src, begin, end, dst, 0 )
 			nodeLength( src, nodeLength(src) - (end - begin) )
@@ -382,7 +378,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		}
 	}
 	
-	def newInternal( parent: Long ): Long = {
+	protected def newInternal( parent: Long ): Long = {
 		val node = alloc
 		
 		file write INTERNAL_NODE
@@ -390,7 +386,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		node
 	}
 	
-	def newLeaf( parent: Long ): Long = {
+	protected def newLeaf( parent: Long ): Long = {
 		val node = alloc
 		
 		file write LEAF_NODE
@@ -398,7 +394,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		node
 	}
 	
-	def newRoot( branch: Long ): Long = {
+	protected def newRoot( branch: Long ): Long = {
 		val node = newInternal( nul )
 		
 		file seek (node + INTERNAL_BRANCHES)
@@ -408,46 +404,56 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		node
 	}
 	
-	def getNext( node: Long ): Long = {
+	protected def getNext( node: Long ): Long = {
 		file seek (node + LEAF_NEXT_PTR)
 		file readLong
 	}
 	
-	def setNext( node: Long, p: Long ) {
+	protected def setNext( node: Long, p: Long ) {
 		file seek (node + LEAF_NEXT_PTR)
 		file writeLong p
 	}
 	
-	def nodeLength( node: Long ) =
+	protected def nodeLength( node: Long ) =
 		if (savedNode == NULL) {
 			file seek (node + NODE_LENGTH)
 			file.readShort
 		} else
 			savedKeys.length
 	
-	def nul = 0
+	protected def nul = 0
 	
-	def parent( node: Long ): Long = {
+	protected def parent( node: Long ): Long = {
 		file seek (node + NODE_PARENT_PTR)
 		file readLong
 	}
 	
-	def parent( node: Long, p: Long ) {
+	protected def parent( node: Long, p: Long ) {
 		file seek (node + NODE_PARENT_PTR)
 		file writeLong p
 	}
 	
-	def prev( node: Long ): Long = {
+	protected def prev( node: Long ): Long = {
 		file seek (node + LEAF_PREV_PTR)
 		file readLong
 	}
 	
-	def prev( node: Long, p: Long ) {
+	protected def prev( node: Long, p: Long ) {
 		file seek (node + LEAF_PREV_PTR)
 		file writeLong p
 	}
 	
-	def setValue( node: Long, index: Int, v: Any ) = writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, v )
+	protected def setFirst( leaf: Long ) {
+		file seek FILE_FIRST_PTR
+		file writeLong leaf
+	}
+	
+	protected def setLast( leaf: Long ) {
+		file seek FILE_LAST_PTR
+		file writeLong leaf
+	}
+	
+	protected def setValue( node: Long, index: Int, v: Any ) = writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, v )
 	
 	private def hex( n: Long* ) = println( n map (a => "%h" format a) mkString ("(", ", ", ")") )
 

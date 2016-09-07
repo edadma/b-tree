@@ -3,9 +3,11 @@ package xyz.hyperreal.btree
 import collection.mutable.ArrayBuffer
 
 
-class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTree[K, V, Node[K, V]]( order ) {
+class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTree[K, V]( order ) {
+	type N = Node[K, V]
+	
 	protected var first: Node[K, V] = new LeafNode[K, V]( null )
-	protected var last: Node[K, V] = new LeafNode[K, V]( null )
+	protected var last: Node[K, V] = first
 	protected var root: Node[K, V] = first
 	
 	protected def getBranch( n: Node[K, V], index: Int ) = n.asInternal.branches( index )
@@ -72,6 +74,10 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	protected def prev( node: Node[K, V], p: Node[K, V] ) = node.asLeaf.prev = p.asInstanceOf[LeafNode[K, V]]
 	
 	protected def prev( node: Node[K, V] ) = node.asLeaf.prev
+	
+	protected def setFirst( leaf: Node[K, V] ) {}
+	
+	protected def setLast( leaf: Node[K, V] ) {}
 		
 	protected def setValue( node: Node[K, V], index: Int, v: V ) = node.asLeaf.values(index) = v
 }
@@ -100,5 +106,5 @@ class LeafNode[K, V]( var parent: InternalNode[K, V] ) extends Node[K, V] {
 	var prev: LeafNode[K, V] = null
 	var next: LeafNode[K, V] = null
 	
-	override def toString = keys.mkString( "keys: ", ", ", "| ") + values.mkString( "values: ", ", ", "" )
+	override def toString = keys.mkString( "[keys: ", ", ", "| ") + values.mkString( "values: ", ", ", "]" )
 }

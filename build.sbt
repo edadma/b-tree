@@ -17,8 +17,8 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
 
 libraryDependencies ++= Seq(
-	"org.scalatest" %% "scalatest" % "2.2.6" % "test",
-	"org.scalacheck" %% "scalacheck" % "1.12.5" % "test"
+	"org.scalatest" %% "scalatest" % "3.0.0" % "test",
+	"org.scalacheck" %% "scalacheck" % "1.13.2" % "test"
 )
 
 libraryDependencies += "xyz.hyperreal" %% "ramfile" % "0.3" % "test"
