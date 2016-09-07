@@ -31,7 +31,8 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	val FILE_FREE_PTR = FILE_ORDER + 2
 	val FILE_ROOT_PTR = FILE_FREE_PTR + POINTER_SIZE
 	val FILE_FIRST_PTR = FILE_ROOT_PTR + POINTER_SIZE
-	val FILE_BLOCKS = FILE_FIRST_PTR + POINTER_SIZE
+	val FILE_LAST_PTR = FILE_FIRST_PTR + POINTER_SIZE
+	val FILE_BLOCKS = FILE_LAST_PTR + POINTER_SIZE
 	
 	val NODE_TYPE = 0
 	val NODE_PARENT_PTR = NODE_TYPE + 1
@@ -57,6 +58,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	protected val file = new RamFile( filename )
 	
 	protected var first: Long = _
+	protected var last: Long = _
 	protected var root: Long = _
 		
 	if (file.length == 0) {
@@ -65,8 +67,10 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file writeLong nul
 		file writeLong FILE_BLOCKS
 		file writeLong FILE_BLOCKS
+		file writeLong FILE_BLOCKS
 		root = newLeaf( nul )
 		first = FILE_BLOCKS
+		last = FILE_BLOCKS
 	} else {
 		file seek FILE_ORDER
 		
@@ -76,8 +80,9 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file seek FILE_ROOT_PTR
 		root = file.readLong
 		first = file.readLong
+		last = file.readLong
 	}
-		
+	
 	protected def copy( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
 		val data = copyKeys( src, begin, end, dst, index )
 		

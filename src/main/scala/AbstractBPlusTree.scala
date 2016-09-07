@@ -8,6 +8,7 @@ import java.io.{ByteArrayOutputStream, PrintStream}
 abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 	protected var root: N
 	protected var first: N
+	protected var last: N
 	
 	protected def getBranch( node: N, index: Int ): N
 	
@@ -55,7 +56,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 		
 	protected def setValue( node: N, index: Int, v: V ): Unit
 		
-	private [btree] def binarySearch( node: N, target: K ): Int = {
+	protected def binarySearch( node: N, target: K ): Int = {
 		def search( start: Int, end: Int ): Int = {
 			if (start > end)
 				-start - 1
@@ -74,7 +75,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 		search( 0, nodeLength(node) - 1 )
 	}
 	
-	private [btree] def lookup( key: K ): (Boolean, N, Int) = {
+	protected def lookup( key: K ): (Boolean, N, Int) = {
 		def _lookup( n: N ): (Boolean, N, Int) =
 			if (isLeaf( n ))
 				binarySearch( n, key ) match {
@@ -96,13 +97,19 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 			case _ => None
 		}
 	
-	private def nextLeaf( leaf: N, index: Int ) =
+	protected def nextLeaf( leaf: N, index: Int ) =
 		if (index == nodeLength( leaf ) - 1)
 			(getNext( leaf ), 0)
 		else
 			(leaf, index + 1)
 		
 	
+	def min =
+		if (nodeLength( first ) == 0)
+			None
+		else
+			Some( (getKey(first, 0), getValue(first, 0)) )
+			
 	def iterator: Iterator[(K, V)] =
 		new Iterator[(K, V)] {
 			var leaf = first
@@ -173,7 +180,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 			case (false, _, _) => false
 		}
 		
-	private def _insert( key: K, value: V = null.asInstanceOf[V] ): (Boolean, N, Int) =
+	protected def _insert( key: K, value: V ): (Boolean, N, Int) =
 		lookup( key ) match {
 			case t@(true, _, _) => t
 			case f@(false, leaf, index) =>
@@ -273,6 +280,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V, N]( order: Int ) {
 				else if (d != depth)
 					return "leaf nodes not at same depth"
 			
+				if (prevnode == nul && first != n)
+					return "incorrect first pointer"
+					
 				if (prevnode != prev( n ))
 					return "incorrect prev pointer"
 				else

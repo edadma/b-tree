@@ -5,6 +5,7 @@ import collection.mutable.ArrayBuffer
 
 class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTree[K, V, Node[K, V]]( order ) {
 	protected var first: Node[K, V] = new LeafNode[K, V]( null )
+	protected var last: Node[K, V] = new LeafNode[K, V]( null )
 	protected var root: Node[K, V] = first
 	
 	protected def getBranch( n: Node[K, V], index: Int ) = n.asInternal.branches( index )
