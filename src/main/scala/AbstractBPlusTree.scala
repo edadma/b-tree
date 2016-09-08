@@ -226,100 +226,113 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 			insert( k, null.asInstanceOf[V] )
 	
 	def insert( key: K, value: V = null.asInstanceOf[V] ) =
-		_insert( key, value ) match {
+		lookup( key ) match {
 			case (true, leaf, index) =>
 				setValue( leaf, index, value )
 				true
-			case (false, _, _) =>
+			case (false, leaf, index) =>
+				insertAt	( key, value, leaf, index )
 				false
 		}
 	
 	def insertIfNotFound( key: K, value: V ) =
-		_insert( key, value ) match {
+		lookup( key ) match {
 			case (true, _, _) => true
-			case (false, _, _) => false
+			case (false, leaf, index) =>
+				insertAt	( key, value, leaf, index )
+				false
 		}
 		
-	protected def _insert( key: K, value: V ): (Boolean, N, Int) =
-		lookup( key ) match {
-			case t@(true, _, _) => t
-			case f@(false, leaf, index) =>
-				def split = {
-					val newleaf = newLeaf( parent(leaf) )
-					val leafnext = getNext( leaf )
-					
-					setNext( newleaf, leafnext )
-					
-					if (leafnext == nul) {
-						last = newleaf
-						setLast( newleaf )
-					} else
-						prev( leafnext, newleaf )
-						
-					setNext( leaf, newleaf )
-					prev( newleaf, leaf )
-					
-					val len = nodeLength( leaf )
-					val mid = len/2
-					
-					moveLeaf( leaf, mid, len, newleaf )
-					newleaf
-				}
-				
-				insertLeaf( leaf, index, key, value )
-				
-				if (nodeLength( leaf ) == order) {
-					if (parent( leaf ) == nul) {
-						root = newRoot( leaf )
-						parent( leaf, root )
-						
-						val newleaf = split
-						
-						insertInternal( root, 0, getKey(newleaf, 0), newleaf )
-					} else {
-						var par = parent( leaf )
-						val newleaf = split
-						
-						binarySearch( par, getKey(newleaf, 0) ) match {
-							case index if index >= 0 => sys.error( "key found in internal node" )
-							case insertion =>
-								val index = -(insertion + 1)
-								insertInternal( par, index, getKey(newleaf, 0), newleaf )
-						
-								while (nodeLength( par ) == order) {
-									val newinternal = newInternal( parent(par) )
-									val len = nodeLength( par )
-									val mid = len/2
-									val middle = getKey( par, mid )
-									
-									moveInternal( par, mid + 1, len, newinternal )
-									
-									for (child <- getBranches( newinternal ))
-										parent( child, newinternal )
-										
-									if (parent( par ) == nul) {
-										root = newRoot( par )
-										
-										parent( newinternal, root )
-										parent( par, root )
-										insertInternal( root, 0, middle, newinternal )
-										par = root
-									} else {
-										par = parent( par )
-										binarySearch( par, middle ) match {
-											case index if index >= 0 => sys.error( "key found in internal node" )
-											case insertion =>
-												val index = -(insertion + 1)
-												insertInternal( par, index, middle, newinternal )
-										}
-									}
-								}
-						}
-					}
-				}
-
-				f
+	def load( kvs: (K, V)* ) = {
+		require( !kvs.isEmpty, "expected some key/value pairs to load" )
+		
+		val seq = kvs sortBy {case (k, _) => k}
+		
+		max match {
+			case None =>
+			case Some( (maxkey, _) ) =>
+				if (maxkey >= seq.head._1)
+					sys.error( "can only load into non-empty tree is maximum element is less than minimum element to be loaded" )
 		}
+		
+		seq foreach {case (k, v) => insertAt( k, v, last, nodeLength(last) )}
+	}
+	
+	protected def insertAt( key: K, value: V, leaf: N, index: Int ) {
+		def split = {
+			val newleaf = newLeaf( parent(leaf) )
+			val leafnext = getNext( leaf )
+			
+			setNext( newleaf, leafnext )
+			
+			if (leafnext == nul) {
+				last = newleaf
+				setLast( newleaf )
+			} else
+				prev( leafnext, newleaf )
+				
+			setNext( leaf, newleaf )
+			prev( newleaf, leaf )
+			
+			val len = nodeLength( leaf )
+			val mid = len/2
+			
+			moveLeaf( leaf, mid, len, newleaf )
+			newleaf
+		}
+		
+		insertLeaf( leaf, index, key, value )
+		
+		if (nodeLength( leaf ) == order) {
+			if (parent( leaf ) == nul) {
+				root = newRoot( leaf )
+				parent( leaf, root )
+				
+				val newleaf = split
+				
+				insertInternal( root, 0, getKey(newleaf, 0), newleaf )
+			} else {
+				var par = parent( leaf )
+				val newleaf = split
+				
+				binarySearch( par, getKey(newleaf, 0) ) match {
+					case index if index >= 0 => sys.error( "key found in internal node" )
+					case insertion =>
+						val index = -(insertion + 1)
+						insertInternal( par, index, getKey(newleaf, 0), newleaf )
+				
+						while (nodeLength( par ) == order) {
+							val newinternal = newInternal( parent(par) )
+							val len = nodeLength( par )
+							val mid = len/2
+							val middle = getKey( par, mid )
+							
+							moveInternal( par, mid + 1, len, newinternal )
+							
+							for (child <- getBranches( newinternal ))
+								parent( child, newinternal )
+								
+							if (parent( par ) == nul) {
+								root = newRoot( par )
+								
+								parent( newinternal, root )
+								parent( par, root )
+								insertInternal( root, 0, middle, newinternal )
+								par = root
+							} else {
+								par = parent( par )
+								binarySearch( par, middle ) match {
+									case index if index >= 0 => sys.error( "key found in internal node" )
+									case insertion =>
+										val index = -(insertion + 1)
+										insertInternal( par, index, middle, newinternal )
+								}
+							}
+						}
+				}
+			}
+		}
+	}
 	
 	def delete( key: K ) = {
 		
