@@ -44,7 +44,7 @@ object TestMain extends App {
 // 	tree.insert( "jkl" )
 // 	tree.insert( "mno" )
 //	tree.file.dump
-	tree.load( ("b", 2), ("a", 1), ("c", 3) )
+//	tree.load( ("b", 2), ("a", 1), ("c", 3) )
 	println( tree.max )
  	println( tree.wellConstructed )
 // 	tree.prettyPrintKeysOnly

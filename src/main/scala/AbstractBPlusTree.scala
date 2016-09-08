@@ -7,7 +7,7 @@ import java.io.{ByteArrayOutputStream, PrintStream}
 
 
 abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
-	type N
+	protected type N
 	
 	protected var root: N
 	protected var first: N
@@ -236,7 +236,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 				false
 		}
 	
-	def insertIfNotFound( key: K, value: V ) =
+	def insertIfNotFound( key: K, value: V = null.asInstanceOf[V] ) =
 		lookup( key ) match {
 			case (true, _, _) => true
 			case (false, leaf, index) =>
@@ -341,9 +341,19 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		}
 	}
 	
-	def delete( key: K ) = {
-		
-	}
+// 	def delete( key: K ) = {
+// 		lookup( key ) match {
+// 			case (true, leaf, index) =>
+// 				val len = removeLeaf( leaf, index )
+// 				
+// 				if (len < order/2) {
+// 					
+// 				}
+// 				
+// 				true
+// 			case (false, leaf, index) => false
+// 		}
+// 	}
 	
 	def wellConstructed: String = {
 		val nodes = new ArrayBuffer[N]
