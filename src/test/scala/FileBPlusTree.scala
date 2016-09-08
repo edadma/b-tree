@@ -59,9 +59,10 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		
 	protected val file = new RamFile( filename )
 	
+	protected var root: Long = _
 	protected var first: Long = _
 	protected var last: Long = _
-	protected var root: Long = _
+	protected var lastlen: Int = _
 		
 	if (file.length == 0) {
 		file writeBytes "B+ Tree v0.1"
@@ -73,6 +74,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		root = newLeaf( nul )
 		first = FILE_BLOCKS
 		last = FILE_BLOCKS
+		lastlen = 0
 	} else {
 		file seek FILE_ORDER
 		
@@ -83,6 +85,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		root = file.readLong
 		first = file.readLong
 		last = file.readLong
+		lastlen = nodeLength( last )
 	}
 	
 	protected def copy( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {

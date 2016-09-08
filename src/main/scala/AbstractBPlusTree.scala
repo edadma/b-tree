@@ -12,7 +12,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	protected var root: N
 	protected var first: N
 	protected var last: N
-	
+	protected var lastlen: Int
+		
 	protected def getBranch( node: N, index: Int ): N
 	
 	protected def getBranches( node: N ): Seq[N]
@@ -255,7 +256,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 					sys.error( "can only load into non-empty tree is maximum element is less than minimum element to be loaded" )
 		}
 		
-		seq foreach {case (k, v) => insertAt( k, v, last, nodeLength(last) )}
+		seq foreach {case (k, v) => insertAt( k, v, last, lastlen )}
 	}
 	
 	protected def insertAt( key: K, value: V, leaf: N, index: Int ) {
@@ -277,12 +278,18 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 			val len = nodeLength( leaf )
 			val mid = len/2
 			
+			if (leafnext == nul)
+				lastlen = len - mid
+				
 			moveLeaf( leaf, mid, len, newleaf )
 			newleaf
 		}
 		
 		insertLeaf( leaf, index, key, value )
 		
+		if (leaf == last)
+			lastlen += 1
+
 		if (nodeLength( leaf ) == order) {
 			if (parent( leaf ) == nul) {
 				root = newRoot( leaf )
