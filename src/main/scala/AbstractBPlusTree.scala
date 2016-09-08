@@ -58,61 +58,19 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	
 	protected def prev( node: N ): N
 
+	protected def removeLeaf( node: N, index: Int ): Int
+	
 	protected def setFirst( leaf: N ): Unit
 
 	protected def setLast( leaf: N ): Unit
 		
 	protected def setValue( node: N, index: Int, v: V ): Unit
-		
-	protected def binarySearch( node: N, target: K ): Int = {
-		def search( start: Int, end: Int ): Int = {
-			if (start > end)
-				-start - 1
-			else {
-				val mid = start + (end-start + 1)/2
-				
-				if (getKey( node, mid ) == target)
-					mid
-				else if (getKey(node, mid) > target)
-					search( start, mid - 1 )
-				else
-					search( mid + 1, end )
-			}
-		}
-		
-		search( 0, nodeLength(node) - 1 )
-	}
-	
-	protected def lookup( key: K ): (Boolean, N, Int) = {
-		def _lookup( n: N ): (Boolean, N, Int) =
-			if (isLeaf( n ))
-				binarySearch( n, key ) match {
-					case index if index >= 0 => (true, n, index)
-					case index => (false, n, -(index + 1))
-				}
-			else
-				binarySearch( n, key ) match {
-					case index if index >= 0 => _lookup( getBranch(n, index + 1) )
-					case index => _lookup( getBranch(n, -(index + 1)) )
-				}
-			
-		_lookup( root )
-	}
 	
 	def search( key: K ): Option[V] =
 		lookup( key ) match {
 			case (true, leaf, index) => Some( getValue(leaf, index) )
 			case _ => None
 		}
-	
-	protected def nextLeaf( leaf: N, index: Int ) = {
-		val kv = (getKey( leaf, index ), getValue( leaf, index ))
-		
-		if (index == nodeLength( leaf ) - 1)
-			(kv, getNext( leaf ), 0)
-		else
-			(kv, leaf, index + 1)
-	}
 	
 	def min =
 		if (nodeLength( first ) == 0)
@@ -146,16 +104,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		}
 	
 	def iteratorOverKeys = iterator map {case (k, _) => k}
-	
-	protected def lookupGTE( key: K ) =
-		lookup( key ) match {
-			case t@(true, _, _) => t
-			case f@(false, leaf, index) =>
-				if (index < nodeLength( leaf ))
-					f
-				else
-					(false, getNext( leaf ), 0)
-		}
 	
 	def boundedIteratorOverKeys( bounds: (Symbol, K)* ) = boundedIterator( bounds: _* ) map {case (k, _) => k}
 	
@@ -259,6 +207,60 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		seq foreach {case (k, v) => insertAt( k, v, last, lastlen )}
 	}
 	
+	protected def binarySearch( node: N, target: K ): Int = {
+		def search( start: Int, end: Int ): Int = {
+			if (start > end)
+				-start - 1
+			else {
+				val mid = start + (end-start + 1)/2
+				
+				if (getKey( node, mid ) == target)
+					mid
+				else if (getKey(node, mid) > target)
+					search( start, mid - 1 )
+				else
+					search( mid + 1, end )
+			}
+		}
+		
+		search( 0, nodeLength(node) - 1 )
+	}
+	
+	protected def lookup( key: K ): (Boolean, N, Int) = {
+		def _lookup( n: N ): (Boolean, N, Int) =
+			if (isLeaf( n ))
+				binarySearch( n, key ) match {
+					case index if index >= 0 => (true, n, index)
+					case index => (false, n, -(index + 1))
+				}
+			else
+				binarySearch( n, key ) match {
+					case index if index >= 0 => _lookup( getBranch(n, index + 1) )
+					case index => _lookup( getBranch(n, -(index + 1)) )
+				}
+			
+		_lookup( root )
+	}
+	
+	protected def nextLeaf( leaf: N, index: Int ) = {
+		val kv = (getKey( leaf, index ), getValue( leaf, index ))
+		
+		if (index == nodeLength( leaf ) - 1)
+			(kv, getNext( leaf ), 0)
+		else
+			(kv, leaf, index + 1)
+	}
+	
+	protected def lookupGTE( key: K ) =
+		lookup( key ) match {
+			case t@(true, _, _) => t
+			case f@(false, leaf, index) =>
+				if (index < nodeLength( leaf ))
+					f
+				else
+					(false, getNext( leaf ), 0)
+		}
+	
 	protected def insertAt( key: K, value: V, leaf: N, index: Int ) {
 		def split = {
 			val newleaf = newLeaf( parent(leaf) )
@@ -347,7 +349,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 // 				val len = removeLeaf( leaf, index )
 // 				
 // 				if (len < order/2) {
-// 					
+// 					if (getNext( leaf ) != nul)
+// 						
 // 				}
 // 				
 // 				true
