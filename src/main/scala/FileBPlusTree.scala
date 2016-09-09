@@ -6,59 +6,62 @@ import io.Codec
 import collection.mutable.ArrayBuffer
 import collection.AbstractSeq
 
+import java.io.{File, RandomAccessFile}
+
 
 class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) extends AbstractBPlusTree[String, Any]( order ) {
 	protected type N = Long
 	
-	val NULL = 0
+	protected val NULL = 0
 	
-	val LEAF_NODE = 0
-	val INTERNAL_NODE = 1
+	protected val LEAF_NODE = 0
+	protected val INTERNAL_NODE = 1
 	
-	val TYPE_BOOLEAN = 0x10
-		val TYPE_BOOLEAN_FALSE = 0x10
-		val TYPE_BOOLEAN_TRUE = 0x18
-	val TYPE_INT = 0x11
-	val TYPE_LONG = 0x12
-	val TYPE_DOUBLE = 0x13
-	val TYPE_STRING = 0x14
-	val TYPE_NULL = 0x15
+	protected val TYPE_BOOLEAN = 0x10
+		protected val TYPE_BOOLEAN_FALSE = 0x10
+		protected val TYPE_BOOLEAN_TRUE = 0x18
+	protected val TYPE_INT = 0x11
+	protected val TYPE_LONG = 0x12
+	protected val TYPE_DOUBLE = 0x13
+	protected val TYPE_STRING = 0x14
+	protected val TYPE_NULL = 0x15
 	
-	val DATUM_SIZE = 1 + 8		// type + datum
-	val POINTER_SIZE = 8
-	val DATA_ARRAY_SIZE = (order - 1)*DATUM_SIZE
+	protected val DATUM_SIZE = 1 + 8		// type + datum
+	protected val POINTER_SIZE = 8
+	protected val DATA_ARRAY_SIZE = (order - 1)*DATUM_SIZE
 	
-	val FILE_HEADER = 0
-	val FILE_ORDER = FILE_HEADER + 12
-	val FILE_FREE_PTR = FILE_ORDER + 2
-	val FILE_ROOT_PTR = FILE_FREE_PTR + POINTER_SIZE
-	val FILE_FIRST_PTR = FILE_ROOT_PTR + POINTER_SIZE
-	val FILE_LAST_PTR = FILE_FIRST_PTR + POINTER_SIZE
-	val FILE_BLOCKS = FILE_LAST_PTR + POINTER_SIZE
+	protected val FILE_HEADER = 0
+	protected val FILE_ORDER = FILE_HEADER + 12
+	protected val FILE_FREE_PTR = FILE_ORDER + 2
+	protected val FILE_ROOT_PTR = FILE_FREE_PTR + POINTER_SIZE
+	protected val FILE_FIRST_PTR = FILE_ROOT_PTR + POINTER_SIZE
+	protected val FILE_LAST_PTR = FILE_FIRST_PTR + POINTER_SIZE
+	protected val FILE_BLOCKS = FILE_LAST_PTR + POINTER_SIZE
 	
-	val NODE_TYPE = 0
-	val NODE_PARENT_PTR = NODE_TYPE + 1
-	val NODE_LENGTH = NODE_PARENT_PTR + POINTER_SIZE
-	val NODE_KEYS = NODE_LENGTH + 2
+	protected val NODE_TYPE = 0
+	protected val NODE_PARENT_PTR = NODE_TYPE + 1
+	protected val NODE_LENGTH = NODE_PARENT_PTR + POINTER_SIZE
+	protected val NODE_KEYS = NODE_LENGTH + 2
 	
-	val LEAF_PREV_PTR = NODE_KEYS + DATA_ARRAY_SIZE	
-	val LEAF_NEXT_PTR = LEAF_PREV_PTR + POINTER_SIZE
-	val LEAF_VALUES = LEAF_NEXT_PTR + POINTER_SIZE
+	protected val LEAF_PREV_PTR = NODE_KEYS + DATA_ARRAY_SIZE	
+	protected val LEAF_NEXT_PTR = LEAF_PREV_PTR + POINTER_SIZE
+	protected val LEAF_VALUES = LEAF_NEXT_PTR + POINTER_SIZE
 	
-	val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
+	protected val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
 	
-	val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
+	protected val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
 	
 	private var savedNode: Long = NULL
 	private var savedKeys = new ArrayBuffer[String]
 	private var savedValues = new ArrayBuffer[Any]
 	private var savedBranches = new ArrayBuffer[Long]
 	
-	if (newfile)
-		RamFile.delete( filename )
+ 	if (newfile)
+// 		RamFile.delete( filename )
+		new File( filename ).delete
 		
-	protected val file = new RamFile( filename )
-	
+// 	protected val file = new RamFile( filename )
+ 	protected val file = new RandomAccessFile( filename, "rw" )		
 	protected var root: Long = _
 	protected var first: Long = _
 	protected var last: Long = _
@@ -350,7 +353,9 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	protected def setValue( node: Long, index: Int, v: Any ) = writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, v )
 	
 		
-		
+	def close = file.close
+	
+	
 	protected def copyKeys( src: Long, begin: Int, end: Int, dst: Long, index: Int ) = {
 		val data = new Array[Byte]( (end - begin)*DATUM_SIZE )
 		

@@ -6,14 +6,38 @@ import collection.immutable.ListMap
 import java.io.{ByteArrayOutputStream, PrintStream}
 
 
+/**
+ * Provides for interaction (insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially.  An empty B+ Tree consists of a single empty leaf node as the root.  Also the <code>first</code> and <code>last</code> should refer to the root leaf node, and the <code>lastlen</code> variable should be 0.
+ */
 abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
+	/**
+	 * Abstract node type. For in-memory implementations this would probably be the actual node class and for on-disk it would likely be the file pointer where the node is stored.
+	 */
 	protected type N
 	
+	/**
+	 * Root node. Implementations are required to set this as well as to create/update the in-storage copy of this if needed (only really applies to on-disk implementations). The methods in this class will take care of updating this variable, implementations only need to worry about the in-storage copy.
+	 */
 	protected var root: N
-	protected var first: N
-	protected var last: N
-	protected var lastlen: Int
 		
+	/**
+	 * First leaf node. Implementations are required to set this as well as to create/update the in-storage copy of this if needed (only really applies to on-disk implementations). The methods in this class will take care of updating this variable, implementations only need to worry about the in-storage copy.
+	 */
+	protected var first: N
+		
+	/**
+	 * Last leaf node. Implementations are required to set this as well as to create/update the in-storage copy of this if needed (only really applies to on-disk implementations). The methods in this class will take care of updating this variable, implementations only need to worry about the in-storage copy.
+	 */
+	protected var last: N
+		
+	/**
+	 * Length of the last leaf node.  This just speeds up bulk loading (the <code>load</code> method). Implementations are required to set this.
+	 */
+	protected var lastlen: Int
+	
+	/**
+	 * Gets a branch pointer from an internal node at a given <code>index</code>.  There is always one more branch pointer than there are keys in an internal node so the highest index is equal to <code>nodeLength( node )</code>.
+	 */
 	protected def getBranch( node: N, index: Int ): N
 	
 	protected def getBranches( node: N ): Seq[N]
@@ -197,7 +221,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 			case None =>
 			case Some( (maxkey, _) ) =>
 				if (maxkey >= seq.head._1)
-					sys.error( "can only load into non-empty tree is maximum element is less than minimum element to be loaded" )
+					sys.error( "can only load into non-empty tree if maximum element is less than minimum element to be loaded" )
 		}
 		
 		seq foreach {case (k, v) => insertAt( k, v, last, lastlen )}
@@ -473,7 +497,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	
 	def prettyStringWithValues = serialize( "", true )
 	
-	def serialize( after: String, withValues: Boolean ) = {
+	protected def serialize( after: String, withValues: Boolean ) = {
 		val bytes = new ByteArrayOutputStream
 		val s = new PrintStream( bytes )
 		val map = new HashMap[N, String]
