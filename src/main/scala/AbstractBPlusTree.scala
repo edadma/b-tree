@@ -66,47 +66,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		
 	protected def setValue( node: N, index: Int, v: V ): Unit
 	
-	def search( key: K ): Option[V] =
-		lookup( key ) match {
-			case (true, leaf, index) => Some( getValue(leaf, index) )
-			case _ => None
-		}
-	
-	def min =
-		if (nodeLength( first ) == 0)
-			None
-		else
-			Some( (getKey(first, 0), getValue(first, 0)) )
-	
-	def max =
-		nodeLength( last ) match {
-			case 0 => 	None
-			case l =>Some( (getKey(last, l - 1), getValue(last, l - 1)) )
-		}
 		
-	def iterator: Iterator[(K, V)] =
-		new Iterator[(K, V)] {
-			var leaf = first
-			var index = 0
-			
-			def hasNext = leaf != nul && index < nodeLength( leaf )
-			
-			def next =
-				if (hasNext)
-					nextLeaf( leaf, index ) match {
-						case (kv, nl, ni) =>
-							leaf = nl
-							index = ni
-							kv
-						}
-				else
-					throw new NoSuchElementException( "no more keys" )
-		}
-	
-	def iteratorOverKeys = iterator map {case (k, _) => k}
-	
-	def boundedIteratorOverKeys( bounds: (Symbol, K)* ) = boundedIterator( bounds: _* ) map {case (k, _) => k}
-	
+		
 	def boundedIterator( bounds: (Symbol, K)* ): Iterator[(K, V)] = {
 		def gte( key: K ) =
 			lookupGTE( key ) match {
@@ -170,9 +131,40 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		}
 	}
 	
-	def insertKeys( keys: K* ) =
-		for (k <- keys)
-			insert( k, null.asInstanceOf[V] )
+	def boundedIteratorOverKeys( bounds: (Symbol, K)* ) = boundedIterator( bounds: _* ) map {case (k, _) => k}
+		
+	def iterator: Iterator[(K, V)] =
+		new Iterator[(K, V)] {
+			var leaf = first
+			var index = 0
+			
+			def hasNext = leaf != nul && index < nodeLength( leaf )
+			
+			def next =
+				if (hasNext)
+					nextLeaf( leaf, index ) match {
+						case (kv, nl, ni) =>
+							leaf = nl
+							index = ni
+							kv
+						}
+				else
+					throw new NoSuchElementException( "no more keys" )
+		}
+	
+	def iteratorOverKeys = iterator map {case (k, _) => k}
+	
+	def max =
+		nodeLength( last ) match {
+			case 0 => 	None
+			case l =>Some( (getKey(last, l - 1), getValue(last, l - 1)) )
+		}
+	
+	def min =
+		if (nodeLength( first ) == 0)
+			None
+		else
+			Some( (getKey(first, 0), getValue(first, 0)) )
 	
 	def insert( key: K, value: V = null.asInstanceOf[V] ) =
 		lookup( key ) match {
@@ -191,6 +183,10 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 				insertAt	( key, value, leaf, index )
 				false
 		}
+	
+	def insertKeys( keys: K* ) =
+		for (k <- keys)
+			insert( k, null.asInstanceOf[V] )
 		
 	def load( kvs: (K, V)* ) = {
 		require( !kvs.isEmpty, "expected some key/value pairs to load" )
@@ -207,6 +203,14 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		seq foreach {case (k, v) => insertAt( k, v, last, lastlen )}
 	}
 	
+	def search( key: K ): Option[V] =
+		lookup( key ) match {
+			case (true, leaf, index) => Some( getValue(leaf, index) )
+			case _ => None
+		}
+
+		
+		
 	protected def binarySearch( node: N, target: K ): Int = {
 		def search( start: Int, end: Int ): Int = {
 			if (start > end)

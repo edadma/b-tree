@@ -267,7 +267,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	}
 	
 	protected def newInternal( parent: Long ): Long = {
-		val node = alloc
+		val node = alloc( BLOCK_SIZE )
 		
 		file write INTERNAL_NODE
 		file writeLong parent
@@ -275,7 +275,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	}
 	
 	protected def newLeaf( parent: Long ): Long = {
-		val node = alloc
+		val node = alloc( BLOCK_SIZE )
 		
 		file write LEAF_NODE
 		file writeLong parent
@@ -370,6 +370,21 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file write data
 	}
 	
+	protected def freeDatum( addr: Long ) = {
+		file seek addr
+		
+		file read match {
+			case TYPE_STRING => 
+				file seek file.readLong
+				
+				val start = file.getFilePointer
+				val len = file.readUnsignedShort + 2
+				
+				free( start, len )
+			case _ =>
+		}
+	}
+	
 	protected def readDatum( addr: Long ) = {
 		def readUTF8( len: Int ) = {
 			val a = new Array[Byte]( len )
@@ -417,11 +432,16 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 				
 				if (utf.length > 8) {
 					file write TYPE_STRING
-					sys.error( "long strings not supported" )
-				} else {
+					
+					val addr = alloc( utf.length + 4 )
+					
+					file writeLong addr
+					file seek addr
+					file writeInt utf.length
+				} else
 					file write utf.length
-					file write utf
-				}
+				
+				file write utf
 				
 			case _ => sys.error( "type not supported: " + datum )
 		}
@@ -434,41 +454,45 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file writeLong branch
 	}
 	
-	protected def alloc = {
+	protected def alloc( size: Int ) = {
 		file seek FILE_FREE_PTR
 		
-		file.readLong match {
-			case NULL =>
-				val addr = file.length
-				
-				file seek addr
-				
-				for (_ <- 1 to BLOCK_SIZE)
-					file write 0
-				
-				file seek addr
-				addr
-			case p =>
-				file seek p
-				
-				val n = file readLong
-				
-				file seek FILE_FREE_PTR
-				file writeLong n
-				file seek p
-				p
+		val ptr = file.readLong
+		
+		if (ptr == NULL || size > BLOCK_SIZE) {
+			val addr = file.length
+			val blocks = size/BLOCK_SIZE + (if (size%BLOCK_SIZE == 0) 0 else 1)
+			
+			file.setLength( addr + blocks*BLOCK_SIZE )
+			file seek addr
+			addr
+		} else {
+			file seek ptr
+			
+			val n = file readLong
+			
+			file seek FILE_FREE_PTR
+			file writeLong n
+			file seek ptr
+			ptr
 		}
 	}
 	
-	protected def free( block: Long ) {
-		file seek FILE_FREE_PTR
+	protected def free( start: Long, size: Int ) {
+		val blocks = size/BLOCK_SIZE + (if (size%BLOCK_SIZE == 0) 0 else 1)
 		
-		val next = file readLong
-		
-		file seek block
-		file writeLong next
-		file seek FILE_FREE_PTR
-		file writeLong block
+		for (i <- 0 until blocks) {
+			val block = start + i*BLOCK_SIZE
+			
+			file seek FILE_FREE_PTR
+			
+			val next = file readLong
+			
+			file seek block
+			file writeLong next
+			file seek FILE_FREE_PTR
+			file writeLong block
+		}
 	}
 	
 	private def hex( n: Long* ) = println( n map (a => "%h" format a) mkString ("(", ", ", ")") )
