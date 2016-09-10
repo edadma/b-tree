@@ -7,7 +7,7 @@ import java.io.{ByteArrayOutputStream, PrintStream}
 
 
 /**
- * Provides for interaction (insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially.  An empty B+ Tree consists of a single empty leaf node as the root.  Also the <code>first</code> and <code>last</code> should refer to the root leaf node, and the <code>lastlen</code> variable should be 0.
+ * Provides for interaction (insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially.  An empty B+ Tree consists of a single empty leaf node as the root.  Also the `first` and `last` should refer to the root leaf node, and the `lastlen` variable should be 0.
  */
 abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	/**
@@ -31,23 +31,38 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	protected var last: N
 		
 	/**
-	 * Length of the last leaf node.  This just speeds up bulk loading (the <code>load</code> method). Implementations are required to set this.
+	 * Length of the last leaf node.  This just speeds up bulk loading (the `load` method). Implementations are required to set this.
 	 */
 	protected var lastlen: Int
 	
 	/**
-	 * Gets a branch pointer from an internal node at a given <code>index</code>.  There is always one more branch pointer than there are keys in an internal node so the highest index is equal to <code>nodeLength( node )</code>.
+	 * Gets a branch pointer from an internal node at a given `index`.  There is always one more branch pointer than there are keys in an internal node so the highest index is equal to `nodeLength( node )`.
 	 */
 	protected def getBranch( node: N, index: Int ): N
 	
+	/**
+	 * Gets the branches of `node` as a non-strict immutable sequence.
+	 */
 	protected def getBranches( node: N ): Seq[N]
 		
+	/**
+	 * Gets a key from a leaf `node` at a given `index`.
+	 */
 	protected def getKey( node: N, index: Int ): K
 	
+	/**
+	 * Gets the keys of `node` as a non-strict immutable sequence.
+	 */	
 	protected def getKeys( node: N ): Seq[K]
-	
+		
+	/**
+	 * Gets a value from a leaf `node` at a given `index`.
+	 */
 	protected def getValue( node: N, index: Int ): V
 	
+	/**
+	 * Gets the values of `node` as a non-strict immutable sequence.
+	 */	
 	protected def getValues( node: N ): Seq[V]
 	
 	protected def insertInternal( node: N, index: Int, key: K, branch: N ): Unit
@@ -179,9 +194,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	def iteratorOverKeys = iterator map {case (k, _) => k}
 	
 	def max =
-		nodeLength( last ) match {
+		lastlen match {
 			case 0 => 	None
-			case l =>Some( (getKey(last, l - 1), getValue(last, l - 1)) )
+			case l => Some( (getKey(last, l - 1), getValue(last, l - 1)) )
 		}
 	
 	def min =
@@ -371,6 +386,61 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		}
 	}
 	
+	protected def serialize( after: String, withValues: Boolean ) = {
+		val bytes = new ByteArrayOutputStream
+		val s = new PrintStream( bytes )
+		val map = new HashMap[N, String]
+		val nodes = new ArrayBuffer[N]
+		var count = 0
+		
+		def id( node: N ) =
+			if (node == nul)
+				"null"
+			else
+				map get node match {
+					case Some( n ) => n
+					case None =>
+						val n = "n" + count
+						map(node) = n
+						count += 1
+						n
+				}
+		
+		def printNodes {
+			if (isLeaf( nodes.head )) {
+				s.print( nodes map (n => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") +
+					(if (withValues) (getKeys(n) zip getValues(n)) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else getKeys(n) mkString " ") + "]") mkString " " )
+				s.print( after )
+			} else {
+				for ((n, i) <- nodes zipWithIndex) {
+					s.print( "[" + id(n) + ": (" + id(parent(n)) + ") " + id(getBranch(n, 0)) )
+					
+					for ((k, i) <- getKeys( n ) zipWithIndex)
+						s.print( " | " + k + " | " + id(getBranch(n, i + 1)) )
+				
+					s.print( "]" )
+					
+					if (i < nodes.size - 1)
+						s.print( " " )
+				}
+				
+				val ns = nodes.toList
+				
+				nodes.clear
+				
+				for (n <- ns)
+					nodes ++= getBranches( n )
+				
+				s.println
+				printNodes
+			}
+		}
+
+		nodes += root
+		printNodes
+		bytes toString
+	}
+	
 // 	def delete( key: K ) = {
 // 		lookup( key ) match {
 // 			case (true, leaf, index) =>
@@ -496,59 +566,4 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	def prettyString = serialize( "", false )
 	
 	def prettyStringWithValues = serialize( "", true )
-	
-	protected def serialize( after: String, withValues: Boolean ) = {
-		val bytes = new ByteArrayOutputStream
-		val s = new PrintStream( bytes )
-		val map = new HashMap[N, String]
-		val nodes = new ArrayBuffer[N]
-		var count = 0
-		
-		def id( node: N ) =
-			if (node == nul)
-				"null"
-			else
-				map get node match {
-					case Some( n ) => n
-					case None =>
-						val n = "n" + count
-						map(node) = n
-						count += 1
-						n
-				}
-		
-		def printNodes {
-			if (isLeaf( nodes.head )) {
-				s.print( nodes map (n => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") +
-					(if (withValues) (getKeys(n) zip getValues(n)) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else getKeys(n) mkString " ") + "]") mkString " " )
-				s.print( after )
-			} else {
-				for ((n, i) <- nodes zipWithIndex) {
-					s.print( "[" + id(n) + ": (" + id(parent(n)) + ") " + id(getBranch(n, 0)) )
-					
-					for ((k, i) <- getKeys( n ) zipWithIndex)
-						s.print( " | " + k + " | " + id(getBranch(n, i + 1)) )
-				
-					s.print( "]" )
-					
-					if (i < nodes.size - 1)
-						s.print( " " )
-				}
-				
-				val ns = nodes.toList
-				
-				nodes.clear
-				
-				for (n <- ns)
-					nodes ++= getBranches( n )
-				
-				s.println
-				printNodes
-			}
-		}
-
-		nodes += root
-		printNodes
-		bytes toString
-	}
 }
