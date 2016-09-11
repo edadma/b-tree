@@ -386,61 +386,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		}
 	}
 	
-	protected def serialize( after: String, withValues: Boolean ) = {
-		val bytes = new ByteArrayOutputStream
-		val s = new PrintStream( bytes )
-		val map = new HashMap[N, String]
-		val nodes = new ArrayBuffer[N]
-		var count = 0
-		
-		def id( node: N ) =
-			if (node == nul)
-				"null"
-			else
-				map get node match {
-					case Some( n ) => n
-					case None =>
-						val n = "n" + count
-						map(node) = n
-						count += 1
-						n
-				}
-		
-		def printNodes {
-			if (isLeaf( nodes.head )) {
-				s.print( nodes map (n => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") +
-					(if (withValues) (getKeys(n) zip getValues(n)) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else getKeys(n) mkString " ") + "]") mkString " " )
-				s.print( after )
-			} else {
-				for ((n, i) <- nodes zipWithIndex) {
-					s.print( "[" + id(n) + ": (" + id(parent(n)) + ") " + id(getBranch(n, 0)) )
-					
-					for ((k, i) <- getKeys( n ) zipWithIndex)
-						s.print( " | " + k + " | " + id(getBranch(n, i + 1)) )
-				
-					s.print( "]" )
-					
-					if (i < nodes.size - 1)
-						s.print( " " )
-				}
-				
-				val ns = nodes.toList
-				
-				nodes.clear
-				
-				for (n <- ns)
-					nodes ++= getBranches( n )
-				
-				s.println
-				printNodes
-			}
-		}
-
-		nodes += root
-		printNodes
-		bytes toString
-	}
-	
 // 	def delete( key: K ) = {
 // 		lookup( key ) match {
 // 			case (true, leaf, index) =>
@@ -559,11 +504,67 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		}
 	}
 	
+	protected def serialize( leafnode: (N, N => String) => String, after: String ) = {
+		val bytes = new ByteArrayOutputStream
+		val s = new PrintStream( bytes )
+		val map = new HashMap[N, String]
+		val nodes = new ArrayBuffer[N]
+		var count = 0
+		
+		def id( node: N ) =
+			if (node == nul)
+				"null"
+			else
+				map get node match {
+					case Some( n ) => n
+					case None =>
+						val n = "n" + count
+						map(node) = n
+						count += 1
+						n
+				}
+		
+		def printNodes {
+			if (isLeaf( nodes.head )) {
+				s.print( nodes map (n => leafnode(n, id)) )
+				s.print( after )
+			} else {
+				for ((n, i) <- nodes zipWithIndex) {
+					s.print( "[" + id(n) + ": (" + id(parent(n)) + ") " + id(getBranch(n, 0)) )
+					
+					for ((k, i) <- getKeys( n ) zipWithIndex)
+						s.print( " | " + k + " | " + id(getBranch(n, i + 1)) )
+				
+					s.print( "]" )
+					
+					if (i < nodes.size - 1)
+						s.print( " " )
+				}
+				
+				val ns = nodes.toList
+				
+				nodes.clear
+				
+				for (n <- ns)
+					nodes ++= getBranches( n )
+				
+				s.println
+				printNodes
+			}
+		}
+
+		nodes += root
+		printNodes
+		bytes toString
+	}
+	
 	def prettyPrint = println( prettyStringWithValues )
 	
 	def prettyPrintKeysOnly = println( prettyString )
 	
-	def prettyString = serialize( "", false )
+	def prettyString = serialize( (n, id) => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + getKeys(n).mkString(" ") + "]", "" )
 	
-	def prettyStringWithValues = serialize( "", true )
+// "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") +
+//					(if (withValues) (getKeys(n) zip getValues(n)) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else getKeys(n) mkString " ") + "]") mkString " " )
+	def prettyStringWithValues = serialize( (n, id) => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + getKeys(n).mkString(" ") + "]", "" )
 }
