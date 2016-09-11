@@ -22,7 +22,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	protected var root: N
 		
 	/**
-	 * First leaf node. Implementations are required to set this as well as to create/update the in-storage copy of this if needed (only really applies to on-disk implementations). The methods in this class will take care of updating this variable, implementations only need to worry about the in-storage copy.
+	 * First leaf node. Implementations are required to set this as well as to create/update the in-storage copy of this if needed (only really applies to on-disk implementations) within the implementation's `newRoot()` method. The methods in this class will take care of updating this variable, implementations only need to worry about the in-storage copy.
 	 */
 	protected var first: N
 		
@@ -102,36 +102,76 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	protected def newLeaf( parent: N ): N
 	
 	/**
-	 * Creates a new root (internal) node with `branch` as its leftmost branch pointer and `null` parent pointer. Implementations are require to update the in-storage copy of the root pointer if needed (only really applies to on-disk implementations)
+	 * Creates a new root (internal) node with `branch` as its leftmost branch pointer and `null` parent pointer. Implementations are require to update the in-storage copy of the root pointer if needed (only really applies to on-disk implementations).
 	 */
 	protected def newRoot( branch: N ): N
 	
+	/**
+	 * Sets the next pointer of (leaf) `node` to `p`.
+	 */
 	protected def setNext( node: N, p: N ): Unit
 	
+	/**
+	 * Returns the next pointer of (leaf) `node`.
+	 */
 	protected def getNext( node: N ): N
 	
+	/**
+	 * Returns the length (number of keys) of `node`. For internal nodes, the number of branch pointers will one more than the length.
+	 */
 	protected def nodeLength( node: N ): Int
 	
+	/**
+	 * Returns the ''null'' node pointer.  For in-memory implementations this will usually be a Scala `null` value.  For on-disk it would make sense for this to be `0L`.
+	 */
 	protected def nul: N
 	
+	/**
+	 * Sets the parent pointer of `node` to `p`.
+	 */
 	protected def parent( node: N, p: N ): Unit
 	
+	/**
+	 * Returns the parent pointer of `node`.
+	 */
 	protected def parent( node: N ): N
 	
+	/**
+	 * Sets previous leaf node link pointer of (leaf) `node` to `p`.
+	 */
 	protected def prev( node: N, p: N ): Unit
 	
+	/**
+	 * Returns the previous leaf node link pointer of (leaf) `node`.
+	 */
 	protected def prev( node: N ): N
 
+	/**
+	 * Removes the key/value pair from leaf `node` at `index`. This method is perhaps poorly named: it does not remove a leaf node from the tree, that's done by (concrete method) `delete()`.
+	 */
 	protected def removeLeaf( node: N, index: Int ): Int
 	
+	/**
+	 * not used yet, could be empty
+	 */
 	protected def setFirst( leaf: N ): Unit
 
+	/**
+	 * not used yet, could be empty
+	 */
 	protected def setLast( leaf: N ): Unit
-		
+
+	/**
+	 * Sets the value at `index` of `node` to `v`.
+	 */
 	protected def setValue( node: N, index: Int, v: V ): Unit
 	
-		
-		
+	
+	/**
+	 * Returns a bounded iterator over a range of key/value pairs in the tree in sorted order. The range of key/value pairs in the iterator is specified by `bounds`.  `bounds` must contain one or two pairs where the first element in the pair is a symbol corresponding to the type of bound (i.e. '<, '<=, '>, '>=) and the second element is a key value.
+	 * 
+	 * An example of a bounded iterator over all elements in a tree (with `String` keys) that will include all keys that sort greater than or equal to "a" and up to but not including "e" is `boundedIterator( ('>=, "a"), ('<, "e") )`.
+	 */
 	def boundedIterator( bounds: (Symbol, K)* ): Iterator[(K, V)] = {
 		def gte( key: K ) =
 			lookupGTE( key ) match {
