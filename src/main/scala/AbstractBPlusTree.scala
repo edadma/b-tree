@@ -1,9 +1,10 @@
 package xyz.hyperreal.btree
 
+import scala.sys.process._
 import collection.mutable.{HashMap, ArrayBuffer}
 import collection.immutable.ListMap
 
-import java.io.{ByteArrayOutputStream, PrintStream}
+import java.io.PrintWriter
 
 
 /**
@@ -504,11 +505,10 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		}
 	}
 	
-	protected def serialize( leafnode: (N, N => String) => String, after: String ) = {
-		val bytes = new ByteArrayOutputStream
-		val s = new PrintStream( bytes )
+	protected def serialize( before: String, prefix: String, internalnode: (N, N => String, String => Unit) => String, leafnode: (N, N => String) => String, after: String ) = {
+		val buf = new StringBuilder( before )
+		val afterbuf = new StringBuilder
 		val map = new HashMap[N, String]
-		val nodes = new ArrayBuffer[N]
 		var count = 0
 		
 		def id( node: N ) =
@@ -524,47 +524,71 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 						n
 				}
 		
-		def printNodes {
+		def emit( s: String ) = {
+			afterbuf ++= prefix
+			afterbuf ++= s
+			afterbuf += '\n'
+		}
+		
+		def printNodes( nodes: List[N] ) {
 			if (isLeaf( nodes.head )) {
-				s.print( nodes map (n => leafnode(n, id)) )
-				s.print( after )
+				buf ++= prefix
+				buf ++= nodes map (n => leafnode(n, id)) mkString " "
 			} else {
-				for ((n, i) <- nodes zipWithIndex) {
-					s.print( "[" + id(n) + ": (" + id(parent(n)) + ") " + id(getBranch(n, 0)) )
-					
-					for ((k, i) <- getKeys( n ) zipWithIndex)
-						s.print( " | " + k + " | " + id(getBranch(n, i + 1)) )
-				
-					s.print( "]" )
-					
-					if (i < nodes.size - 1)
-						s.print( " " )
-				}
-				
-				val ns = nodes.toList
-				
-				nodes.clear
-				
-				for (n <- ns)
-					nodes ++= getBranches( n )
-				
-				s.println
-				printNodes
+				buf ++= prefix
+				buf ++= nodes map (n => internalnode(n, id, emit)) mkString " "
+				buf += '\n'
+				printNodes( List.concat(nodes flatMap getBranches) )
 			}
 		}
 
-		nodes += root
-		printNodes
-		bytes toString
+		printNodes( List(root) )
+		
+		if (!afterbuf.isEmpty || after != "")
+			buf += '\n'
+			
+		buf ++= afterbuf.toString
+		buf ++= after
+		buf toString
 	}
 	
 	def prettyPrint = println( prettyStringWithValues )
 	
 	def prettyPrintKeysOnly = println( prettyString )
 	
-	def prettyString = serialize( (n, id) => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + getKeys(n).mkString(" ") + "]", "" )
+	def prettyString = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(parent(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + getKeys(n).mkString(" ") + "]", "" )
 	
-// "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") +
-//					(if (withValues) (getKeys(n) zip getValues(n)) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " " else getKeys(n) mkString " ") + "]") mkString " " )
-	def prettyStringWithValues = serialize( (n, id) => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + getKeys(n).mkString(" ") + "]", "" )
+	def prettyStringWithValues = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(parent(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + (getKeys(n) zip getValues(n) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " ") + "]", "" )
+	
+	def graphviz( name: String ) = {
+		val before =
+			"""	|digraph {
+					|    graph [splines=line];
+					|    edge [penwidth=2];
+					|    node [shape = record, height=.1, penwidth=2, style=filled, fillcolor=white];
+					|
+					|""".stripMargin
+
+		def internalnode( n: N, id: N => String, emit: String => Unit ) = {
+			val buf = new StringBuilder( id(n) + """[label = "<b0> &bull;""" )
+			
+			emit( id(n) + ":b0" + " -> " + id(getBranch(n, 0)) + ";" )
+			
+			for ((k, i) <- getKeys(n) zipWithIndex) {
+				buf ++= " | " + k + " | <b" + (i + 1) + "> &bull;"
+				emit( id(n) + ":b" + (i + 1) + " -> " + id(getBranch(n, i + 1)) + ";" )
+			}
+			
+			buf ++= """"];"""
+			buf toString
+		}
+		
+		def leafnode( n: N, id: N => String ) = id(n) + """[label = "<prev> &bull; | """ + (getKeys(n) mkString " | ") + """ | <next> &bull;"];"""
+		
+		val file = new PrintWriter( name + ".dot" )
+		
+		file.println( serialize(before, "    ", internalnode, leafnode, "}") )
+		file.close
+		s"dot -Tpng $name.dot -o $name.png".!
+	}
 }

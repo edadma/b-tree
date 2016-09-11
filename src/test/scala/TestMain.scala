@@ -3,17 +3,17 @@ package xyz.hyperreal.btree
 
 object TestMain extends App {
 //	val tree = new FileBPlusTree( "btree", 3 )
-	val tree = new MemoryBPlusTree[String, Any]( 3 )
+	val tree = new MemoryBPlusTree[String, Any]( 5 )
 	
-	tree.insert( "a" )
-	tree.insert( "b" )
-	tree.insert( "c" )
-	tree.insert( "d" )
-	tree.insert( "e" )
+// 	tree.insert( "a" )
+// 	tree.insert( "b" )
+//  	tree.insert( "c" )
+// 	tree.insert( "d" )
+// 	tree.insert( "e" )
 // 	tree.insert( "f" )
 // 	tree.insert( "g" )
 // 	tree.insert( "h" )
-//		tree.insert( "i" )
+// 	tree.insert( "i" )
 // 	tree.insert( "j" )
 // 	tree.insert( "k" )
 // 	tree.insert( "l" )
@@ -37,7 +37,7 @@ object TestMain extends App {
 // 	println( tree.lookup("e") )
 // 	println( tree.lookup("f") )
 
-//		tree.insertKeys( "v", "t", "u", "j", "g", "w", "y", "c", "n", "l", "a", "r", "b", "s", "e", "f", "i", "z", "h", "d", "p", "x", "m", "k", "o", "q" )
+		tree.insertKeys( "v", "t", "u", "j", "g", "w", "y", "c", "n", "l", "a", "r", "b", "s", "e", "f", "i", "z", "h", "d", "p", "x", "m", "k", "o", "q" )
 // 	tree.insert( "abc" )
 // 	tree.insert( "def" )
 // 	tree.insert( "ghi" )
@@ -47,7 +47,7 @@ object TestMain extends App {
 //	tree.load( ("b", 2), ("a", 1), ("c", 3) )
 // 	println( tree.max )
 //  	println( tree.wellConstructed )
- 	tree.prettyPrintKeysOnly
+ 	tree.graphviz( "tree" )
 //	println( tree.iterator.toList )
 //	println( tree.boundedIterator(('>, "a"), ('<, "d")) map {case (k, _) => k} toList )
 //	println( tree.boundedIteratorOverKeys(('<=, "z")) toList )
