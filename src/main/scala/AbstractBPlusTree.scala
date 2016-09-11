@@ -66,20 +66,44 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	 */	
 	protected def getValues( node: N ): Seq[V]
 	
+	/**
+	 * Inserts `key` and `branch` into (internal) `node` at `index`. The branch is the right branch immediately to the right of `key`.
+	 */
 	protected def insertInternal( node: N, index: Int, key: K, branch: N ): Unit
 	
+	/**
+	 * Inserts `key` and `value` into (leaf) `node` at `index`.
+	 */
 	protected def insertLeaf( node: N, index: Int, key: K, value: V ): Unit
 	
+	/**
+	 * Returns `true` if `node` is a leaf node
+	 */
 	protected def isLeaf( node: N ): Boolean
 	
+	/**
+	 * Moves key/branch pairs as well as the left branch of the first key from node `src` to node `dst` beginning at index `begin` and ending up to but not including index `end`, and also removes the key at index `begin - 1`.
+	 */
 	protected def moveInternal( src: N, begin: Int, end: Int, dst: N ): Unit
 	
+	/**
+	 * Moves key/value pairs from node `src` to node `dst` beginning at index `begin` and ending up to but not including index `end`.
+	 */
 	protected def moveLeaf( src: N, begin: Int, end: Int, dst: N ): Unit
 	
+	/**
+	 * Creates a new internal node with `parent` as its parent pointer.
+	 */
 	protected def newInternal( parent: N ): N
 	
+	/**
+	 * Creates a new leaf node with `parent` as its parent pointer.
+	 */
 	protected def newLeaf( parent: N ): N
 	
+	/**
+	 * Creates a new root (internal) node with `branch` as its leftmost branch pointer and `null` parent pointer. Implementations are require to update the in-storage copy of the root pointer if needed (only really applies to on-disk implementations)
+	 */
 	protected def newRoot( branch: N ): N
 	
 	protected def setNext( node: N, p: N ): Unit
