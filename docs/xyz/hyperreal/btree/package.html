@@ -1,0 +1,231 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>btree - xyz.hyperreal.btree</title>
+          <meta name="description" content="btree - xyz.hyperreal.btree" />
+          <meta name="keywords" content="btree xyz.hyperreal.btree" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../index.html';
+            var hash = 'xyz.hyperreal.btree.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img alt="Package" src="../../../lib/package_big.png" />
+        <p id="owner"><a href="../../package.html" class="extype" name="xyz">xyz</a>.<a href="../package.html" class="extype" name="xyz.hyperreal">hyperreal</a></p>
+        <h1>btree</h1><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.package" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">btree</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Provides an abstract class for building and using B+ Trees.</p><h4>Overview</h4><p>The class to extend is <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>.  It is designed to be both generic (type parameters for keys and values, and an abstract type for node references) and general (doesn't care how the tree is stored). An extending class needs to implement a number of simple methods and node type that 	provide storage abstraction.</p><p>There are two examples that extend <code>AbstractBPlusTree</code>: <code>MemoryBPlusTree</code> and <code>FileBPlusTree</code>. <a href="MemoryBPlusTree.html" class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree">MemoryBPlusTree</a> implements a B+ Tree in-memory and is essentially a map implementation.  <a href="FileBPlusTree.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> implements a B+ Tree on-disk and is sort-of a very simple database.
+</p></div><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="xyz.hyperreal.btree"><span>btree</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show All</span></li>
+            </ol>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="xyz.hyperreal.btree.AbstractBPlusTree" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="AbstractBPlusTree[K,V]extendsAnyRef"></a>
+      <a id="AbstractBPlusTree[K,V]:AbstractBPlusTree[K,V]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="AbstractBPlusTree.html"><span class="name">AbstractBPlusTree</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.package@AbstractBPlusTree[K,V]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Provides for interaction (insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).</p><div class="fullcomment"><div class="comment cmt"><p>Provides for interaction (insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially.  An empty B+ Tree consists of a single empty leaf node as the root.  Also the <code>first</code> and <code>last</code> should refer to the root leaf node, and the <code>lastlen</code> variable should be 0.
+</p></div></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FileBPlusTreeextendsAbstractBPlusTree[String,Any]"></a>
+      <a id="FileBPlusTree:FileBPlusTree"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="FileBPlusTree.html"><span class="name">FileBPlusTree</span></a><span class="result"> extends <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.package@FileBPlusTreeextendsAbstractBPlusTree[String,Any]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.btree.InternalNode" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="InternalNode[K,V]extendsNode[K,V]"></a>
+      <a id="InternalNode[K,V]:InternalNode[K,V]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="InternalNode.html"><span class="name">InternalNode</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <a href="Node.html" class="extype" name="xyz.hyperreal.btree.Node">Node</a>[<span class="extype" name="xyz.hyperreal.btree.InternalNode.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.InternalNode.V">V</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.package@InternalNode[K,V]extendsNode[K,V]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.btree.LeafNode" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LeafNode[K,V]extendsNode[K,V]"></a>
+      <a id="LeafNode[K,V]:LeafNode[K,V]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="LeafNode.html"><span class="name">LeafNode</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <a href="Node.html" class="extype" name="xyz.hyperreal.btree.Node">Node</a>[<span class="extype" name="xyz.hyperreal.btree.LeafNode.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.LeafNode.V">V</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.package@LeafNode[K,V]extendsNode[K,V]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.btree.MemoryBPlusTree" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MemoryBPlusTree[K,V]extendsAbstractBPlusTree[K,V]"></a>
+      <a id="MemoryBPlusTree[K,V]:MemoryBPlusTree[K,V]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="MemoryBPlusTree.html"><span class="name">MemoryBPlusTree</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree.V">V</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.package@MemoryBPlusTree[K,V]extendsAbstractBPlusTree[K,V]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.btree.Node" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Node[K,V]extendsAnyRef"></a>
+      <a id="Node[K,V]:Node[K,V]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Node.html"><span class="name">Node</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.package@Node[K,V]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>
