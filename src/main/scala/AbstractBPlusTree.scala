@@ -402,6 +402,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 // 		}
 // 	}
 	
+	/**
+	 * Analyzes the tree to determine if it is well constructed.
+	 * 
+	 * @return `"true"` (as a string) if the tree is a well constructed B+ Tree, a string description of the flaw otherwise.
+	 */
 	def wellConstructed: String = {
 		val nodes = new ArrayBuffer[N]
 		var depth = -1
@@ -474,37 +479,39 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		"true"
 	}
 	
+	/**
+	 * Returns a string representing a search result for `key` that will be consistant with `prettyPrint`. This method is used mainly for unit testing.
+	 */
 	def prettySearch( key: K ) = {
-		val nodes = new ArrayBuffer[N]
 		val map = new HashMap[N, String]
 		var count = 0
 		
-		def traverse {
+		def traverse( nodes: List[N] ) {
 			for (n <- nodes) {
 				map(n) = "n" + count
 				count += 1
 			}
 			
-			if (!isLeaf( nodes.head )) {
-				val ns = nodes.toList
-				
-				nodes.clear
-				
-				for (n <- ns)
-					nodes ++= getBranches( n )
-				
-				traverse
-			}
+			if (!isLeaf( nodes.head ))
+				traverse( List.concat(nodes flatMap getBranches) )
 		}
 		
-		nodes += root
-		traverse
+		traverse( List(root) )
 		lookup( key ) match {
 			case (true, leaf, index) => map(leaf) + " " + getValue( leaf, index ) + " " + index
 			case _ => "not found"
 		}
 	}
 	
+	/**
+	 * Returns a serialization (string representation of the tree) using string and function arguments to specify the exact form of the serialization. This method is used for ''pretty printing'' and to generate a DOT (graph description language) description of the tree so that it can be visualized.
+	 * 
+	 * @param before string to be prepended to the serialization
+	 * @param prefix string to be place before each line of the serialization that includes internal and leaf nodes
+	 * @param internalnode function to generate internal node serializations using three parameters: the current node, a function to return a string id of a node, a function that allows a line of text to be appended after all nodes have been serialized
+	 * @param leafnode function to generate leaf node serializations using two parameters: the current node, a function to return a string id of a node
+	 * @param after string to be appended to the serialization
+	 */
 	protected def serialize( before: String, prefix: String, internalnode: (N, N => String, String => Unit) => String, leafnode: (N, N => String) => String, after: String ) = {
 		val buf = new StringBuilder( before )
 		val afterbuf = new StringBuilder
@@ -552,15 +559,30 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		buf toString
 	}
 	
+	/**
+	 * Prints (to stdout) a readable representation of the structure and contents of the tree.
+	 */
 	def prettyPrint = println( prettyStringWithValues )
 	
+	/**
+	 * Prints (to stdout) a readable representation of the structure and contents of the tree, omitting the values and only printing the keys.
+	 */
 	def prettyPrintKeysOnly = println( prettyString )
 	
+	/**
+	 * Returns a string containing a readable representation of the structure and contents of the tree, omitting the values and only printing the keys. This method is used mainly for unit testing.
+	 */
 	def prettyString = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(parent(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + getKeys(n).mkString(" ") + "]", "" )
 	
+	/**
+	 * Returns a string containing a readable representation of the structure and contents of the tree. This method is used mainly for unit testing.
+	 */
 	def prettyStringWithValues = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(parent(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + (getKeys(n) zip getValues(n) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " ") + "]", "" )
 	
-	def graphviz( name: String ) = {
+	/**
+	 * Creates a PNG image file called `name` (with `.png` added) which visually represents the structure and contents of the tree, only showing the keys. This method uses GraphViz and specifically the `dot` command to produce the diagram.
+	 */
+	def diagram( name: String ) {
 		val before =
 			"""	|digraph {
 					|    graph [splines=line];

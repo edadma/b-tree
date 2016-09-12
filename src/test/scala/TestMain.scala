@@ -37,7 +37,7 @@ object TestMain extends App {
 // 	println( tree.lookup("e") )
 // 	println( tree.lookup("f") )
 
-		tree.insertKeys( "v", "t", "u", "j", "g", "w", "y", "c", "n", "l", "a", "r", "b", "s", "e", "f", "i", "z", "h", "d", "p", "x", "m", "k", "o", "q" )
+//		tree.insertKeys( "v", "t", "u", "j", "g", "w", "y", "c", "n", "l", "a", "r", "b", "s", "e", "f", "i", "z", "h", "d", "p", "x", "m", "k", "o", "q" )
 // 	tree.insert( "abc" )
 // 	tree.insert( "def" )
 // 	tree.insert( "ghi" )
@@ -47,7 +47,7 @@ object TestMain extends App {
 //	tree.load( ("b", 2), ("a", 1), ("c", 3) )
 // 	println( tree.max )
 //  	println( tree.wellConstructed )
- 	tree.graphviz( "tree" )
+// 	tree.diagram( "tree" )
 //	println( tree.iterator.toList )
 //	println( tree.boundedIterator(('>, "a"), ('<, "d")) map {case (k, _) => k} toList )
 //	println( tree.boundedIteratorOverKeys(('<=, "z")) toList )
