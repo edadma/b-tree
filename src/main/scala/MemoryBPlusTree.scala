@@ -50,10 +50,10 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 		src.asInternal.branches.remove( begin, end - begin + 1 )
 	}
 	
-	protected def moveLeaf( src: Node[K, V], begin: Int, end: Int, dst: Node[K, V] ) {
-		src.keys.view( begin, end ) copyToBuffer dst.keys
+	protected def moveLeaf( src: Node[K, V], begin: Int, end: Int, dst: Node[K, V], index: Int ) {
+		dst.keys.insertAll( index, src.keys.view(begin, end) ) 
 		src.keys.remove( begin, end - begin )
-		src.asLeaf.values.view( begin, end ) copyToBuffer dst.asLeaf.values
+		dst.asLeaf.values.insertAll( index, src.asLeaf.values.view(begin, end) )
 		src.asLeaf.values.remove( begin, end - begin )
 	}
 	
@@ -78,6 +78,8 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	
 	protected def setFirst( leaf: Node[K, V] ) {}
 	
+	protected def setKey( node: Node[K, V], index: Int, key: K ) = node.keys( index ) = key
+
 	protected def setLast( leaf: Node[K, V] ) {}
 	
 	protected def setNext( node: Node[K, V], p: Node[K, V] ) = node.asLeaf.next = p.asInstanceOf[LeafNode[K, V]]

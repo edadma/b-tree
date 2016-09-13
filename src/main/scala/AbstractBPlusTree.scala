@@ -104,7 +104,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	/**
 	 * Moves key/value pairs from node `src` to node `dst` beginning at index `begin` and ending up to but not including index `end`.
 	 */
-	protected def moveLeaf( src: N, begin: Int, end: Int, dst: N ): Unit
+	protected def moveLeaf( src: N, begin: Int, end: Int, dst: N, index: Int ): Unit
 	
 	/**
 	 * Creates a new internal node with `parent` as its parent pointer.
@@ -142,6 +142,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	protected def setFirst( leaf: N ): Unit
 
 	/**
+	 * Sets the key at `index` of `node` to `key`.
+	 */
+	protected def setKey( node: N, index: Int, key: K ): Unit
+
+	/**
 	 * not used yet, could be empty
 	 */
 	protected def setLast( leaf: N ): Unit
@@ -160,7 +165,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	 * Sets previous leaf node link pointer of (leaf) `node` to `p`.
 	 */
 	protected def setPrev( node: N, p: N ): Unit
-
+		
 	/**
 	 * Sets the value at `index` of `node` to `v`.
 	 */
@@ -432,7 +437,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 			if (leafnext == nul)
 				lastlen = len - mid
 				
-			moveLeaf( leaf, mid, len, newleaf )
+			moveLeaf( leaf, mid, len, newleaf, 0 )
 			newleaf
 		}
 		
@@ -520,7 +525,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 					
 					if (nodeLength( sibling ) > order/2) {
 						// borrow
-	//					moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )	// rewrite moveLeaf
+						moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
 					} else {
 						// merge
 					}

@@ -248,11 +248,14 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		}
 	}
 	
-	protected def moveLeaf( src: Long, begin: Int, end: Int, dst: Long ) {
+	protected def moveLeaf( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
+		val dstlen = nodeLength( dst )
+			
 		if (savedNode == NULL) {
-			copy( src, begin, end, dst, 0 )
+			copy( dst, index, dstlen, dst, index + end - begin )
+			copy( src, begin, end, dst, index )
 			nodeLength( src, nodeLength(src) - (end - begin) )
-			nodeLength( dst, end - begin )
+			nodeLength( dst, dstlen + end - begin )
 		} else {
 			val dstKeys = new ArrayBuffer[String]
 			val dstValues = new ArrayBuffer[Any]
@@ -284,6 +287,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		
 		file write INTERNAL_NODE
 		file writeLong parent
+		file writeShort 0
 		node
 	}
 	
@@ -292,6 +296,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		
 		file write LEAF_NODE
 		file writeLong parent
+		file writeShort 0
 		node
 	}
 	
@@ -325,11 +330,18 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		len
 	}
 	
+	protected def setBranch( node: Long, index: Int, branch: Long ) {
+		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
+		file writeLong branch
+	}
+	
 	protected def setFirst( leaf: Long ) {
 		file seek FILE_FIRST_PTR
 		file writeLong leaf
 	}
-	
+
+	protected def setKey( node: Long, index: Int, key: String ) = writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
+
 	protected def setLast( leaf: Long ) {
 		file seek FILE_LAST_PTR
 		file writeLong leaf
@@ -450,13 +462,6 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 				
 			case _ => sys.error( "type not supported: " + datum )
 		}
-	}
-	
-	protected def setKey( node: Long, index: Int, key: String ) = writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
-	
-	protected def setBranch( node: Long, index: Int, branch: Long ) {
-		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
-		file writeLong branch
 	}
 	
 	protected def alloc( size: Int ) = {
