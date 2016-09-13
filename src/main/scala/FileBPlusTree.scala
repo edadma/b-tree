@@ -126,6 +126,16 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file readLong
 	}
 	
+	protected def getParent( node: Long ): Long = {
+		file seek (node + NODE_PARENT_PTR)
+		file readLong
+	}
+	
+	protected def getPrev( node: Long ): Long = {
+		file seek (node + LEAF_PREV_PTR)
+		file readLong
+	}
+	
 	protected def getValue( node: Long, index: Int ) = readDatum( node + LEAF_VALUES + index*DATUM_SIZE )
 	
 	protected def getValues( node: Long ) =
@@ -303,26 +313,6 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 			savedKeys.length
 	
 	protected def nul = 0
-	
-	protected def parent( node: Long ): Long = {
-		file seek (node + NODE_PARENT_PTR)
-		file readLong
-	}
-	
-	protected def parent( node: Long, p: Long ) {
-		file seek (node + NODE_PARENT_PTR)
-		file writeLong p
-	}
-	
-	protected def prev( node: Long ): Long = {
-		file seek (node + LEAF_PREV_PTR)
-		file readLong
-	}
-	
-	protected def prev( node: Long, p: Long ) {
-		file seek (node + LEAF_PREV_PTR)
-		file writeLong p
-	}
 
 	protected def removeLeaf( node: Long, index: Int ) = {
 		val len = nodeLength( node )
@@ -347,6 +337,16 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	
 	protected def setNext( node: Long, p: Long ) {
 		file seek (node + LEAF_NEXT_PTR)
+		file writeLong p
+	}
+	
+	protected def setParent( node: Long, p: Long ) {
+		file seek (node + NODE_PARENT_PTR)
+		file writeLong p
+	}
+	
+	protected def setPrev( node: Long, p: Long ) {
+		file seek (node + LEAF_PREV_PTR)
 		file writeLong p
 	}
 	

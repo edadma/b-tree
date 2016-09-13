@@ -55,6 +55,21 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	 * Gets the keys of `node` as a non-strict immutable sequence.
 	 */	
 	protected def getKeys( node: N ): Seq[K]
+	
+	/**
+	 * Returns the next pointer of (leaf) `node`.
+	 */
+	protected def getNext( node: N ): N
+	
+	/**
+	 * Returns the parent pointer of `node`.
+	 */
+	protected def getParent( node: N ): N
+	
+	/**
+	 * Returns the previous leaf node link pointer of (leaf) `node`.
+	 */
+	protected def getPrev( node: N ): N
 		
 	/**
 	 * Gets a value from a leaf `node` at a given `index`.
@@ -107,16 +122,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	protected def newRoot( branch: N ): N
 	
 	/**
-	 * Sets the next pointer of (leaf) `node` to `p`.
-	 */
-	protected def setNext( node: N, p: N ): Unit
-	
-	/**
-	 * Returns the next pointer of (leaf) `node`.
-	 */
-	protected def getNext( node: N ): N
-	
-	/**
 	 * Returns the length (number of keys) of `node`. For internal nodes, the number of branch pointers will one more than the length.
 	 */
 	protected def nodeLength( node: N ): Int
@@ -125,26 +130,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	 * Returns the ''null'' node pointer.  For in-memory implementations this will usually be a Scala `null` value.  For on-disk it would make sense for this to be `0L`.
 	 */
 	protected def nul: N
-	
-	/**
-	 * Sets the parent pointer of `node` to `p`.
-	 */
-	protected def parent( node: N, p: N ): Unit
-	
-	/**
-	 * Returns the parent pointer of `node`.
-	 */
-	protected def parent( node: N ): N
-	
-	/**
-	 * Sets previous leaf node link pointer of (leaf) `node` to `p`.
-	 */
-	protected def prev( node: N, p: N ): Unit
-	
-	/**
-	 * Returns the previous leaf node link pointer of (leaf) `node`.
-	 */
-	protected def prev( node: N ): N
 
 	/**
 	 * Removes the key/value pair from leaf `node` at `index`. This method is perhaps poorly named: it does not remove a leaf node from the tree, that's done by (concrete method) `delete()`.
@@ -160,6 +145,21 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	 * not used yet, could be empty
 	 */
 	protected def setLast( leaf: N ): Unit
+	
+	/**
+	 * Sets the next pointer of (leaf) `node` to `p`.
+	 */
+	protected def setNext( node: N, p: N ): Unit
+	
+	/**
+	 * Sets the parent pointer of `node` to `p`.
+	 */
+	protected def setParent( node: N, p: N ): Unit
+	
+	/**
+	 * Sets previous leaf node link pointer of (leaf) `node` to `p`.
+	 */
+	protected def setPrev( node: N, p: N ): Unit
 
 	/**
 	 * Sets the value at `index` of `node` to `v`.
@@ -371,7 +371,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	
 	protected def insertAt( key: K, value: V, leaf: N, index: Int ) {
 		def split = {
-			val newleaf = newLeaf( parent(leaf) )
+			val newleaf = newLeaf( getParent(leaf) )
 			val leafnext = getNext( leaf )
 			
 			setNext( newleaf, leafnext )
@@ -380,10 +380,10 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 				last = newleaf
 				setLast( newleaf )
 			} else
-				prev( leafnext, newleaf )
+				setPrev( leafnext, newleaf )
 				
 			setNext( leaf, newleaf )
-			prev( newleaf, leaf )
+			setPrev( newleaf, leaf )
 			
 			val len = nodeLength( leaf )
 			val mid = len/2
@@ -401,15 +401,15 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 			lastlen += 1
 
 		if (nodeLength( leaf ) == order) {
-			if (parent( leaf ) == nul) {
+			if (getParent( leaf ) == nul) {
 				root = newRoot( leaf )
-				parent( leaf, root )
+				setParent( leaf, root )
 				
 				val newleaf = split
 				
 				insertInternal( root, 0, getKey(newleaf, 0), newleaf )
 			} else {
-				var par = parent( leaf )
+				var par = getParent( leaf )
 				val newleaf = split
 				
 				binarySearch( par, getKey(newleaf, 0) ) match {
@@ -419,7 +419,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 						insertInternal( par, index, getKey(newleaf, 0), newleaf )
 				
 						while (nodeLength( par ) == order) {
-							val newinternal = newInternal( parent(par) )
+							val newinternal = newInternal( getParent(par) )
 							val len = nodeLength( par )
 							val mid = len/2
 							val middle = getKey( par, mid )
@@ -427,17 +427,17 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 							moveInternal( par, mid + 1, len, newinternal )
 							
 							for (child <- getBranches( newinternal ))
-								parent( child, newinternal )
+								setParent( child, newinternal )
 								
-							if (parent( par ) == nul) {
+							if (getParent( par ) == nul) {
 								root = newRoot( par )
 								
-								parent( newinternal, root )
-								parent( par, root )
+								setParent( newinternal, root )
+								setParent( par, root )
 								insertInternal( root, 0, middle, newinternal )
 								par = root
 							} else {
-								par = parent( par )
+								par = getParent( par )
 								binarySearch( par, middle ) match {
 									case index if index >= 0 => sys.error( "key found in internal node" )
 									case insertion =>
@@ -451,20 +451,39 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		}
 	}
 	
-// 	def delete( key: K ) = {
-// 		lookup( key ) match {
-// 			case (true, leaf, index) =>
-// 				val len = removeLeaf( leaf, index )
-// 				
-// 				if (len < order/2) {
-// 					if (getNext( leaf ) != nul)
-// 						
-// 				}
-// 				
-// 				true
-// 			case (false, leaf, index) => false
-// 		}
-// 	}
+	def delete( key: K ) = {
+		lookup( key ) match {
+			case (true, leaf, index) =>
+				val len = removeLeaf( leaf, index )
+				
+				if (len < order/2) {
+					val (sibling, leafside, siblingside) = {
+						val next = getNext( leaf )
+						
+						if (next != nul && getParent( next ) == getParent( leaf ))
+							(next, len, 0)
+						else {
+							val prev = getPrev( leaf )
+							
+							if (prev != nul && getParent( prev ) == getParent( leaf ))
+								(prev, 0, nodeLength( prev ) - 1)
+							else
+								sys.error( "no sibling" )
+						}
+					}
+					
+					if (nodeLength( sibling ) > order/2) {
+						// borrow
+	//					moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )	// rewrite moveLeaf
+					} else {
+						// merge
+					}
+				}
+				
+				true
+			case (false, leaf, index) => false
+		}
+	}
 	
 	/**
 	 * Analyzes the tree to determine if it is well constructed.
@@ -481,7 +500,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 			if (!(getKeys( n ).dropRight( 1 ) zip getKeys( n ).drop( 1 ) forall( p => p._1 < p._2 )))
 				return "incorrectly ordered keys"
 			
-			if (parent( n ) != p)
+			if (getParent( n ) != p)
 				return "incorrect parent pointer in level " + d
 				
 			if (isLeaf( n )) {
@@ -493,7 +512,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 				if (prevnode == nul && first != n)
 					return "incorrect first pointer"
 					
-				if (prevnode != prev( n ))
+				if (prevnode != getPrev( n ))
 					return "incorrect prev pointer"
 				else
 					prevnode = n
@@ -636,12 +655,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	/**
 	 * Returns a string containing a readable representation of the structure and contents of the tree, omitting the values and only printing the keys. This method is used mainly for unit testing.
 	 */
-	def prettyString = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(parent(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + getKeys(n).mkString(" ") + "]", "" )
+	def prettyString = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(getParent(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(getPrev(n)) + ", " + id(getParent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + getKeys(n).mkString(" ") + "]", "" )
 	
 	/**
 	 * Returns a string containing a readable representation of the structure and contents of the tree. This method is used mainly for unit testing.
 	 */
-	def prettyStringWithValues = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(parent(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(prev(n)) + ", " + id(parent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + (getKeys(n) zip getValues(n) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " ") + "]", "" )
+	def prettyStringWithValues = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(getParent(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(getPrev(n)) + ", " + id(getParent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + (getKeys(n) zip getValues(n) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " ") + "]", "" )
 	
 	/**
 	 * Creates a PNG image file called `name` (with `.png` added) which visually represents the structure and contents of the tree, only showing the keys. This method uses GraphViz and specifically the `dot` command to produce the diagram.

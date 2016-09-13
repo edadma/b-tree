@@ -5,10 +5,10 @@ object TestMain extends App {
 //	val tree = new FileBPlusTree( "btree", 3 )
 	val tree = new MemoryBPlusTree[String, Any]( 5 )
 	
-// 	tree.insert( "a" )
-// 	tree.insert( "b" )
-//  	tree.insert( "c" )
-// 	tree.insert( "d" )
+	tree.insert( "a" )
+	tree.insert( "b" )
+ 	tree.insert( "c" )
+	tree.insert( "d" )
 // 	tree.insert( "e" )
 // 	tree.insert( "f" )
 // 	tree.insert( "g" )
@@ -51,4 +51,7 @@ object TestMain extends App {
 //	println( tree.iterator.toList )
 //	println( tree.boundedIterator(('>, "a"), ('<, "d")) map {case (k, _) => k} toList )
 //	println( tree.boundedIteratorOverKeys(('<=, "z")) toList )
+	tree.prettyPrintKeysOnly
+	println( tree.delete( "b" ) )
+	tree.prettyPrintKeysOnly
 }

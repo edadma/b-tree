@@ -21,6 +21,10 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	
 	protected def getNext( node: Node[K, V] ) = node.asLeaf.next
 	
+	protected def getParent( node: Node[K, V] ) = node.parent
+	
+	protected def getPrev( node: Node[K, V] ) = node.asLeaf.prev
+	
 	protected def getValue( n: Node[K, V], index: Int ) = n.asLeaf.values( index )
 		
 	protected def getValues( node: Node[K, V] ) = node.asLeaf.values
@@ -65,14 +69,6 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	}
 	
 	protected def nul = null
-	
-	protected def parent( node: Node[K, V], p: Node[K, V] ) = node.parent = p.asInstanceOf[InternalNode[K, V]]
-	
-	protected def parent( node: Node[K, V] ) = node.parent
-	
-	protected def prev( node: Node[K, V], p: Node[K, V] ) = node.asLeaf.prev = p.asInstanceOf[LeafNode[K, V]]
-	
-	protected def prev( node: Node[K, V] ) = node.asLeaf.prev
 
 	protected def removeLeaf( node: Node[K, V], index: Int ) = {
 		node.keys.remove( index, 1 )
@@ -85,6 +81,10 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	protected def setLast( leaf: Node[K, V] ) {}
 	
 	protected def setNext( node: Node[K, V], p: Node[K, V] ) = node.asLeaf.next = p.asInstanceOf[LeafNode[K, V]]
+	
+	protected def setParent( node: Node[K, V], p: Node[K, V] ) = node.parent = p.asInstanceOf[InternalNode[K, V]]
+	
+	protected def setPrev( node: Node[K, V], p: Node[K, V] ) = node.asLeaf.prev = p.asInstanceOf[LeafNode[K, V]]
 		
 	protected def setValue( node: Node[K, V], index: Int, v: V ) = node.asLeaf.values(index) = v
 }
