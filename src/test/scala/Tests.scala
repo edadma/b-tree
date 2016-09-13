@@ -30,8 +30,7 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 			t.boundedIterator( ('>=, "a") ).isEmpty shouldBe true
 			t.boundedIterator( ('>=, "a"), ('<=, "z") ).isEmpty shouldBe true
 			t.boundedIterator( ('<=, "z") ).isEmpty shouldBe true
-			t.insertKeys( "v", "t", "u", "j", "g", "w", "y", "c", "n", "a", "r", "b", "s", "e", "f", "i", "z", "d", "p", "x", "m", "k", "o", "q" )
-			t.wellConstructed shouldBe "true"
+			t.insertKeysAndCheck( "v", "t", "u", "j", "g", "w", "y", "c", "n", "a", "r", "b", "s", "e", "f", "i", "z", "d", "p", "x", "m", "k", "o", "q" ) shouldBe "true"
 			t.iteratorOverKeys.mkString shouldBe "abcdefgijkmnopqrstuvwxyz"
 			t.boundedIteratorOverKeys( ('>=, "a") ).mkString shouldBe "abcdefgijkmnopqrstuvwxyz"
 			t.boundedIteratorOverKeys( ('>, "a") ).mkString shouldBe "bcdefgijkmnopqrstuvwxyz"

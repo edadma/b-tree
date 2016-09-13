@@ -258,12 +258,22 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	
 	def iteratorOverKeys = iterator map {case (k, _) => k}
 	
+	/**
+	 * Returns the maximum key and it's associated value.
+	 * 
+	 * @return `Some( (key, value) )` where `key` is the maximum key and `value` is it's associated value if the tree is non-empty, or `None` if the tree is empty.
+	 */
 	def max =
 		lastlen match {
 			case 0 => 	None
 			case l => Some( (getKey(last, l - 1), getValue(last, l - 1)) )
 		}
 	
+	/**
+	 * Returns the minimum key and it's associated value.
+	 * 
+	 * @return `Some( (key, value) )` where `key` is the minimum key and `value` is it's associated value if the tree is non-empty, or `None` if the tree is empty.
+	 */
 	def min =
 		if (nodeLength( first ) == 0)
 			None
@@ -288,9 +298,18 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 				false
 		}
 	
-	def insertKeys( keys: K* ) =
-		for (k <- keys)
+	def insertKeysAndCheck( keys: K* ): String = {
+		for (k <- keys) {
 			insert( k, null.asInstanceOf[V] )
+			
+			wellConstructed match {
+				case "true" =>
+				case reason => return reason
+			}
+		}
+		
+		"true"
+	}
 		
 	def load( kvs: (K, V)* ) = {
 		require( !kvs.isEmpty, "expected some key/value pairs to load" )
@@ -307,6 +326,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		seq foreach {case (k, v) => insertAt( k, v, last, lastlen )}
 	}
 	
+	/**
+	 * Searches for `key` returning it's associated value if `key` exists.
+	 * 
+	 * @return `Some( value )` where `value` is the value associated to `key` if it exists, or `None` otherwise
+	 */
 	def search( key: K ): Option[V] =
 		lookup( key ) match {
 			case (true, leaf, index) => Some( getValue(leaf, index) )
@@ -314,7 +338,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		}
 
 		
-		
+	/**
+	 * Performs a binary search for key `target` within `node` (tail recursively).
+	 * 
+	 * @return the index of `target` within `node` if it exists, or (-''insertionPoint'' - 1) where ''insertionPoint'' is the index of the correct insertion point for key `target`.
+	 */
 	protected def binarySearch( node: N, target: K ): Int = {
 		def search( start: Int, end: Int ): Int = {
 			if (start > end)
@@ -334,6 +362,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		search( 0, nodeLength(node) - 1 )
 	}
 	
+	/**
+	 * Performs the B+ Tree lookup algorithm (tail recursively) beginning at the root, in search of the location (if found) or correct insertion point (if not found) of `key`.
+	 * 
+	 * @return a triple where the first element is `true` if `key` exists and `false` otherwise, the second element is the node containing `key` if found or the correct insertion point for `key` if not found, the third is the index within that node.
+	 */
 	protected def lookup( key: K ): (Boolean, N, Int) = {
 		def _lookup( n: N ): (Boolean, N, Int) =
 			if (isLeaf( n ))
@@ -359,6 +392,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 			(kv, leaf, index + 1)
 	}
 	
+	/**
+	 * Searches for `key` returning a point in a leaf node that is the least greater than (if not found) or equal to (if found) `key`. The leaf node and index returned in case `key` does not exist is not necessarily the correct insertion point. This method is used by `boundedIterator`.
+	 * 
+	 * @return a triple where the first element is `true` if `key` exists and `false` otherwise, and the second element is the leaf node containing the least greater than or equal key, and the third is the index of that key.
+	 */
 	protected def lookupGTE( key: K ) =
 		lookup( key ) match {
 			case t@(true, _, _) => t
@@ -369,6 +407,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 					(false, getNext( leaf ), 0)
 		}
 	
+	/**
+	 * Performs the B+ Tree insertion algorithm to insert `key` and associated `value` into the tree, specifically in `leaf` at `index`, rebalancing the tree if necessary. If `leaf` and `index` is not the correct insertion point for `key` then this method will probably cause the tree to become an invalid B+ Tree.
+	 */
 	protected def insertAt( key: K, value: V, leaf: N, index: Int ) {
 		def split = {
 			val newleaf = newLeaf( getParent(leaf) )
@@ -451,6 +492,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		}
 	}
 	
+	/**
+	 * Performs the B+ Tree deletion algorithm to remove `key` and it's associated value from the tree, rebalancing the tree if necessary.
+	 * 
+	 * @return `true` if `key` was found (and therefore removed), `false` otherwise
+	 */
 	def delete( key: K ) = {
 		lookup( key ) match {
 			case (true, leaf, index) =>

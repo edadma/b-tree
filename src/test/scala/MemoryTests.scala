@@ -44,7 +44,7 @@ class MemoryTests extends FreeSpec with PropertyChecks with Matchers {
 	"descending insertion (order 3)" in {
 		val tree = new MemoryBPlusTree[Char, Null]( 3 )
 	
-		tree.insertKeys( 'g', 'f' )
+		tree.insertKeysAndCheck( 'g', 'f' ) shouldBe "true"
 		tree.prettyString shouldBe "[n0: (null, null, null) f g]"
 		tree.insert( 'e' )
 		tree.prettyString shouldBe
@@ -74,10 +74,7 @@ class MemoryTests extends FreeSpec with PropertyChecks with Matchers {
 	"random insertion (order 3)" in	{
 		val tree = new MemoryBPlusTree[Char, Null]( 3 )
 	
-		for (k <- Vector( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' ))
-			tree.insert( k )
-			
-		tree.wellConstructed shouldBe "true"
+		tree.insertKeysAndCheck( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' ) shouldBe "true"
 		tree.prettyString shouldBe
 			"""	|[n0: (null) n1 | g | n2 | r | n3]
 					|[n1: (n0) n4 | e | n5] [n2: (n0) n6 | j | n7 | n | n8] [n3: (n0) n9 | u | n10 | w | n11]
@@ -117,8 +114,7 @@ class MemoryTests extends FreeSpec with PropertyChecks with Matchers {
 	"descending insertion (order 4)" in {
 		val tree = new MemoryBPlusTree[Char, Null]( 4 )
 	
-		tree.insertKeys( 'p', 'o', 'n', 'm', 'l', 'k', 'j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a' )
-		tree.wellConstructed shouldBe "true"
+		tree.insertKeysAndCheck( 'p', 'o', 'n', 'm', 'l', 'k', 'j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a' ) shouldBe "true"
 		tree.prettyString shouldBe
 			"""	|[n0: (null) n1 | i | n2 | m | n3]
 					|[n1: (n0) n4 | c | n5 | e | n6 | g | n7] [n2: (n0) n8 | k | n9] [n3: (n0) n10 | o | n11]
@@ -129,10 +125,7 @@ class MemoryTests extends FreeSpec with PropertyChecks with Matchers {
 	"random insertion (order 4)" in	{
 		val tree = new MemoryBPlusTree[Char, Null]( 4 )
 	
-		for (k <- Vector( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' ))
-			tree.insert( k )
-			
-		tree.wellConstructed shouldBe "true"
+		tree.insertKeysAndCheck( 'v', 't', 'u', 'j', 'g', 'w', 'y', 'c', 'n', 'l', 'a', 'r', 'b', 's', 'e', 'f', 'i', 'z', 'h', 'd', 'p', 'x', 'm', 'k', 'o', 'q' ) shouldBe "true"
 		tree.prettyString shouldBe
 			"""	|[n0: (null) n1 | h | n2 | n | n3 | u | n4]
 					|[n1: (n0) n5 | c | n6 | f | n7] [n2: (n0) n8 | j | n9 | l | n10] [n3: (n0) n11 | p | n12 | s | n13] [n4: (n0) n14 | w | n15 | y | n16]
