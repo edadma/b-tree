@@ -303,6 +303,10 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 				false
 		}
 	
+	def insertKeys( keys: K* ) =
+		for (k <- keys)
+			insert( k, null.asInstanceOf[V] )
+	
 	def insertKeysAndCheck( keys: K* ): String = {
 		for (k <- keys) {
 			insert( k, null.asInstanceOf[V] )
@@ -631,6 +635,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		}
 		
 		traverse( List(root) )
+		
 		lookup( key ) match {
 			case (true, leaf, index) => map(leaf) + " " + getValue( leaf, index ) + " " + index
 			case _ => "not found"
@@ -714,14 +719,14 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	def prettyStringWithValues = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(getParent(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(getPrev(n)) + ", " + id(getParent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + (getKeys(n) zip getValues(n) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " ") + "]", "" )
 	
 	/**
-	 * Creates a PNG image file called `name` (with `.png` added) which visually represents the structure and contents of the tree, only showing the keys. This method uses GraphViz and specifically the `dot` command to produce the diagram.
+	 * Creates a PNG image file called `name` (with `.png` added) which visually represents the structure and contents of the tree, only showing the keys. This method uses GraphViz (specifically the `dot` command) to produce the diagram, and ImageMagik (specifically the `convert` command) to convert it from SVG to PNG. `dot` can product PNG files directly but I got better results producing SVG and converting to PNG.
 	 */
 	def diagram( name: String ) {
 		val before =
 			"""	|digraph {
 					|    graph [splines=line];
 					|    edge [penwidth=2];
-					|    node [shape = record, height=.1, penwidth=2, style=filled, fillcolor=white];
+					|    node [shape = record, height=.1, width=.1, penwidth=2, style=filled, fillcolor=white];
 					|
 					|""".stripMargin
 
@@ -739,12 +744,14 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 			buf toString
 		}
 		
-		def leafnode( n: N, id: N => String ) = id(n) + """[label = "<prev> &bull; | """ + (getKeys(n) mkString " | ") + """ | <next> &bull;"];"""
+// 		def leafnode( n: N, id: N => String ) = id(n) + """[label = "<prev> &bull; | """ + (getKeys(n) mkString " | ") + """ | <next> &bull;"];"""
+		def leafnode( n: N, id: N => String ) = id(n) + """[label = """" + (getKeys(n) mkString " | ") + """"];"""
 		
 		val file = new PrintWriter( name + ".dot" )
 		
 		file.println( serialize(before, "    ", internalnode, leafnode, "}") )
 		file.close
-		s"dot -Tpng $name.dot -o $name.png".!
+		s"dot -Tsvg $name.dot -o $name.svg".!
+		s"convert $name.svg $name.png".!
 	}
 }
