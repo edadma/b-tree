@@ -240,6 +240,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		}
 	}
 	
+	/**
+	 * Returns a bounded iterator over a range of keys in the tree in sorted order. The `bounds` parameter is the same as for [[boundedIterator]].
+	 */
 	def boundedIteratorOverKeys( bounds: (Symbol, K)* ) = boundedIterator( bounds: _* ) map {case (k, _) => k}
 	
 	/**
@@ -440,6 +443,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		_lookup( root )
 	}
 	
+	/**
+	 * Returns the key/value pair at `index` in `leaf` as well as the leaf node and index where the next key (in sorted order) is located. This method assumes that `index` is the index of an existing key within `node`.
+	 * 
+	 * @return a triple where the first element is the key/value pair (as a tuple), and the second element is the node containing the next key in sorted order (or `null` if there is no next key), and the third element is the index of the next key (or 0 if there is no next key)
+	 */
 	protected def nextLeaf( leaf: N, index: Int ) = {
 		val kv = (getKey( leaf, index ), getValue( leaf, index ))
 		

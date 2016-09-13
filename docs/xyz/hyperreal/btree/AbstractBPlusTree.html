@@ -807,7 +807,7 @@
     </span>
       <p class="shortcomment cmt">Returns a bounded iterator over a range of key/value pairs in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of key/value pairs in the tree in sorted order. The range of key/value pairs in the iterator is specified by <code>bounds</code>.  <code>bounds</code> must contain one or two pairs where the first element in the pair is a symbol corresponding to the type of bound (i.e. '&lt;, '&lt;=, '&gt;, '&gt;=) and the second element is a key value.</p><p>An example of a bounded iterator over all elements in a tree (with <code>String</code> keys) that will include all keys that sort greater than or equal to &quot;a&quot; and up to but not including &quot;e&quot; is <code>boundedIterator( ('&gt;=, &quot;a&quot;), ('&lt;, &quot;e&quot;) )</code>.
 </p></div></div>
-    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#boundedIteratorOverKeys" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#boundedIteratorOverKeys" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="boundedIteratorOverKeys(bounds:(Symbol,K)*):Iterator[K]"></a>
       <a id="boundedIteratorOverKeys((Symbol,K)*):Iterator[K]"></a>
       <h4 class="signature">
@@ -823,7 +823,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Returns a bounded iterator over a range of keys in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of keys in the tree in sorted order. The <code>bounds</code> parameter is the same as for <a href="#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree#boundedIterator">boundedIterator</a>.
+</p></div></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -1289,7 +1290,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+      <p class="shortcomment cmt">Returns the key/value pair at <code>index</code> in <code>leaf</code> as well as the leaf node and index where the next key (in sorted order) is located.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the key/value pair at <code>index</code> in <code>leaf</code> as well as the leaf node and index where the next key (in sorted order) is located. This method assumes that <code>index</code> is the index of an existing key within <code>node</code>.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a triple where the first element is the key/value pair (as a tuple), and the second element is the node containing the next key in sorted order (or <code>null</code> if there is no next key), and the third element is the index of the next key (or 0 if there is no next key)</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <a id="notify():Unit"></a>
