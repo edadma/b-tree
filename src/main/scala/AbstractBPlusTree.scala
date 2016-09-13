@@ -241,7 +241,15 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	}
 	
 	def boundedIteratorOverKeys( bounds: (Symbol, K)* ) = boundedIterator( bounds: _* ) map {case (k, _) => k}
-		
+	
+	/**
+   * Returns `true` is the tree is empty.
+   */
+	def isEmpty = lastlen == 0
+	
+	/**
+   * Returns an iterator over all key/value pairs in the tree in sorted order.
+   */
 	def iterator: Iterator[(K, V)] =
 		new Iterator[(K, V)] {
 			var leaf = first
@@ -261,6 +269,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 					throw new NoSuchElementException( "no more keys" )
 		}
 	
+  /**
+   * Returns an iterator over all keys in the tree in sorted order.
+   */
 	def iteratorOverKeys = iterator map {case (k, _) => k}
 	
 	/**
@@ -269,32 +280,60 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	 * @return `Some( (key, value) )` where `key` is the maximum key and `value` is it's associated value if the tree is non-empty, or `None` if the tree is empty.
 	 */
 	def max =
-		lastlen match {
-			case 0 => 	None
-			case l => Some( (getKey(last, l - 1), getValue(last, l - 1)) )
-		}
+		if (isEmpty)
+			None
+		else
+			Some( (getKey(last, lastlen - 1), getValue(last, lastlen - 1)) )
 	
+	/**
+   * Returns the maximum key.
+   */
+  def maxKey =
+    if (isEmpty)
+      None
+    else
+      Some( getKey(last, lastlen - 1) )
+    
 	/**
 	 * Returns the minimum key and it's associated value.
 	 * 
 	 * @return `Some( (key, value) )` where `key` is the minimum key and `value` is it's associated value if the tree is non-empty, or `None` if the tree is empty.
 	 */
 	def min =
-		if (nodeLength( first ) == 0)
+		if (isEmpty)
 			None
 		else
 			Some( (getKey(first, 0), getValue(first, 0)) )
+  
+  /**
+   * Returns the minimum key.
+   */
+  def minKey =
+    if (isEmpty)
+      None
+    else
+      Some( getKey(first, 0) )
+  
+  /**
+   * Inserts `key` with associated `value` into the tree. If `key` exists, then it's new associated value will be `value`.
+   * 
+   * @return `true` if `key` exists
+   */
+  def insert( key: K, value: V = null.asInstanceOf[V] ) =
+    lookup( key ) match {
+      case (true, leaf, index) =>
+        setValue( leaf, index, value )
+        true
+      case (false, leaf, index) =>
+        insertAt( key, value, leaf, index )
+        false
+    }
 	
-	def insert( key: K, value: V = null.asInstanceOf[V] ) =
-		lookup( key ) match {
-			case (true, leaf, index) =>
-				setValue( leaf, index, value )
-				true
-			case (false, leaf, index) =>
-				insertAt	( key, value, leaf, index )
-				false
-		}
-	
+  /**
+   * Inserts `key` with associated `value` into the tree only if `key` does not exist.
+   * 
+   * @return `true` if `key` exists
+   */
 	def insertIfNotFound( key: K, value: V = null.asInstanceOf[V] ) =
 		lookup( key ) match {
 			case (true, _, _) => true
@@ -303,10 +342,16 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 				false
 		}
 	
+	/**
+	 * Inserts `keys` into the tree each with an associated value of `null`. If a given key exists, then it's new associated value will be `null`.
+	 */
 	def insertKeys( keys: K* ) =
 		for (k <- keys)
 			insert( k, null.asInstanceOf[V] )
 	
+	/**
+	 * Inserts `keys` into the tree each with an associated value of `null`, and checks that the tree is well constructed after each key is inserted. If a given key exists, then it's new associated value will be `null`. This method is used for testing.
+	 */
 	def insertKeysAndCheck( keys: K* ): String = {
 		for (k <- keys) {
 			insert( k, null.asInstanceOf[V] )
@@ -319,15 +364,18 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 		
 		"true"
 	}
-		
-	def load( kvs: (K, V)* ) = {
+	
+	/**
+   * Performs the B+ Tree bulk loading algorithm to insert key/value pairs `kvs` into the tree efficiently. This method is more efficient than using `insert` because `insert` performs a search to determine the correct insertion point for the key whereas `load` does not. `load` can only work if the tree is empty, or if the minimum key to be inserted is greater than the maximum key in the tree.
+   */
+	def load( kvs: (K, V)* ) {
 		require( !kvs.isEmpty, "expected some key/value pairs to load" )
 		
 		val seq = kvs sortBy {case (k, _) => k}
 		
-		max match {
+		maxKey match {
 			case None =>
-			case Some( (maxkey, _) ) =>
+			case Some( maxkey ) =>
 				if (maxkey >= seq.head._1)
 					sys.error( "can only load into non-empty tree if maximum element is less than minimum element to be loaded" )
 		}
