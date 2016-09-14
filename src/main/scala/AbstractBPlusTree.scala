@@ -8,7 +8,7 @@ import java.io.PrintWriter
 
 
 /**
- * Provides for interaction (insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially.  An empty B+ Tree consists of a single empty leaf node as the root.  Also the `first` and `last` should refer to the root leaf node, and the `lastlen` variable should be 0.
+ * Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially.  An empty B+ Tree consists of a single empty leaf node as the root.  Also the `first` and `last` should refer to the root leaf node, and the `lastlen` variable should be 0.
  */
 abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	/**
@@ -177,7 +177,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	 * 
 	 * An example of a bounded iterator over all elements in a tree (with `String` keys) that will include all keys that sort greater than or equal to "a" and up to but not including "e" is `boundedIterator( ('>=, "a"), ('<, "e") )`.
 	 */
-	def boundedIterator( bounds: (Symbol, K)* ): Iterator[(K, V)] = {
+	def boundedIterator( bounds: (Symbol, K)* ): Iterator[(K, V)] = boundedPositionIterator( bounds: _* ) map {case (n, i) => getKeyValue( n, i )}
+
+	/**
+	 * Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in sorted order. The `bounds` parameter is the same as for [[boundedIterator]].
+	 */
+	protected def boundedPositionIterator( bounds: (Symbol, K)* ): Iterator[(N, Int)] = {
 		def gte( key: K ) =
 			lookupGTE( key ) match {
 				case (_, leaf, index) => (leaf, index)
@@ -185,10 +190,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 
 		def gt( key: K ) =
 			lookupGTE( key ) match {
-				case (true, leaf, index) =>
-					nextLeaf( leaf, index ) match {
-						case (_, nl, ni) => (nl, ni)
-						}
+				case (true, leaf, index) => nextPosition( leaf, index )
 				case (false, leaf, index) => (leaf, index)
 			}
 
@@ -221,29 +223,30 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 			else
 				((first, 0), translate( 0 ))
 			
-		new Iterator[(K, V)] {
+		new Iterator[(N, Int)] {
 			var leaf: N = loleaf
 			var index: Int = loindex
 
 			def hasNext = leaf != nul && index < nodeLength( leaf ) && (leaf != upleaf || index < upindex)
 
 			def next =
-				if (hasNext)
-					nextLeaf( leaf, index ) match {
-						case (kv, nl, ni) =>
-							leaf = nl
-							index = ni
-							kv
-						}
+				if (hasNext) {
+					val (n, i) = nextPosition( leaf, index )
+					val cur = (leaf, index)
+							
+					leaf = n
+					index = i
+					cur
+				}
 				else
 					throw new NoSuchElementException( "no more keys" )
 		}
 	}
-	
+
 	/**
 	 * Returns a bounded iterator over a range of keys in the tree in sorted order. The `bounds` parameter is the same as for [[boundedIterator]].
 	 */
-	def boundedIteratorOverKeys( bounds: (Symbol, K)* ) = boundedIterator( bounds: _* ) map {case (k, _) => k}
+	def boundedIteratorOverKeys( bounds: (Symbol, K)* ) = boundedPositionIterator( bounds: _* ) map {case (n, i) => getKey( n, i )}
 	
 	/**
    * Returns `true` is the tree is empty.
@@ -253,29 +256,35 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	/**
    * Returns an iterator over all key/value pairs in the tree in sorted order.
    */
-	def iterator: Iterator[(K, V)] =
-		new Iterator[(K, V)] {
+	def iterator = positionIterator map {case (n, i) => getKeyValue( n, i )}
+
+	/**
+   * Returns an iterator over all key positions (node/index pairs) in the tree in sorted order.
+   */
+	protected def positionIterator: Iterator[(N, Int)] =
+		new Iterator[(N, Int)] {
 			var leaf = first
 			var index = 0
 			
 			def hasNext = leaf != nul && index < nodeLength( leaf )
 			
 			def next =
-				if (hasNext)
-					nextLeaf( leaf, index ) match {
-						case (kv, nl, ni) =>
-							leaf = nl
-							index = ni
-							kv
-						}
+				if (hasNext) {
+					val (n, i) = nextPosition( leaf, index )
+					val cur = (leaf, index)
+							
+					leaf = n
+					index = i
+					cur
+					}
 				else
 					throw new NoSuchElementException( "no more keys" )
 		}
-	
+
   /**
    * Returns an iterator over all keys in the tree in sorted order.
    */
-	def iteratorOverKeys = iterator map {case (k, _) => k}
+	def iteratorOverKeys = positionIterator map {case (n, i) => getKey( n, i )}
 	
 	/**
 	 * Returns the maximum key and it's associated value.
@@ -446,16 +455,23 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	/**
 	 * Returns the key/value pair at `index` in `leaf` as well as the leaf node and index where the next key (in sorted order) is located. This method assumes that `index` is the index of an existing key within `node`.
 	 * 
-	 * @return a triple where the first element is the key/value pair (as a tuple), and the second element is the node containing the next key in sorted order (or `null` if there is no next key), and the third element is the index of the next key (or 0 if there is no next key)
+	 * @return a pair where the first element is the key/value pair, and the second element is a pair containing the node containing the next key in sorted order (or `null` if there is no next key), and the index of the next key (or 0 if there is no next key)
 	 */
-	protected def nextLeaf( leaf: N, index: Int ) = {
-		val kv = (getKey( leaf, index ), getValue( leaf, index ))
-		
+	protected def nextKeyValue( leaf: N, index: Int ) = (getKeyValue( leaf, index), nextPosition( leaf, index ))
+	
+	/**
+	 * Returns the key/value pair at `index` within `leaf`.
+	 */
+	protected def getKeyValue( leaf: N, index: Int ) = (getKey( leaf, index ), getValue( leaf, index ))
+	
+	/**
+	 * Returns the node/index pair pointing to the location of the leaf node key following the one at `index` in `leaf`.
+	 */
+	protected def nextPosition( leaf: N, index: Int ) =
 		if (index == nodeLength( leaf ) - 1)
-			(kv, getNext( leaf ), 0)
+			(getNext( leaf ), 0)
 		else
-			(kv, leaf, index + 1)
-	}
+			(leaf, index + 1)
 	
 	/**
 	 * Searches for `key` returning a point in a leaf node that is the least greater than (if not found) or equal to (if found) `key`. The leaf node and index returned in case `key` does not exist is not necessarily the correct insertion point. This method is used by `boundedIterator`.
