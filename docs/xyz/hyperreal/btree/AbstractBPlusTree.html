@@ -825,6 +825,24 @@
     </span>
       <p class="shortcomment cmt">Returns a bounded iterator over a range of keys in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of keys in the tree in sorted order. The <code>bounds</code> parameter is the same as for <a href="#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree#boundedIterator">boundedIterator</a>.
 </p></div></div>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#boundedPositionIterator" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="boundedPositionIterator(bounds:(Symbol,K)*):Iterator[(AbstractBPlusTree.this.N,Int)]"></a>
+      <a id="boundedPositionIterator((Symbol,K)*):Iterator[(N,Int)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">boundedPositionIterator</span><span class="params">(<span name="bounds">bounds: (<span class="extype" name="scala.Symbol">Symbol</span>, <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.K">K</span>)*</span>)</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[(<a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>)]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@boundedPositionIterator(bounds:(Symbol,K)*):Iterator[(AbstractBPlusTree.this.N,Int)]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in sorted order. The <code>bounds</code> parameter is the same as for <a href="#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree#boundedIterator">boundedIterator</a>.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -958,6 +976,24 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#getKeyValue" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getKeyValue(leaf:AbstractBPlusTree.this.N,index:Int):(K,V)"></a>
+      <a id="getKeyValue(N,Int):(K,V)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getKeyValue</span><span class="params">(<span name="leaf">leaf: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: (<span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.V">V</span>)</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@getKeyValue(leaf:AbstractBPlusTree.this.N,index:Int):(K,V)" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Returns the key/value pair at <code>index</code> within <code>leaf</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the key/value pair at <code>index</code> within <code>leaf</code>.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
       <a id="hashCode():Int"></a>
@@ -1108,7 +1144,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">iterator</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[(<span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.V">V</span>)]</span>
+        <span class="name">iterator</span><span class="result">: <span class="extype" name="scala.collection.Iterator">Iterator</span>[(<span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.V">V</span>)]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@iterator:Iterator[(K,V)]" title="Permalink" target="_top">
@@ -1274,24 +1310,42 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#nextLeaf" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="nextLeaf(leaf:AbstractBPlusTree.this.N,index:Int):((K,V),AbstractBPlusTree.this.N,Int)"></a>
-      <a id="nextLeaf(N,Int):((K,V),N,Int)"></a>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#nextKeyValue" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="nextKeyValue(leaf:AbstractBPlusTree.this.N,index:Int):((K,V),(AbstractBPlusTree.this.N,Int))"></a>
+      <a id="nextKeyValue(N,Int):((K,V),(N,Int))"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">nextLeaf</span><span class="params">(<span name="leaf">leaf: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: ((<span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.V">V</span>), <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>)</span>
+        <span class="name">nextKeyValue</span><span class="params">(<span name="leaf">leaf: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: ((<span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.V">V</span>), (<a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>))</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@nextLeaf(leaf:AbstractBPlusTree.this.N,index:Int):((K,V),AbstractBPlusTree.this.N,Int)" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@nextKeyValue(leaf:AbstractBPlusTree.this.N,index:Int):((K,V),(AbstractBPlusTree.this.N,Int))" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Returns the key/value pair at <code>index</code> in <code>leaf</code> as well as the leaf node and index where the next key (in sorted order) is located.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the key/value pair at <code>index</code> in <code>leaf</code> as well as the leaf node and index where the next key (in sorted order) is located. This method assumes that <code>index</code> is the index of an existing key within <code>node</code>.
-</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a triple where the first element is the key/value pair (as a tuple), and the second element is the node containing the next key in sorted order (or <code>null</code> if there is no next key), and the third element is the index of the next key (or 0 if there is no next key)</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a pair where the first element is the key/value pair, and the second element is a pair containing the node containing the next key in sorted order (or <code>null</code> if there is no next key), and the index of the next key (or 0 if there is no next key)</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#nextPosition" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="nextPosition(leaf:AbstractBPlusTree.this.N,index:Int):(AbstractBPlusTree.this.N,Int)"></a>
+      <a id="nextPosition(N,Int):(N,Int)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">nextPosition</span><span class="params">(<span name="leaf">leaf: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: (<a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>)</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@nextPosition(leaf:AbstractBPlusTree.this.N,index:Int):(AbstractBPlusTree.this.N,Int)" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Returns the node/index pair pointing to the location of the leaf node key following the one at <code>index</code> in <code>leaf</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the node/index pair pointing to the location of the leaf node key following the one at <code>index</code> in <code>leaf</code>.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <a id="notify():Unit"></a>
@@ -1326,6 +1380,24 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#positionIterator" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="positionIterator:Iterator[(AbstractBPlusTree.this.N,Int)]"></a>
+      <a id="positionIterator:Iterator[(N,Int)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">positionIterator</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[(<a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>)]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@positionIterator:Iterator[(AbstractBPlusTree.this.N,Int)]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Returns an iterator over all key positions (node/index pairs) in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key positions (node/index pairs) in the tree in sorted order.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#prettyPrint" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="prettyPrint:Unit"></a>
       <a id="prettyPrint:Unit"></a>

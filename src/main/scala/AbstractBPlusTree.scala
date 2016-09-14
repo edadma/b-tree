@@ -256,8 +256,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	/**
    * Returns an iterator over all key/value pairs in the tree in sorted order.
    */
-	def iterator: Iterator[(K, V)] = positionIterator map {case (n, i) => getKeyValue( n, i )}
+	def iterator = positionIterator map {case (n, i) => getKeyValue( n, i )}
 
+	/**
+   * Returns an iterator over all key positions (node/index pairs) in the tree in sorted order.
+   */
 	protected def positionIterator: Iterator[(N, Int)] =
 		new Iterator[(N, Int)] {
 			var leaf = first
