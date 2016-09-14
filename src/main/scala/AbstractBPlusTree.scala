@@ -22,7 +22,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	protected var root: N
 		
 	/**
-	 * First leaf node. Implementations are required to set this as well as to create/update the in-storage copy of this if needed (only really applies to on-disk implementations) within the implementation's `newRoot()` method. The methods in this class will take care of updating this variable, implementations only need to worry about the in-storage copy.
+	 * First leaf node. Implementations are required to set this as well as to create/update the in-storage copy of this if needed (only really applies to on-disk implementations) within the implementation's `newRoot` method. The methods in this class will take care of updating this variable, implementations only need to worry about the in-storage copy.
 	 */
 	protected var first: N
 		
@@ -132,7 +132,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	protected def nul: N
 
 	/**
-	 * Removes the key/value pair from leaf `node` at `index`. This method is perhaps poorly named: it does not remove a leaf node from the tree, that's done by (concrete method) `delete()`.
+	 * Removes the key/value pair from leaf `node` at `index`. This method is perhaps poorly named: it does not remove a leaf node from the tree, that's done by (concrete method) `delete`.
 	 */
 	protected def removeLeaf( node: N, index: Int ): Int
 	
