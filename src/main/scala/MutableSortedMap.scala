@@ -1,10 +1,10 @@
 package xyz.hyperreal.btree
 
 import collection.SortedMap
-import collection.mutable.AbstractMap
+import collection.mutable.{Map, MapLike, AbstractMap}
 
 
-class MutableSortedMap[K <% Ordered[K], V] extends AbstractMap[K, V] {//SortedMap[K, V] {
+class MutableSortedMap[K <% Ordered[K], V] extends AbstractMap[K, V] with MapLike[K, V, MutableSortedMap[K, V]] {//SortedMap[K, V] {
 	private val btree = new MemoryBPlusTree[K, V]( 10 )
 	
 	implicit def ordering = implicitly[Ordering[K]]
@@ -18,6 +18,8 @@ class MutableSortedMap[K <% Ordered[K], V] extends AbstractMap[K, V] {//SortedMa
 		btree delete key
 		this
 	}
+	
+	override def empty = new MutableSortedMap[K, V]
 	
 	def get( key: K ) = btree search key
 	
