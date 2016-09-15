@@ -34,7 +34,7 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 		n.asInternal.branches.insert( index + 1, branch )
 	}
 	
-	protected def insertLeaf( n: Node[K, V], index: Int, key: K, value: V ) {
+	protected def insertLeaf[V1 >: V]( n: Node[K, V], index: Int, key: K, value: V1 ) {
 		n.keys.insert( index, key )
 		n.asLeaf.values.insert( index, value )
 	}
