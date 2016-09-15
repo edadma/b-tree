@@ -10,7 +10,7 @@ import java.io.PrintWriter
 /**
  * Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially.  An empty B+ Tree consists of a single empty leaf node as the root.  Also the `first` and `last` should refer to the root leaf node, and the `lastlen` variable should be 0.
  */
-abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
+abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	/**
 	 * Abstract node type. For in-memory implementations this would probably be the actual node class and for on-disk it would likely be the file pointer where the node is stored.
 	 */
@@ -89,7 +89,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	/**
 	 * Inserts `key` and `value` into (leaf) `node` at `index`.
 	 */
-	protected def insertLeaf( node: N, index: Int, key: K, value: V ): Unit
+	protected def insertLeaf[V1 >: V]( node: N, index: Int, key: K, value: V1 ): Unit
 	
 	/**
 	 * Returns `true` if `node` is a leaf node
@@ -169,7 +169,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	/**
 	 * Sets the value at `index` of `node` to `v`.
 	 */
-	protected def setValue( node: N, index: Int, v: V ): Unit
+	protected def setValue[V1 >: V]( node: N, index: Int, v: V1 ): Unit
 	
 	
 	/**
@@ -246,7 +246,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	/**
 	 * Returns a bounded iterator over a range of keys in the tree in sorted order. The `bounds` parameter is the same as for [[boundedIterator]].
 	 */
-	def boundedIteratorOverKeys( bounds: (Symbol, K)* ) = boundedPositionIterator( bounds: _* ) map {case (n, i) => getKey( n, i )}
+	def boundedKeysIterator( bounds: (Symbol, K)* ) = boundedPositionIterator( bounds: _* ) map {case (n, i) => getKey( n, i )}
+
+	/**
+	 * Returns a bounded iterator over a range of values in the tree in sorted order. The `bounds` parameter is the same as for [[boundedIterator]].
+	 */
+	def boundedValuesIterator( bounds: (Symbol, K)* ) = boundedPositionIterator( bounds: _* ) map {case (n, i) => getValue( n, i )}
 	
 	/**
    * Returns `true` is the tree is empty.
@@ -284,7 +289,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
   /**
    * Returns an iterator over all keys in the tree in sorted order.
    */
-	def iteratorOverKeys = positionIterator map {case (n, i) => getKey( n, i )}
+	def keysIterator = positionIterator map {case (n, i) => getKey( n, i )}
 	
 	/**
 	 * Returns the maximum key and it's associated value.
@@ -331,7 +336,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
    * 
    * @return `true` if `key` exists
    */
-  def insert( key: K, value: V = null.asInstanceOf[V] ) =
+  def insert[V1 >: V]( key: K, value: V1 = null.asInstanceOf[V1] ) =
     lookup( key ) match {
       case (true, leaf, index) =>
         setValue( leaf, index, value )
@@ -346,7 +351,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
    * 
    * @return `true` if `key` exists
    */
-	def insertIfNotFound( key: K, value: V = null.asInstanceOf[V] ) =
+	def insertIfNotFound[V1 >: V]( key: K, value: V1 = null.asInstanceOf[V1] ) =
 		lookup( key ) match {
 			case (true, _, _) => true
 			case (false, leaf, index) =>
@@ -380,7 +385,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	/**
    * Performs the B+ Tree bulk loading algorithm to insert key/value pairs `kvs` into the tree efficiently. This method is more efficient than using `insert` because `insert` performs a search to determine the correct insertion point for the key whereas `load` does not. `load` can only work if the tree is empty, or if the minimum key to be inserted is greater than the maximum key in the tree.
    */
-	def load( kvs: (K, V)* ) {
+	def load[V1 >: V]( kvs: (K, V1)* ) {
 		require( !kvs.isEmpty, "expected some key/value pairs to load" )
 		
 		val seq = kvs sortBy {case (k, _) => k}
@@ -491,7 +496,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], V]( order: Int ) {
 	/**
 	 * Performs the B+ Tree insertion algorithm to insert `key` and associated `value` into the tree, specifically in `leaf` at `index`, rebalancing the tree if necessary. If `leaf` and `index` is not the correct insertion point for `key` then this method will probably cause the tree to become an invalid B+ Tree.
 	 */
-	protected def insertAt( key: K, value: V, leaf: N, index: Int ) {
+	protected def insertAt[V1 >: V]( key: K, value: V1, leaf: N, index: Int ) {
 		def split = {
 			val newleaf = newLeaf( getParent(leaf) )
 			val leafnext = getNext( leaf )

@@ -179,7 +179,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		}
 	}
 	
-	protected def insertLeaf( node: Long, index: Int, key: String, value: Any ) {
+	protected def insertLeaf[V1 >: Any]( node: Long, index: Int, key: String, value: V1 ) {
 		val len = nodeLength( node )
 		
 		if (len < order - 1) {
@@ -362,7 +362,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file writeLong p
 	}
 	
-	protected def setValue( node: Long, index: Int, v: Any ) = writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, v )
+	protected def setValue[V1 >: Any]( node: Long, index: Int, v: V1 ) = writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, v )
 	
 		
 	def close = file.close
