@@ -46,15 +46,18 @@ object TestMain extends App {
 //	tree.file.dump
 //	tree.load( ("b", 2), ("a", 1), ("c", 3) )
 // 	println( tree.max )
-//  	println( tree.wellConstructed )
 // 	tree.diagram( "tree" )
 //	println( tree.keysIterator.toList )
-	println( tree.reverseKeysIterator.toList )
+//	println( tree.reverseKeysIterator.toList )
 //	println( tree.boundedIterator(('>, "a"), ('<, "d")) map {case (k, _) => k} toList )
 //	println( tree.boundedIteratorOverKeys(('<=, "z")) toList )
-// 	tree.prettyPrintKeysOnly
-// 	println( tree.delete( "b" ) )
-// 	tree.prettyPrintKeysOnly
+	tree.insert( "aa" )
+ 	tree.prettyPrintKeysOnly
+	println( tree.delete( "c" ) )
+ 	tree.prettyPrintKeysOnly
+	println( tree.delete( "d" ) )
+ 	tree.prettyPrintKeysOnly
+ 	println( tree.wellConstructed )
 // 	map += ("asdf" -> 123)
 // 	println( map )
 }

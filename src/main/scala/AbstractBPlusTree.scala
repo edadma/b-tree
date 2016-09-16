@@ -631,27 +631,32 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				val len = removeLeaf( leaf, index )
 				
 				if (len < order/2) {
-					val (sibling, leafside, siblingside) = {
+					val par = getParent( leaf )
+					val (sibling, leafside, siblingside, left, right) = {
 						val next = getNext( leaf )
 						
-						if (next != nul && getParent( next ) == getParent( leaf ))
-							(next, len, 0)
+						if (next != nul && getParent( next ) == par)
+							(next, len, 0, leaf, next)
 						else {
 							val prev = getPrev( leaf )
 							
-							if (prev != nul && getParent( prev ) == getParent( leaf ))
-								(prev, 0, nodeLength( prev ) - 1)
+							if (prev != nul && getParent( prev ) == par)
+								(prev, 0, nodeLength( prev ) - 1, prev, leaf)
 							else
 								sys.error( "no sibling" )
 						}
 					}
 					
 					if (nodeLength( sibling ) > order/2) {
-						// borrow
-						// find parent node key
+						val index = binarySearch( par, getKey(left, nodeLength(left) - 1) ) match {
+							case index if index >= 0 => index
+							case index => -(index + 1)
+						}
+						
 						moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
+						setKey( par, index, getKey(right, 0) )
 					} else {
-						// merge
+						sys.error( "merge" )
 					}
 				}
 				
