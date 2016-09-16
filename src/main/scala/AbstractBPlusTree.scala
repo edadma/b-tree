@@ -606,6 +606,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					
 					if (nodeLength( sibling ) > order/2) {
 						// borrow
+						// find parent node key
 						moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
 					} else {
 						// merge
@@ -627,6 +628,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 		var depth = -1
 		var prevnode: N = nul
 		var nextptr: N = nul
+		val cbo2 = order/2 + order%2
 		
 		def check( n: N, p: N, d: Int ): String = {
 			if (!(getKeys( n ).dropRight( 1 ) zip getKeys( n ).drop( 1 ) forall( p => p._1 < p._2 )))
@@ -640,7 +642,13 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					depth = d
 				else if (d != depth)
 					return "leaf nodes not at same depth"
-			
+				
+				if (getParent( n ) == nul) {
+					if (nodeLength( n ) >= order)
+						return "root leaf node length out of range"
+				} else if (nodeLength( n ) < cbo2 - 1 || nodeLength( n ) > order - 1)
+					return "non-root leaf node length out of range"
+					
 				if (prevnode == nul && first != n)
 					return "incorrect first pointer"
 					
@@ -666,6 +674,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					
 				if (getKeys( n ) isEmpty)
 					return "empty internal node"
+				
+				if (getParent( n ) == nul) {
+					if (nodeLength( n ) < 1 || nodeLength( n ) >= order)
+						return "root internal node length out of range"
+				} else if (nodeLength( n ) < cbo2 - 1 || nodeLength( n ) > order - 1)
+					return "non-root internal node length out of range"
 					
 				if (getKeys( getBranch(n, 0) ).last >= getKey( n, 0 ))
 					return "left internal node branch not strictly less than"
