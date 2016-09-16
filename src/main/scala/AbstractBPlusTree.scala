@@ -810,7 +810,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 			}
 			
 			if (!isLeaf( nodes.head ))
-				traverse( List.concat(nodes flatMap getBranches) )
+				traverse( nodes flatMap getBranches )
 		}
 		
 		traverse( List(root) )
@@ -863,7 +863,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				buf ++= prefix
 				buf ++= nodes map (n => internalnode(n, id, emit)) mkString " "
 				buf += '\n'
-				printNodes( List.concat(nodes flatMap getBranches) )
+				printNodes( nodes flatMap getBranches )
 			}
 		}
 
