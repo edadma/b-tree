@@ -12,7 +12,7 @@ import java.io.{File, RandomAccessFile}
 class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) extends AbstractBPlusTree[String, Any]( order ) {
 	protected type N = Long
 	
-	protected val NULL = 0
+	protected val NUL = 0
 	
 	protected val LEAF_NODE = 0
 	protected val INTERNAL_NODE = 1
@@ -51,7 +51,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	
 	protected val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
 	
-	private var savedNode: Long = NULL
+	private var savedNode: Long = NUL
 	private var savedKeys = new ArrayBuffer[String]
 	private var savedValues = new ArrayBuffer[Any]
 	private var savedBranches = new ArrayBuffer[Long]
@@ -91,10 +91,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		lastlen = nodeLength( last )
 	}
 	
-	protected def nodeLength( node: Long, len: Int ) {
-		file seek (node + NODE_LENGTH)
-		file writeShort len
-	}
+	protected def freeNode( node: Long ) {}
 	
 	protected def getBranch( node: Long, index: Int ) = {
 		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
@@ -166,7 +163,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 			file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
 			file writeLong branch
 		} else {
-			if (savedNode != NULL)
+			if (savedNode != NUL)
 				sys.error( "a node is already being saved" )
 				
 			savedKeys.clear
@@ -191,7 +188,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 			writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
 			setValue( node, index, value )
 		} else {
-			if (savedNode != NULL)
+			if (savedNode != NUL)
 				sys.error( "a node is already being saved" )
 				
 			savedKeys.clear
@@ -210,7 +207,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	}
 		
 	protected def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
-		if (savedNode == NULL) {
+		if (savedNode == NUL) {
 			copyKeys( src, begin, end, dst, 0 )
 			nodeLength( src, nodeLength(src) - (end - begin) - 1 )
 			
@@ -244,14 +241,14 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 				
 			nodeLength( src, savedKeys.length )
 			nodeLength( dst, end - begin )
-			savedNode = NULL
+			savedNode = NUL
 		}
 	}
 	
 	protected def moveLeaf( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
 		val dstlen = nodeLength( dst )
 			
-		if (savedNode == NULL) {
+		if (savedNode == NUL) {
 			copy( dst, index, dstlen, dst, index + end - begin )
 			copy( src, begin, end, dst, index )
 			nodeLength( src, nodeLength(src) - (end - begin) )
@@ -278,7 +275,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 				
 			nodeLength( src, savedKeys.length )
 			nodeLength( dst, len )
-			savedNode = NULL
+			savedNode = NUL
 		}
 	}
 	
@@ -311,23 +308,40 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	}
 	
 	protected def nodeLength( node: Long ) =
-		if (savedNode == NULL) {
+		if (savedNode == NUL) {
 			file seek (node + NODE_LENGTH)
 			file.readShort
 		} else
 			savedKeys.length
 	
+	protected def nodeLength( node: Long, len: Int ) {
+		file seek (node + NODE_LENGTH)
+		file writeShort len
+	}
+	
 	protected def nul = 0
 
+	protected def removeInternal( node: Long, index: Int ) = {
+		val newlen = nodeLength( node ) - 1
+		
+		nodeLength( node, newlen )
+		
+		if (index < newlen) {
+			copyKeys( node, index + 1, newlen + 1, node, index - 1 )
+		}
+		
+		newlen
+	}
+
 	protected def removeLeaf( node: Long, index: Int ) = {
-		val len = nodeLength( node )
+		val newlen = nodeLength( node ) - 1
 		
-		nodeLength( node, len - 1 )
+		nodeLength( node, newlen )
 		
-		if (index < len - 1)
-			copy( node, index + 1, len, node, index - 1 )
+		if (index < newlen)
+			copy( node, index + 1, newlen + 1, node, index - 1 )
 			
-		len
+		newlen
 	}
 	
 	protected def setBranch( node: Long, index: Int, branch: Long ) {
@@ -469,7 +483,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		
 		val ptr = file.readLong
 		
-		if (ptr == NULL || size > BLOCK_SIZE) {
+		if (ptr == NUL || size > BLOCK_SIZE) {
 			val addr = file.length
 			val blocks = size/BLOCK_SIZE + (if (size%BLOCK_SIZE == 0) 0 else 1)
 			

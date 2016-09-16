@@ -37,6 +37,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected var lastlen: Int
 	
 	/**
+	 * Frees that storage previously allocated for `node`. For in-memory implementations, this method probably won't do anything.
+	 */
+	protected def freeNode( node: N )
+		
+	/**
 	 * Gets a branch pointer from an internal node at a given `index`.  There is always one more branch pointer than there are keys in an internal node so the highest index is equal to `nodeLength( node )`.
 	 */
 	protected def getBranch( node: N, index: Int ): N
@@ -84,12 +89,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	/**
 	 * Inserts `key` and `branch` into (internal) `node` at `index`. The branch is the right branch immediately to the right of `key`.
 	 */
-	protected def insertInternal( node: N, index: Int, key: K, branch: N ): Unit
+	protected def insertInternal( node: N, index: Int, key: K, branch: N )
 	
 	/**
 	 * Inserts `key` and `value` into (leaf) `node` at `index`.
 	 */
-	protected def insertLeaf[V1 >: V]( node: N, index: Int, key: K, value: V1 ): Unit
+	protected def insertLeaf[V1 >: V]( node: N, index: Int, key: K, value: V1 )
 	
 	/**
 	 * Returns `true` if `node` is a leaf node
@@ -99,12 +104,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	/**
 	 * Moves key/branch pairs as well as the left branch of the first key from node `src` to node `dst` beginning at index `begin` and ending up to but not including index `end`, and also removes the key at index `begin - 1`.
 	 */
-	protected def moveInternal( src: N, begin: Int, end: Int, dst: N ): Unit
+	protected def moveInternal( src: N, begin: Int, end: Int, dst: N )
 	
 	/**
 	 * Moves key/value pairs from node `src` to node `dst` beginning at index `begin` and ending up to but not including index `end`.
 	 */
-	protected def moveLeaf( src: N, begin: Int, end: Int, dst: N, index: Int ): Unit
+	protected def moveLeaf( src: N, begin: Int, end: Int, dst: N, index: Int )
 	
 	/**
 	 * Creates a new internal node with `parent` as its parent pointer.
@@ -127,49 +132,58 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected def nodeLength( node: N ): Int
 	
 	/**
-	 * Returns the ''null'' node pointer.  For in-memory implementations this will usually be a Scala `null` value.  For on-disk it would make sense for this to be `0L`.
+	 * Returns the ''null'' node pointer. For in-memory implementations this will usually be a Scala `null` value. For on-disk it would make sense for this to be `0L`.
 	 */
 	protected def nul: N
 
 	/**
-	 * Removes the key/value pair from leaf `node` at `index`. This method is perhaps poorly named: it does not remove a leaf node from the tree, that's done by (concrete method) `delete`.
+	 * Removes the key/branch pair from internal `node` at `index`. The branch that is removed is the one to the right of the key being removed, i.e. the branch at (`index` + 1). This method is perhaps poorly named: it does not remove an internal node from the tree.
+	 * 
+	 * @return length of `node` after removal
+	 */
+	protected def removeInternal( node: N, index: Int ): Int
+
+	/**
+	 * Removes the key/value pair from leaf `node` at `index`. This method is perhaps poorly named: it does not remove a leaf node from the tree.
+	 * 
+	 * @return length of `node` after removal
 	 */
 	protected def removeLeaf( node: N, index: Int ): Int
 	
 	/**
 	 * not used yet, could be empty
 	 */
-	protected def setFirst( leaf: N ): Unit
+	protected def setFirst( leaf: N )
 
 	/**
 	 * Sets the key at `index` of `node` to `key`.
 	 */
-	protected def setKey( node: N, index: Int, key: K ): Unit
+	protected def setKey( node: N, index: Int, key: K )
 
 	/**
 	 * not used yet, could be empty
 	 */
-	protected def setLast( leaf: N ): Unit
+	protected def setLast( leaf: N )
 	
 	/**
 	 * Sets the next pointer of (leaf) `node` to `p`.
 	 */
-	protected def setNext( node: N, p: N ): Unit
+	protected def setNext( node: N, p: N )
 	
 	/**
 	 * Sets the parent pointer of `node` to `p`.
 	 */
-	protected def setParent( node: N, p: N ): Unit
+	protected def setParent( node: N, p: N )
 	
 	/**
 	 * Sets previous leaf node link pointer of (leaf) `node` to `p`.
 	 */
-	protected def setPrev( node: N, p: N ): Unit
+	protected def setPrev( node: N, p: N )
 		
 	/**
 	 * Sets the value at `index` of `node` to `v`.
 	 */
-	protected def setValue[V1 >: V]( node: N, index: Int, v: V1 ): Unit
+	protected def setValue[V1 >: V]( node: N, index: Int, v: V1 )
 	
 	
 	/**
@@ -536,7 +550,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 		}
 	
 	/**
-	 * Performs the B+ Tree insertion algorithm to insert `key` and associated `value` into the tree, specifically in `leaf` at `index`, rebalancing the tree if necessary. If `leaf` and `index` is not the correct insertion point for `key` then this method will probably cause the tree to become an invalid B+ Tree.
+	 * Performs the B+ Tree insertion algorithm to insert `key` and associated `value` into the tree, specifically in `leaf` at `index`, rebalancing the tree if necessary. If `leaf` and `index` is not the correct insertion point for `key` then this method will probably result in an invalid B+ Tree.
 	 */
 	protected def insertAt[V1 >: V]( key: K, value: V1, leaf: N, index: Int ) {
 		def split = {
@@ -584,8 +598,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				binarySearch( par, getKey(newleaf, 0) ) match {
 					case index if index >= 0 => sys.error( "key found in internal node" )
 					case insertion =>
-						val index = -(insertion + 1)
-						insertInternal( par, index, getKey(newleaf, 0), newleaf )
+						insertInternal( par, -(insertion + 1), getKey(newleaf, 0), newleaf )
 				
 						while (nodeLength( par ) == order) {
 							val newinternal = newInternal( getParent(par) )
@@ -609,9 +622,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 								par = getParent( par )
 								binarySearch( par, middle ) match {
 									case index if index >= 0 => sys.error( "key found in internal node" )
-									case insertion =>
-										val index = -(insertion + 1)
-										insertInternal( par, index, middle, newinternal )
+									case insertion => insertInternal( par, -(insertion + 1), middle, newinternal )
 								}
 							}
 						}
@@ -656,7 +667,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
 						setKey( par, index, getKey(right, 0) )
 					} else {
-						sys.error( "merge" )
+						moveLeaf( right, 0, nodeLength(right), left, nodeLength(left) )
 					}
 				}
 				
