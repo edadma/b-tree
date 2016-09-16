@@ -262,9 +262,14 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
    * Returns an iterator over all key/value pairs in the tree in sorted order.
    */
 	def iterator = positionIterator map {case (n, i) => getKeyValue( n, i )}
+	
+	/**
+   * Returns an iterator over all key/value pairs in the tree in sorted order.
+   */
+	def reverseIterator = reversePositionIterator map {case (n, i) => getKeyValue( n, i )}
 
 	/**
-   * Returns an iterator over all key positions (node/index pairs) in the tree in sorted order.
+   * Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted order.
    */
 	protected def positionIterator: Iterator[(N, Int)] =
 		new Iterator[(N, Int)] {
@@ -281,15 +286,41 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					leaf = n
 					index = i
 					cur
-					}
-				else
+				} else
+					throw new NoSuchElementException( "no more keys" )
+		}
+
+	/**
+   * Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted order.
+   */
+	protected def reversePositionIterator: Iterator[(N, Int)] =
+		new Iterator[(N, Int)] {
+			var leaf = last
+			var index = lastlen - 1
+			
+			def hasNext = leaf != nul && index >= 0
+			
+			def next =
+				if (hasNext) {
+					val (n, i) = prevPosition( leaf, index )
+					val cur = (leaf, index)
+							
+					leaf = n
+					index = i
+					cur
+				} else
 					throw new NoSuchElementException( "no more keys" )
 		}
 
   /**
-   * Returns an iterator over all keys in the tree in sorted order.
+   * Returns an iterator over all keys in the tree in ascending sorted order.
    */
 	def keysIterator = positionIterator map {case (n, i) => getKey( n, i )}
+
+  /**
+   * Returns a reverse iterator over all keys in the tree in descending sorted order.
+   */
+	def reverseKeysIterator = reversePositionIterator map {case (n, i) => getKey( n, i )}
 	
 	/**
 	 * Returns the maximum key and it's associated value.
@@ -468,6 +499,17 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	 * Returns the key/value pair at `index` within `leaf`.
 	 */
 	protected def getKeyValue( leaf: N, index: Int ) = (getKey( leaf, index ), getValue( leaf, index ))
+	
+	/**
+	 * Returns the node/index pair pointing to the location of the leaf node key preceding the one at `index` in `leaf`.
+	 */
+	protected def prevPosition( leaf: N, index: Int ) =
+		if (index == 0) {
+			val prev = getPrev( leaf )
+			
+			(prev, if (prev == nul) 0 else nodeLength( prev ) - 1)
+		} else
+			(leaf, index - 1)
 	
 	/**
 	 * Returns the node/index pair pointing to the location of the leaf node key following the one at `index` in `leaf`.

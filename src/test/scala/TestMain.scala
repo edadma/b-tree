@@ -3,14 +3,14 @@ package xyz.hyperreal.btree
 
 object TestMain extends App {
 //	val tree = new FileBPlusTree( "btree", 3 )
-//	val tree = new MemoryBPlusTree[String, Any]( 5 )
-	val map = new MutableSortedMap[String, Any]
+	val tree = new MemoryBPlusTree[String, Any]( 5 )
+// 	val map = new MutableSortedMap[String, Any]
 	
-//	tree.insert( "a" )
-// 	tree.insert( "b" )
-//  	tree.insert( "c" )
-// 	tree.insert( "d" )
-// 	tree.insert( "e" )
+	tree.insert( "a" )
+	tree.insert( "b" )
+	tree.insert( "c" )
+	tree.insert( "d" )
+	tree.insert( "e" )
 // 	tree.insert( "f" )
 // 	tree.insert( "g" )
 // 	tree.insert( "h" )
@@ -48,12 +48,13 @@ object TestMain extends App {
 // 	println( tree.max )
 //  	println( tree.wellConstructed )
 // 	tree.diagram( "tree" )
-//	println( tree.iterator.toList )
+//	println( tree.keysIterator.toList )
+	println( tree.reverseKeysIterator.toList )
 //	println( tree.boundedIterator(('>, "a"), ('<, "d")) map {case (k, _) => k} toList )
 //	println( tree.boundedIteratorOverKeys(('<=, "z")) toList )
 // 	tree.prettyPrintKeysOnly
 // 	println( tree.delete( "b" ) )
 // 	tree.prettyPrintKeysOnly
-	map += ("asdf" -> 123)
-	println( map )
+// 	map += ("asdf" -> 123)
+// 	println( map )
 }

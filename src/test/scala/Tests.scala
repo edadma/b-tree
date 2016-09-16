@@ -27,11 +27,13 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 		("iterator: " + storage + ", order " + order) in {
 		
 			t.iterator.isEmpty shouldBe true
+			t.reverseIterator.isEmpty shouldBe true
 			t.boundedIterator( ('>=, "a") ).isEmpty shouldBe true
 			t.boundedIterator( ('>=, "a"), ('<=, "z") ).isEmpty shouldBe true
 			t.boundedIterator( ('<=, "z") ).isEmpty shouldBe true
 			t.insertKeysAndCheck( "v", "t", "u", "j", "g", "w", "y", "c", "n", "a", "r", "b", "s", "e", "f", "i", "z", "d", "p", "x", "m", "k", "o", "q" ) shouldBe "true"
 			t.keysIterator.mkString shouldBe "abcdefgijkmnopqrstuvwxyz"
+			t.reverseKeysIterator.mkString shouldBe "zyxwvutsrqponmkjigfedcba"
 			t.boundedKeysIterator( ('>=, "a") ).mkString shouldBe "abcdefgijkmnopqrstuvwxyz"
 			t.boundedKeysIterator( ('>, "a") ).mkString shouldBe "bcdefgijkmnopqrstuvwxyz"
 			t.boundedKeysIterator( ('>=, "A") ).mkString shouldBe "abcdefgijkmnopqrstuvwxyz"
