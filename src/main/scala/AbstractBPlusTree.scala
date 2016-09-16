@@ -151,7 +151,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected def removeLeaf( node: N, index: Int ): Int
 	
 	/**
-	 * not used yet, could be empty
+	 * Sets the in-storage copy of the first leaf node pointer. This method is not responsable for setting the `first` variable.
 	 */
 	protected def setFirst( leaf: N )
 
@@ -161,7 +161,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected def setKey( node: N, index: Int, key: K )
 
 	/**
-	 * not used yet, could be empty
+	 * Sets the in-storage copy of the last leaf node pointer. This method is not responsable for setting the `last` variable nor the `lastlen` variable.
 	 */
 	protected def setLast( leaf: N )
 	
@@ -179,7 +179,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	 * Sets previous leaf node link pointer of (leaf) `node` to `p`.
 	 */
 	protected def setPrev( node: N, p: N )
-		
+	
+	/**
+	 * Sets the in-storage copy of the root node pointer. This method is not responsable for setting the `root` variable.
+	 */
+	protected def setRoot( node: N )
+	
 	/**
 	 * Sets the value at `index` of `node` to `v`.
 	 */
@@ -639,35 +644,60 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	def delete( key: K ) = {
 		lookup( key ) match {
 			case (true, leaf, index) =>
+				val key = getKey( leaf, index )
 				val len = removeLeaf( leaf, index )
 				
 				if (len < order/2) {
 					val par = getParent( leaf )
-					val (sibling, leafside, siblingside, left, right) = {
+					val (sibling, leafside, siblingside, left, right, parkey) = {
 						val next = getNext( leaf )
 						
-						if (next != nul && getParent( next ) == par)
-							(next, len, 0, leaf, next)
-						else {
+						if (next != nul && getParent( next ) == par) {
+							(next, len, 0, leaf, next, if (len == 0) key else getKey( leaf, nodeLength(leaf) - 1 ))
+						} else {
 							val prev = getPrev( leaf )
 							
 							if (prev != nul && getParent( prev ) == par)
-								(prev, 0, nodeLength( prev ) - 1, prev, leaf)
+								(prev, 0, nodeLength( prev ) - 1, prev, leaf, getKey( prev, nodeLength(prev) - 1 ))
 							else
 								sys.error( "no sibling" )
 						}
 					}
 					
-					if (nodeLength( sibling ) > order/2) {
-						val index = binarySearch( par, getKey(left, nodeLength(left) - 1) ) match {
-							case index if index >= 0 => index
-							case index => -(index + 1)
+					val index =
+						binarySearch( par, parkey ) match {
+							case ind if ind >= 0 => ind
+							case ind => -(ind + 1)
 						}
-						
+					
+					if (nodeLength( sibling ) > order/2) {
 						moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
 						setKey( par, index, getKey(right, 0) )
 					} else {
 						moveLeaf( right, 0, nodeLength(right), left, nodeLength(left) )
+						
+						val next = getNext( right )
+						
+						setNext( left, next )
+						
+						if (next == nul) {
+							last = left
+							setLast( left )
+							lastlen = nodeLength( left )
+						}
+					
+						freeNode( right )
+						
+						val len = removeInternal( par, index )
+							
+						if (par == root && len == 0) {
+							freeNode( root )
+							setParent( left, nul )
+							root = left
+							setRoot( left )
+							first = left
+							setFirst( left )
+						}
 					}
 				}
 				

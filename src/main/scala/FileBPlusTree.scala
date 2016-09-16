@@ -91,7 +91,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		lastlen = nodeLength( last )
 	}
 	
-	protected def freeNode( node: Long ) {}
+	protected def freeNode( node: Long ) = free( node, BLOCK_SIZE )
 	
 	protected def getBranch( node: Long, index: Int ) = {
 		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
@@ -205,7 +205,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file seek node
 		file.read == LEAF_NODE
 	}
-		
+	
 	protected def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
 		if (savedNode == NUL) {
 			copyKeys( src, begin, end, dst, 0 )
@@ -322,12 +322,20 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	protected def nul = 0
 
 	protected def removeInternal( node: Long, index: Int ) = {
-		val newlen = nodeLength( node ) - 1
+		val len = nodeLength( node )
+		val newlen = len - 1
 		
 		nodeLength( node, newlen )
 		
 		if (index < newlen) {
-			copyKeys( node, index + 1, newlen + 1, node, index - 1 )
+			copyKeys( node, index + 1, len, node, index )
+			
+			val data = new Array[Byte]( (len - (index + 1))*POINTER_SIZE )
+			
+			file seek (node + INTERNAL_BRANCHES + (index + 2)*POINTER_SIZE)
+			file readFully data
+			file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
+			file write data
 		}
 		
 		newlen
@@ -374,6 +382,11 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	protected def setPrev( node: Long, p: Long ) {
 		file seek (node + LEAF_PREV_PTR)
 		file writeLong p
+	}
+	
+	protected def setRoot( node: Long ) {
+		file seek FILE_ROOT_PTR
+		file writeLong node
 	}
 	
 	protected def setValue[V1 >: Any]( node: Long, index: Int, v: V1 ) = writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, v )

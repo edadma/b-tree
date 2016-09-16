@@ -96,6 +96,8 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	
 	protected def setPrev( node: Node[K, V], p: Node[K, V] ) = node.asLeaf.prev = p.asInstanceOf[LeafNode[K, V]]
 		
+	protected def setRoot( node: Node[K, V] ) {}
+	
 	protected def setValue[V1 >: V]( node: Node[K, V], index: Int, v: V1 ) = node.asInstanceOf[Node[K, V1]].asLeaf.values(index) = v
 }
 
