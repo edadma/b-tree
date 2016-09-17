@@ -763,8 +763,10 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				} else if (nodeLength( n ) < cbo2 - 1 || nodeLength( n ) > order - 1)
 					return "non-root leaf node length out of range"
 					
-				if (prevnode == nul && first != n)
+				if (prevnode == nul && first != n) {
+					println( first, n )
 					return "incorrect first pointer"
+				}
 					
 				if (prevnode != getPrev( n ))
 					return "incorrect prev pointer"
@@ -1003,6 +1005,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					last = node
 					lastlen = nodeLength( node )
 					
+					if (first == nul)
+						first = node
+						
 					if (prev != nul)
 						setNext( prev, node )
 						

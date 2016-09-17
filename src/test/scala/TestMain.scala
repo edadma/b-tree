@@ -56,6 +56,7 @@ object TestMain extends App {
 			[g] j [j t] u [u v]
 		)
 		""" ).prettyPrintKeysOnly
+ 	println( tree.wellConstructed )
 	println( tree.delete( "u" ) )
  	tree.prettyPrintKeysOnly
 	println( tree.delete( "v" ) )
