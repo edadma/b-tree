@@ -91,17 +91,14 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		lastlen = nodeLength( last )
 	}
 	
-  protected def addBranch( node: Long, branch: Long ) {
-		
-  }
+  protected def addBranch( node: Long, branch: Long ) = setBranch( node, nodeLength(node), branch )
 		
 	protected def addKey( node: Long, key: K ) {
-		
+		setKey( node, nodeLength(node), key )
+		nodeLength( node, nodeLength(node) + 1 )
 	}
 	
-	protected def addValue[V1 >: V]( node: Long, value: V1 ) {
-		
-	}
+	protected def addValue[V1 >: V]( node: Long, value: V1 ) = setValue( node, nodeLength(node) - 1, value )
 	
 	protected def freeNode( node: Long ) = free( node, BLOCK_SIZE )
 	

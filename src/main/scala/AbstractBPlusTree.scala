@@ -44,7 +44,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected var lastlen: Int
 	
 	/**
-	 * Adds a new `branch` to (internal) `node`. `branch` is placed at an index equal to the length of `node`, given that the length of a node is the number of keys. Therefore, this method should be called after `addKey`.
+	 * Adds a new `branch` to (internal) `node`. `branch` is placed at an index equal to the length of `node`, given that the length of a node is the number of keys.
 	 */
 	protected def addBranch( node: N, branch: N )
 		
@@ -54,7 +54,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected def addKey( node: N, key: K )
 	
 	/**
-	 * Adds a new `value` to (leaf) `node`. `value` is placed at an index equal to the length of `node` minus one, given that the length of a node is the number of keys. Therefore, this method should be called after `addKey`.
+	 * Adds a new `value` to (leaf) `node`. `value` is placed at an index equal to the length of `node` minus one, given that the length of a node is the number of keys. Therefore, this method should be called after `addKey` if a key/value pair are being added.
 	 */
 	protected def addValue[V1 >: V]( node: N, value: V1 )
 	

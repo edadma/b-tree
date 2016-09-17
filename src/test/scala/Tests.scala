@@ -87,4 +87,25 @@ class Tests extends FreeSpec with PropertyChecks with Matchers {
 			a [RuntimeException] should be thrownBy {t.load( ("A", 0) )}
 		}
 	}
+	
+	forAll (treeImplementations) { (gen, storage, order) =>
+		val t = gen()
+		
+		("deletion: " + storage + ", order " + order) in {
+			
+			t.build( """
+			(
+				[a] b [c]
+			)
+			""" ).prettyString shouldBe
+			"""	|[n0: (null) n1 | b | n2]
+					|[n1: (null, n0, n2) a] [n2: (n1, n0, null) c]""".stripMargin
+
+			t.wellConstructed shouldBe "true"
+			t.delete( "c" ) shouldBe true
+			t.prettyString shouldBe "[n0: (null, null, null) a]"
+			t.wellConstructed shouldBe "true"
+		}
+	}
+	
 }
