@@ -666,8 +666,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	def delete( key: K ) = {
 		lookup( key ) match {
 			case (true, leaf, index) =>
-				val key = getKey( leaf, index )
-				println( leaf, index )
 				val len = removeLeaf( leaf, index )
 				
 				if (len < order/2) {
@@ -697,7 +695,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
 						setKey( par, index, getKey(right, 0) )
 					} else {
+						println(left, right)
 						moveLeaf( right, 0, nodeLength(right), left, nodeLength(left) )
+						println(left, right)
 						
 						val next = getNext( right )
 						
@@ -709,6 +709,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							lastlen = nodeLength( left )
 						}
 					
+						println( getNext(first) == left, left)
 						freeNode( right )
 						
 						var len = removeInternal( par, index )
@@ -720,10 +721,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							setRoot( left )
 							first = left
 							setFirst( left )
-						} else if (par != root)
-							while (len < order/2) {
-								
-							}
+						} else if (par != root) {
+// 							while (len < order/2) {
+// 								
+// 							}
+						}
 					}
 				}
 				

@@ -57,11 +57,12 @@ object TestMain extends App {
 		)
 		""" ).prettyPrintKeysOnly
  	println( tree.wellConstructed )
-	println( tree.delete( "u" ) )
+	tree.delete( "u" )
  	tree.prettyPrintKeysOnly
-	println( tree.delete( "v" ) )
+	tree.delete( "v" )
  	tree.prettyPrintKeysOnly
  	println( tree.wellConstructed )
-// 	map += ("asdf" -> 123)
-// 	println( map )
+	tree.delete( "j" )
+ 	tree.prettyPrintKeysOnly
+ 	println( tree.wellConstructed )
 }
