@@ -45,13 +45,13 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">FileBPlusTree</span><span class="result"> extends <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>]</span>
+        <span class="name">FileBPlusTree</span><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>]</span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -89,18 +89,18 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="xyz.hyperreal.btree.FileBPlusTree#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(filename:String,order:Int,newfile:Boolean):xyz.hyperreal.btree.FileBPlusTree"></a>
-      <a id="&lt;init&gt;:FileBPlusTree"></a>
+      <a id="&lt;init&gt;(filename:String,order:Int,newfile:Boolean)(implicitevidence$1:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]"></a>
+      <a id="&lt;init&gt;:FileBPlusTree[K,V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">FileBPlusTree</span><span class="params">(<span name="filename">filename: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="order">order: <span class="extype" name="scala.Int">Int</span></span>, <span name="newfile">newfile: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span>
+        <span class="name">FileBPlusTree</span><span class="params">(<span name="filename">filename: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="order">order: <span class="extype" name="scala.Int">Int</span></span>, <span name="newfile">newfile: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: (<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>) ⇒ <span class="extype" name="scala.Ordered">Ordered</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>]</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@&lt;init&gt;(filename:String,order:Int,newfile:Boolean):xyz.hyperreal.btree.FileBPlusTree" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@&lt;init&gt;(filename:String,order:Int,newfile:Boolean)(implicitevidence$1:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -526,19 +526,19 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NULL" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="NULL:Int"></a>
-      <a id="NULL:Int"></a>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NUL" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="NUL:Int"></a>
+      <a id="NUL:Int"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">NULL</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span class="name">NUL</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@NULL:Int" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@NUL:Int" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -696,6 +696,60 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#addBranch" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="addBranch(node:Long,branch:Long):Unit"></a>
+      <a id="addBranch(Long,Long):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addBranch</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="branch">branch: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@addBranch(node:Long,branch:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Adds a new <code>branch</code> to (internal) <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>branch</code> to (internal) <code>node</code>. <code>branch</code> is placed at an index equal to the length of <code>node</code>, given that the length of a node is the number of keys. Therefore, this method should be called after <code>addKey</code>.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#addKey" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="addKey(node:Long,key:K):Unit"></a>
+      <a id="addKey(Long,K):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addKey</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="key">key: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@addKey(node:Long,key:K):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Adds a new <code>key</code> to <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>key</code> to <code>node</code>. The length of <code>node</code> will increase by one as a result. This method should be called before either <code>addBranch</code> or <code>addValue</code> since those methods use the current node length to determine placemenet.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#addValue" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="addValue[V1&gt;:V](node:Long,value:V1):Unit"></a>
+      <a id="addValue[V1&gt;:V](Long,V1):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addValue</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span></span>]</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="value">value: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.addValue.V1">V1</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@addValue[V1&gt;:V](node:Long,value:V1):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Adds a new <code>value</code> to (leaf) <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>value</code> to (leaf) <code>node</code>. <code>value</code> is placed at an index equal to the length of <code>node</code> minus one, given that the length of a node is the number of keys. Therefore, this method should be called after <code>addKey</code>.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#alloc" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="alloc(size:Int):Long"></a>
       <a id="alloc(Int):Long"></a>
@@ -732,14 +786,14 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#binarySearch" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="binarySearch(node:AbstractBPlusTree.this.N,target:K):Int"></a>
-      <a id="binarySearch(N,String):Int"></a>
+      <a id="binarySearch(N,K):Int"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">binarySearch</span><span class="params">(<span name="node">node: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="target">target: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span class="name">binarySearch</span><span class="params">(<span name="node">node: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="target">target: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@binarySearch(node:AbstractBPlusTree.this.N,target:K):Int" title="Permalink" target="_top">
@@ -750,14 +804,14 @@
 </p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the index of <code>target</code> within <code>node</code> if it exists, or (-<i>insertionPoint</i> - 1) where <i>insertionPoint</i> is the index of the correct insertion point for key <code>target</code>.</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#boundedIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]"></a>
-      <a id="boundedIterator((Symbol,String)*):Iterator[(String,Any)]"></a>
+      <a id="boundedIterator((Symbol,K)*):Iterator[(K,V)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">boundedIterator</span><span class="params">(<span name="bounds">bounds: (<span class="extype" name="scala.Symbol">Symbol</span>, <span class="extype" name="scala.Predef.String">String</span>)*</span>)</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>)]</span>
+        <span class="name">boundedIterator</span><span class="params">(<span name="bounds">bounds: (<span class="extype" name="scala.Symbol">Symbol</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>)*</span>)</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[(<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>)]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" title="Permalink" target="_top">
@@ -768,14 +822,14 @@
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#boundedKeysIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="boundedKeysIterator(bounds:(Symbol,K)*):Iterator[K]"></a>
-      <a id="boundedKeysIterator((Symbol,String)*):Iterator[String]"></a>
+      <a id="boundedKeysIterator((Symbol,K)*):Iterator[K]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">boundedKeysIterator</span><span class="params">(<span name="bounds">bounds: (<span class="extype" name="scala.Symbol">Symbol</span>, <span class="extype" name="scala.Predef.String">String</span>)*</span>)</span><span class="result">: <span class="extype" name="scala.collection.Iterator">Iterator</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">boundedKeysIterator</span><span class="params">(<span name="bounds">bounds: (<span class="extype" name="scala.Symbol">Symbol</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>)*</span>)</span><span class="result">: <span class="extype" name="scala.collection.Iterator">Iterator</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@boundedKeysIterator(bounds:(Symbol,K)*):Iterator[K]" title="Permalink" target="_top">
@@ -786,14 +840,14 @@
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#boundedPositionIterator" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="boundedPositionIterator(bounds:(Symbol,K)*):Iterator[(AbstractBPlusTree.this.N,Int)]"></a>
-      <a id="boundedPositionIterator((Symbol,String)*):Iterator[(N,Int)]"></a>
+      <a id="boundedPositionIterator((Symbol,K)*):Iterator[(N,Int)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">boundedPositionIterator</span><span class="params">(<span name="bounds">bounds: (<span class="extype" name="scala.Symbol">Symbol</span>, <span class="extype" name="scala.Predef.String">String</span>)*</span>)</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[(<a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>)]</span>
+        <span class="name">boundedPositionIterator</span><span class="params">(<span name="bounds">bounds: (<span class="extype" name="scala.Symbol">Symbol</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>)*</span>)</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[(<a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>)]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@boundedPositionIterator(bounds:(Symbol,K)*):Iterator[(AbstractBPlusTree.this.N,Int)]" title="Permalink" target="_top">
@@ -804,14 +858,14 @@
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#boundedValuesIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="boundedValuesIterator(bounds:(Symbol,K)*):Iterator[V]"></a>
-      <a id="boundedValuesIterator((Symbol,String)*):Iterator[Any]"></a>
+      <a id="boundedValuesIterator((Symbol,K)*):Iterator[V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">boundedValuesIterator</span><span class="params">(<span name="bounds">bounds: (<span class="extype" name="scala.Symbol">Symbol</span>, <span class="extype" name="scala.Predef.String">String</span>)*</span>)</span><span class="result">: <span class="extype" name="scala.collection.Iterator">Iterator</span>[<span class="extype" name="scala.Any">Any</span>]</span>
+        <span class="name">boundedValuesIterator</span><span class="params">(<span name="bounds">bounds: (<span class="extype" name="scala.Symbol">Symbol</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>)*</span>)</span><span class="result">: <span class="extype" name="scala.collection.Iterator">Iterator</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@boundedValuesIterator(bounds:(Symbol,K)*):Iterator[V]" title="Permalink" target="_top">
@@ -820,6 +874,29 @@
     </span>
       <p class="shortcomment cmt">Returns a bounded iterator over a range of values in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of values in the tree in sorted order. The <code>bounds</code> parameter is the same as for <a href="AbstractBPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree#boundedIterator">boundedIterator</a>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#build" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="build(s:String):xyz.hyperreal.btree.AbstractBPlusTree[K,V]"></a>
+      <a id="build(String):AbstractBPlusTree[K,V]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">build</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@build(s:String):xyz.hyperreal.btree.AbstractBPlusTree[K,V]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Returns a B+ Tree build from a string representation of the tree.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a B+ Tree build from a string representation of the tree. The syntax of the input string is simple: internal nodes are coded as lists of nodes alternating with keys (alpha strings with no quotation marks) using parentheses with elements separated by space, leaf nodes are coded as lists of alpha strings (no quotation marks) using brackets with elements separated by space.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd><div class="block">Example:
+               <ol><li class="cmt"><p></p><pre>(
+  [g] j [j t] u [u v]
+)</pre><p>produces a tree that pretty prints as</p><pre>[n0: (<span class="kw">null</span>) n1 | j | n2 | u | n3]
+[n1: (<span class="kw">null</span>, n0, n2) g] [n2: (n1, n0, n3) j t] [n3: (n2, n0, <span class="kw">null</span>) u v]</pre></li></ol>
+            </div></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -896,14 +973,14 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#delete" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="delete(key:K):Boolean"></a>
-      <a id="delete(String):Boolean"></a>
+      <a id="delete(K):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">delete</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">delete</span><span class="params">(<span name="key">key: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@delete(key:K):Boolean" title="Permalink" target="_top">
@@ -1056,6 +1133,24 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#freeNode" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="freeNode(node:Long):Unit"></a>
+      <a id="freeNode(Long):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">freeNode</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@freeNode(node:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Frees that storage previously allocated for <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Frees that storage previously allocated for <code>node</code>. For in-memory implementations, this method probably won't do anything.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#getBranch" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getBranch(node:Long,index:Int):Long"></a>
       <a id="getBranch(Long,Int):Long"></a>
@@ -1110,18 +1205,18 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#getKey" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="getKey(node:Long,index:Int):String"></a>
-      <a id="getKey(Long,Int):String"></a>
+      <a id="getKey(node:Long,index:Int):K"></a>
+      <a id="getKey(Long,Int):K"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getKey</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">getKey</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@getKey(node:Long,index:Int):String" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@getKey(node:Long,index:Int):K" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1129,14 +1224,14 @@
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#getKeyValue" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getKeyValue(leaf:AbstractBPlusTree.this.N,index:Int):(K,V)"></a>
-      <a id="getKeyValue(N,Int):(String,Any)"></a>
+      <a id="getKeyValue(N,Int):(K,V)"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getKeyValue</span><span class="params">(<span name="leaf">leaf: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: (<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>)</span>
+        <span class="name">getKeyValue</span><span class="params">(<span name="leaf">leaf: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: (<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>)</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@getKeyValue(leaf:AbstractBPlusTree.this.N,index:Int):(K,V)" title="Permalink" target="_top">
@@ -1146,18 +1241,18 @@
       <p class="shortcomment cmt">Returns the key/value pair at <code>index</code> within <code>leaf</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the key/value pair at <code>index</code> within <code>leaf</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#getKeys" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="getKeys(node:Long):Seq[String]"></a>
-      <a id="getKeys(Long):Seq[String]"></a>
+      <a id="getKeys(node:Long):Seq[K]"></a>
+      <a id="getKeys(Long):Seq[K]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getKeys</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">getKeys</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@getKeys(node:Long):Seq[String]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@getKeys(node:Long):Seq[K]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1218,36 +1313,36 @@
       <p class="shortcomment cmt">Returns the previous leaf node link pointer of (leaf) <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the previous leaf node link pointer of (leaf) <code>node</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#getValue" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="getValue(node:Long,index:Int):Any"></a>
-      <a id="getValue(Long,Int):Any"></a>
+      <a id="getValue(node:Long,index:Int):V"></a>
+      <a id="getValue(Long,Int):V"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getValue</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Any">Any</span></span>
+        <span class="name">getValue</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@getValue(node:Long,index:Int):Any" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@getValue(node:Long,index:Int):V" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Gets a value from a leaf <code>node</code> at a given <code>index</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Gets a value from a leaf <code>node</code> at a given <code>index</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#getValues" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="getValues(node:Long):scala.collection.AbstractSeq[Any]withIndexedSeq[Any]"></a>
-      <a id="getValues(Long):AbstractSeq[Any]withIndexedSeq[Any]"></a>
+      <a id="getValues(node:Long):scala.collection.AbstractSeq[V]withIndexedSeq[V]"></a>
+      <a id="getValues(Long):AbstractSeq[V]withIndexedSeq[V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getValues</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.collection.AbstractSeq">AbstractSeq</span>[<span class="extype" name="scala.Any">Any</span>] with <span class="extype" name="scala.IndexedSeq">IndexedSeq</span>[<span class="extype" name="scala.Any">Any</span>]</span>
+        <span class="name">getValues</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.collection.AbstractSeq">AbstractSeq</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>] with <span class="extype" name="scala.IndexedSeq">IndexedSeq</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@getValues(node:Long):scala.collection.AbstractSeq[Any]withIndexedSeq[Any]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@getValues(node:Long):scala.collection.AbstractSeq[V]withIndexedSeq[V]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1272,14 +1367,14 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#insert" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="insert[V1&gt;:V](key:K,value:V1):Boolean"></a>
-      <a id="insert[V1&gt;:Any](String,V1):Boolean"></a>
+      <a id="insert[V1&gt;:V](K,V1):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">insert</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="scala.Any">Any</span></span>]</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="value">value: <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.insert.V1">V1</span> = <span class="symbol">null.asInstanceOf[V1]</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">insert</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span></span>]</span><span class="params">(<span name="key">key: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>, <span name="value">value: <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.insert.V1">V1</span> = <span class="symbol">null.asInstanceOf[V1]</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@insert[V1&gt;:V](key:K,value:V1):Boolean" title="Permalink" target="_top">
@@ -1290,32 +1385,32 @@
 </p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p><code>true</code> if <code>key</code> exists</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#insertAt" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="insertAt[V1&gt;:V](key:K,value:V1,leaf:AbstractBPlusTree.this.N,index:Int):Unit"></a>
-      <a id="insertAt[V1&gt;:Any](String,V1,N,Int):Unit"></a>
+      <a id="insertAt[V1&gt;:V](K,V1,N,Int):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">insertAt</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="scala.Any">Any</span></span>]</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="value">value: <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.insertAt.V1">V1</span></span>, <span name="leaf">leaf: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">insertAt</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span></span>]</span><span class="params">(<span name="key">key: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>, <span name="value">value: <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.insertAt.V1">V1</span></span>, <span name="leaf">leaf: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@insertAt[V1&gt;:V](key:K,value:V1,leaf:AbstractBPlusTree.this.N,index:Int):Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Performs the B+ Tree insertion algorithm to insert <code>key</code> and associated <code>value</code> into the tree, specifically in <code>leaf</code> at <code>index</code>, rebalancing the tree if necessary.</p><div class="fullcomment"><div class="comment cmt"><p>Performs the B+ Tree insertion algorithm to insert <code>key</code> and associated <code>value</code> into the tree, specifically in <code>leaf</code> at <code>index</code>, rebalancing the tree if necessary. If <code>leaf</code> and <code>index</code> is not the correct insertion point for <code>key</code> then this method will probably cause the tree to become an invalid B+ Tree.
+      <p class="shortcomment cmt">Performs the B+ Tree insertion algorithm to insert <code>key</code> and associated <code>value</code> into the tree, specifically in <code>leaf</code> at <code>index</code>, rebalancing the tree if necessary.</p><div class="fullcomment"><div class="comment cmt"><p>Performs the B+ Tree insertion algorithm to insert <code>key</code> and associated <code>value</code> into the tree, specifically in <code>leaf</code> at <code>index</code>, rebalancing the tree if necessary. If <code>leaf</code> and <code>index</code> is not the correct insertion point for <code>key</code> then this method will probably result in an invalid B+ Tree.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#insertIfNotFound" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="insertIfNotFound[V1&gt;:V](key:K,value:V1):Boolean"></a>
-      <a id="insertIfNotFound[V1&gt;:Any](String,V1):Boolean"></a>
+      <a id="insertIfNotFound[V1&gt;:V](K,V1):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">insertIfNotFound</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="scala.Any">Any</span></span>]</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="value">value: <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.insertIfNotFound.V1">V1</span> = <span class="symbol">null.asInstanceOf[V1]</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">insertIfNotFound</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span></span>]</span><span class="params">(<span name="key">key: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>, <span name="value">value: <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.insertIfNotFound.V1">V1</span> = <span class="symbol">null.asInstanceOf[V1]</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@insertIfNotFound[V1&gt;:V](key:K,value:V1):Boolean" title="Permalink" target="_top">
@@ -1325,18 +1420,18 @@
       <p class="shortcomment cmt">Inserts <code>key</code> with associated <code>value</code> into the tree only if <code>key</code> does not exist.</p><div class="fullcomment"><div class="comment cmt"><p>Inserts <code>key</code> with associated <code>value</code> into the tree only if <code>key</code> does not exist.
 </p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p><code>true</code> if <code>key</code> exists</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#insertInternal" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="insertInternal(node:Long,index:Int,key:String,branch:Long):Unit"></a>
-      <a id="insertInternal(Long,Int,String,Long):Unit"></a>
+      <a id="insertInternal(node:Long,index:Int,key:K,branch:Long):Unit"></a>
+      <a id="insertInternal(Long,Int,K,Long):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">insertInternal</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>, <span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="branch">branch: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">insertInternal</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>, <span name="key">key: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>, <span name="branch">branch: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@insertInternal(node:Long,index:Int,key:String,branch:Long):Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@insertInternal(node:Long,index:Int,key:K,branch:Long):Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1344,14 +1439,14 @@
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#insertKeys" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="insertKeys(keys:K*):Unit"></a>
-      <a id="insertKeys(String*):Unit"></a>
+      <a id="insertKeys(K*):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">insertKeys</span><span class="params">(<span name="keys">keys: <span class="extype" name="scala.Predef.String">String</span>*</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">insertKeys</span><span class="params">(<span name="keys">keys: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>*</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@insertKeys(keys:K*):Unit" title="Permalink" target="_top">
@@ -1362,14 +1457,14 @@
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#insertKeysAndCheck" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="insertKeysAndCheck(keys:K*):String"></a>
-      <a id="insertKeysAndCheck(String*):String"></a>
+      <a id="insertKeysAndCheck(K*):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">insertKeysAndCheck</span><span class="params">(<span name="keys">keys: <span class="extype" name="scala.Predef.String">String</span>*</span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">insertKeysAndCheck</span><span class="params">(<span name="keys">keys: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>*</span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@insertKeysAndCheck(keys:K*):String" title="Permalink" target="_top">
@@ -1379,18 +1474,18 @@
       <p class="shortcomment cmt">Inserts <code>keys</code> into the tree each with an associated value of <code>null</code>, and checks that the tree is well constructed after each key is inserted.</p><div class="fullcomment"><div class="comment cmt"><p>Inserts <code>keys</code> into the tree each with an associated value of <code>null</code>, and checks that the tree is well constructed after each key is inserted. If a given key exists, then it's new associated value will be <code>null</code>. This method is used for testing.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#insertLeaf" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="insertLeaf[V1&gt;:Any](node:Long,index:Int,key:String,value:V1):Unit"></a>
-      <a id="insertLeaf[V1&gt;:Any](Long,Int,String,V1):Unit"></a>
+      <a id="insertLeaf[V1&gt;:V](node:Long,index:Int,key:K,value:V1):Unit"></a>
+      <a id="insertLeaf[V1&gt;:V](Long,Int,K,V1):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">insertLeaf</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="scala.Any">Any</span></span>]</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>, <span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="value">value: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.insertLeaf.V1">V1</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">insertLeaf</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span></span>]</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>, <span name="key">key: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>, <span name="value">value: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.insertLeaf.V1">V1</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@insertLeaf[V1&gt;:Any](node:Long,index:Int,key:String,value:V1):Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@insertLeaf[V1&gt;:V](node:Long,index:Int,key:K,value:V1):Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1452,14 +1547,14 @@
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#iterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="iterator:Iterator[(K,V)]"></a>
-      <a id="iterator:Iterator[(String,Any)]"></a>
+      <a id="iterator:Iterator[(K,V)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">iterator</span><span class="result">: <span class="extype" name="scala.collection.Iterator">Iterator</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>)]</span>
+        <span class="name">iterator</span><span class="result">: <span class="extype" name="scala.collection.Iterator">Iterator</span>[(<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>)]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@iterator:Iterator[(K,V)]" title="Permalink" target="_top">
@@ -1470,21 +1565,21 @@
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#keysIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="keysIterator:Iterator[K]"></a>
-      <a id="keysIterator:Iterator[String]"></a>
+      <a id="keysIterator:Iterator[K]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">keysIterator</span><span class="result">: <span class="extype" name="scala.collection.Iterator">Iterator</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">keysIterator</span><span class="result">: <span class="extype" name="scala.collection.Iterator">Iterator</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@keysIterator:Iterator[K]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns an iterator over all keys in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all keys in the tree in sorted order.
+      <p class="shortcomment cmt">Returns an iterator over all keys in the tree in ascending sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all keys in the tree in ascending sorted order.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#last" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="last:Long"></a>
@@ -1524,14 +1619,14 @@
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#load" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="load[V1&gt;:V](kvs:(K,V1)*):Unit"></a>
-      <a id="load[V1&gt;:Any]((String,V1)*):Unit"></a>
+      <a id="load[V1&gt;:V]((K,V1)*):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">load</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="scala.Any">Any</span></span>]</span><span class="params">(<span name="kvs">kvs: (<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.load.V1">V1</span>)*</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">load</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span></span>]</span><span class="params">(<span name="kvs">kvs: (<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.load.V1">V1</span>)*</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@load[V1&gt;:V](kvs:(K,V1)*):Unit" title="Permalink" target="_top">
@@ -1542,14 +1637,14 @@
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#lookup" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="lookup(key:K):(Boolean,AbstractBPlusTree.this.N,Int)"></a>
-      <a id="lookup(String):(Boolean,N,Int)"></a>
+      <a id="lookup(K):(Boolean,N,Int)"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">lookup</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: (<span class="extype" name="scala.Boolean">Boolean</span>, <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>)</span>
+        <span class="name">lookup</span><span class="params">(<span name="key">key: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>)</span><span class="result">: (<span class="extype" name="scala.Boolean">Boolean</span>, <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>)</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@lookup(key:K):(Boolean,AbstractBPlusTree.this.N,Int)" title="Permalink" target="_top">
@@ -1560,14 +1655,14 @@
 </p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a triple where the first element is <code>true</code> if <code>key</code> exists and <code>false</code> otherwise, the second element is the node containing <code>key</code> if found or the correct insertion point for <code>key</code> if not found, the third is the index within that node.</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#lookupGTE" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="lookupGTE(key:K):(Boolean,AbstractBPlusTree.this.N,Int)"></a>
-      <a id="lookupGTE(String):(Boolean,N,Int)"></a>
+      <a id="lookupGTE(K):(Boolean,N,Int)"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">lookupGTE</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: (<span class="extype" name="scala.Boolean">Boolean</span>, <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>)</span>
+        <span class="name">lookupGTE</span><span class="params">(<span name="key">key: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>)</span><span class="result">: (<span class="extype" name="scala.Boolean">Boolean</span>, <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>)</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@lookupGTE(key:K):(Boolean,AbstractBPlusTree.this.N,Int)" title="Permalink" target="_top">
@@ -1578,14 +1673,14 @@
 </p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a triple where the first element is <code>true</code> if <code>key</code> exists and <code>false</code> otherwise, and the second element is the leaf node containing the least greater than or equal key, and the third is the index of that key.</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#max" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="max:Option[(K,V)]"></a>
-      <a id="max:Option[(String,Any)]"></a>
+      <a id="max:Option[(K,V)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">max</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>)]</span>
+        <span class="name">max</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[(<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>)]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@max:Option[(K,V)]" title="Permalink" target="_top">
@@ -1596,14 +1691,14 @@
 </p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p><code>Some( (key, value) )</code> where <code>key</code> is the maximum key and <code>value</code> is it's associated value if the tree is non-empty, or <code>None</code> if the tree is empty.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#maxKey" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="maxKey:Option[K]"></a>
-      <a id="maxKey:Option[String]"></a>
+      <a id="maxKey:Option[K]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">maxKey</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">maxKey</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@maxKey:Option[K]" title="Permalink" target="_top">
@@ -1614,14 +1709,14 @@
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#min" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="min:Option[(K,V)]"></a>
-      <a id="min:Option[(String,Any)]"></a>
+      <a id="min:Option[(K,V)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">min</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>)]</span>
+        <span class="name">min</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[(<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>)]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@min:Option[(K,V)]" title="Permalink" target="_top">
@@ -1632,14 +1727,14 @@
 </p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p><code>Some( (key, value) )</code> where <code>key</code> is the minimum key and <code>value</code> is it's associated value if the tree is non-empty, or <code>None</code> if the tree is empty.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#minKey" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="minKey:Option[K]"></a>
-      <a id="minKey:Option[String]"></a>
+      <a id="minKey:Option[K]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">minKey</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">minKey</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@minKey:Option[K]" title="Permalink" target="_top">
@@ -1757,14 +1852,14 @@
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#nextKeyValue" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="nextKeyValue(leaf:AbstractBPlusTree.this.N,index:Int):((K,V),(AbstractBPlusTree.this.N,Int))"></a>
-      <a id="nextKeyValue(N,Int):((String,Any),(N,Int))"></a>
+      <a id="nextKeyValue(N,Int):((K,V),(N,Int))"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">nextKeyValue</span><span class="params">(<span name="leaf">leaf: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: ((<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>), (<a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>))</span>
+        <span class="name">nextKeyValue</span><span class="params">(<span name="leaf">leaf: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: ((<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>), (<a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>))</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@nextKeyValue(leaf:AbstractBPlusTree.this.N,index:Int):((K,V),(AbstractBPlusTree.this.N,Int))" title="Permalink" target="_top">
@@ -1792,6 +1887,23 @@
       <p class="shortcomment cmt">Returns the node/index pair pointing to the location of the leaf node key following the one at <code>index</code> in <code>leaf</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the node/index pair pointing to the location of the leaf node key following the one at <code>index</code> in <code>leaf</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#nodeLength" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="nodeLength(node:Long,len:Int):Unit"></a>
+      <a id="nodeLength(Long,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">nodeLength</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="len">len: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@nodeLength(node:Long,len:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#nodeLength" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="nodeLength(node:Long):Int"></a>
       <a id="nodeLength(Long):Int"></a>
       <h4 class="signature">
@@ -1809,23 +1921,6 @@
     </span>
       <p class="shortcomment cmt">Returns the length (number of keys) of <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the length (number of keys) of <code>node</code>. For internal nodes, the number of branch pointers will one more than the length.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#nodeLength" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="nodeLength(node:Long,len:Int):Unit"></a>
-      <a id="nodeLength(Long,Int):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">nodeLength</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="len">len: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@nodeLength(node:Long,len:Int):Unit" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <a id="notify():Unit"></a>
@@ -1876,7 +1971,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns the <i>null</i> node pointer.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the <i>null</i> node pointer.  For in-memory implementations this will usually be a Scala <code>null</code> value.  For on-disk it would make sense for this to be <code>0L</code>.
+      <p class="shortcomment cmt">Returns the <i>null</i> node pointer.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the <i>null</i> node pointer. For in-memory implementations this will usually be a Scala <code>null</code> value. For on-disk it would make sense for this to be <code>0L</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#positionIterator" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="positionIterator:Iterator[(AbstractBPlusTree.this.N,Int)]"></a>
@@ -1894,7 +1989,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns an iterator over all key positions (node/index pairs) in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key positions (node/index pairs) in the tree in sorted order.
+      <p class="shortcomment cmt">Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted order.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#prettyPrint" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="prettyPrint:Unit"></a>
@@ -1934,14 +2029,14 @@
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#prettySearch" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="prettySearch(key:K):String"></a>
-      <a id="prettySearch(String):String"></a>
+      <a id="prettySearch(K):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">prettySearch</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+        <span class="name">prettySearch</span><span class="params">(<span name="key">key: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>)</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@prettySearch(key:K):String" title="Permalink" target="_top">
@@ -1986,6 +2081,24 @@
     </span>
       <p class="shortcomment cmt">Returns a string containing a readable representation of the structure and contents of the tree.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a string containing a readable representation of the structure and contents of the tree. This method is used mainly for unit testing.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#prevPosition" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="prevPosition(leaf:AbstractBPlusTree.this.N,index:Int):(AbstractBPlusTree.this.N,Int)"></a>
+      <a id="prevPosition(N,Int):(N,Int)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">prevPosition</span><span class="params">(<span name="leaf">leaf: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: (<a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>)</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@prevPosition(leaf:AbstractBPlusTree.this.N,index:Int):(AbstractBPlusTree.this.N,Int)" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Returns the node/index pair pointing to the location of the leaf node key preceding the one at <code>index</code> in <code>leaf</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the node/index pair pointing to the location of the leaf node key preceding the one at <code>index</code> in <code>leaf</code>.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#readDatum" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="readDatum(addr:Long):Any"></a>
       <a id="readDatum(Long):Any"></a>
@@ -2020,6 +2133,24 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#removeInternal" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="removeInternal(node:Long,index:Int):Int"></a>
+      <a id="removeInternal(Long,Int):Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">removeInternal</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@removeInternal(node:Long,index:Int):Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Removes the key/branch pair from internal <code>node</code> at <code>index</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Removes the key/branch pair from internal <code>node</code> at <code>index</code>. The branch that is removed is the one to the right of the key being removed, i.e. the branch at (<code>index</code> + 1). This method is perhaps poorly named: it does not remove an internal node from the tree.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>length of <code>node</code> after removal</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#removeLeaf" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="removeLeaf(node:Long,index:Int):Int"></a>
       <a id="removeLeaf(Long,Int):Int"></a>
@@ -2036,8 +2167,62 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Removes the key/value pair from leaf <code>node</code> at <code>index</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Removes the key/value pair from leaf <code>node</code> at <code>index</code>. This method is perhaps poorly named: it does not remove a leaf node from the tree, that's done by (concrete method) <code>delete</code>.
-</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
+      <p class="shortcomment cmt">Removes the key/value pair from leaf <code>node</code> at <code>index</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Removes the key/value pair from leaf <code>node</code> at <code>index</code>. This method is perhaps poorly named: it does not remove a leaf node from the tree.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>length of <code>node</code> after removal</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#reverseIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reverseIterator:Iterator[(K,V)]"></a>
+      <a id="reverseIterator:Iterator[(K,V)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">reverseIterator</span><span class="result">: <span class="extype" name="scala.collection.Iterator">Iterator</span>[(<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>)]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@reverseIterator:Iterator[(K,V)]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Returns an iterator over all key/value pairs in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key/value pairs in the tree in sorted order.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#reverseKeysIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reverseKeysIterator:Iterator[K]"></a>
+      <a id="reverseKeysIterator:Iterator[K]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">reverseKeysIterator</span><span class="result">: <span class="extype" name="scala.collection.Iterator">Iterator</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@reverseKeysIterator:Iterator[K]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Returns a reverse iterator over all keys in the tree in descending sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a reverse iterator over all keys in the tree in descending sorted order.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#reversePositionIterator" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reversePositionIterator:Iterator[(AbstractBPlusTree.this.N,Int)]"></a>
+      <a id="reversePositionIterator:Iterator[(N,Int)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">reversePositionIterator</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[(<a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a>, <span class="extype" name="scala.Int">Int</span>)]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@reversePositionIterator:Iterator[(AbstractBPlusTree.this.N,Int)]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted order.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#root" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="root:Long"></a>
       <a id="root:Long"></a>
@@ -2058,14 +2243,14 @@
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#search" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="search(key:K):Option[V]"></a>
-      <a id="search(String):Option[Any]"></a>
+      <a id="search(K):Option[V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">search</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Any">Any</span>]</span>
+        <span class="name">search</span><span class="params">(<span name="key">key: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@search(key:K):Option[V]" title="Permalink" target="_top">
@@ -2125,22 +2310,21 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">not used yet, could be empty
-</p><div class="fullcomment"><div class="comment cmt"><p>not used yet, could be empty
+      <p class="shortcomment cmt">Sets the in-storage copy of the first leaf node pointer.</p><div class="fullcomment"><div class="comment cmt"><p>Sets the in-storage copy of the first leaf node pointer. This method is not responsable for setting the <code>first</code> variable.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#setKey" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="setKey(node:Long,index:Int,key:String):Unit"></a>
-      <a id="setKey(Long,Int,String):Unit"></a>
+      <a id="setKey(node:Long,index:Int,key:K):Unit"></a>
+      <a id="setKey(Long,Int,K):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">setKey</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>, <span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">setKey</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>, <span name="key">key: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@setKey(node:Long,index:Int,key:String):Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@setKey(node:Long,index:Int,key:K):Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2162,8 +2346,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">not used yet, could be empty
-</p><div class="fullcomment"><div class="comment cmt"><p>not used yet, could be empty
+      <p class="shortcomment cmt">Sets the in-storage copy of the last leaf node pointer.</p><div class="fullcomment"><div class="comment cmt"><p>Sets the in-storage copy of the last leaf node pointer. This method is not responsable for setting the <code>last</code> variable nor the <code>lastlen</code> variable.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#setNext" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="setNext(node:Long,p:Long):Unit"></a>
@@ -2219,19 +2402,37 @@
     </span>
       <p class="shortcomment cmt">Sets previous leaf node link pointer of (leaf) <code>node</code> to <code>p</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Sets previous leaf node link pointer of (leaf) <code>node</code> to <code>p</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#setValue" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="setValue[V1&gt;:Any](node:Long,index:Int,v:V1):Unit"></a>
-      <a id="setValue[V1&gt;:Any](Long,Int,V1):Unit"></a>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#setRoot" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setRoot(node:Long):Unit"></a>
+      <a id="setRoot(Long):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">setValue</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="scala.Any">Any</span></span>]</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>, <span name="v">v: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.setValue.V1">V1</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">setRoot</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@setValue[V1&gt;:Any](node:Long,index:Int,v:V1):Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@setRoot(node:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Sets the in-storage copy of the root node pointer.</p><div class="fullcomment"><div class="comment cmt"><p>Sets the in-storage copy of the root node pointer. This method is not responsable for setting the <code>root</code> variable.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#setValue" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setValue[V1&gt;:V](node:Long,index:Int,v:V1):Unit"></a>
+      <a id="setValue[V1&gt;:V](Long,Int,V1):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setValue</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span></span>]</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>, <span name="v">v: <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.setValue.V1">V1</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@setValue[V1&gt;:V](node:Long,index:Int,v:V1):Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2385,7 +2586,7 @@
 
         <div id="inheritedMembers">
         <div class="parent" name="xyz.hyperreal.btree.AbstractBPlusTree">
-              <h3>Inherited from <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>]</h3>
+              <h3>Inherited from <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>]</h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
