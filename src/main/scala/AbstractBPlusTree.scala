@@ -3,6 +3,7 @@ package xyz.hyperreal.btree
 import scala.sys.process._
 import collection.mutable.{HashMap, ArrayBuffer}
 import collection.immutable.ListMap
+import collection.AbstractIterator
 
 import java.io.PrintWriter
 
@@ -242,7 +243,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 			else
 				((first, 0), translate( 0 ))
 			
-		new Iterator[(N, Int)] {
+		new AbstractIterator[(N, Int)] {
 			var leaf: N = loleaf
 			var index: Int = loindex
 
@@ -291,7 +292,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
    * Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted order.
    */
 	protected def positionIterator: Iterator[(N, Int)] =
-		new Iterator[(N, Int)] {
+		new AbstractIterator[(N, Int)] {
 			var leaf = first
 			var index = 0
 			
@@ -313,7 +314,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
    * Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted order.
    */
 	protected def reversePositionIterator: Iterator[(N, Int)] =
-		new Iterator[(N, Int)] {
+		new AbstractIterator[(N, Int)] {
 			var leaf = last
 			var index = lastlen - 1
 			

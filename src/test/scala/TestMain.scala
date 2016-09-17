@@ -51,12 +51,13 @@ object TestMain extends App {
 //	println( tree.reverseKeysIterator.toList )
 //	println( tree.boundedIterator(('>, "a"), ('<, "d")) map {case (k, _) => k} toList )
 //	println( tree.boundedIteratorOverKeys(('<=, "z")) toList )
- 	tree.prettyPrintKeysOnly
-	println( tree.delete( "c" ) )
- 	tree.prettyPrintKeysOnly
-	println( tree.delete( "b" ) )
- 	tree.prettyPrintKeysOnly
- 	println( tree.wellConstructed )
+//  	tree.prettyPrintKeysOnly
+// 	println( tree.delete( "c" ) )
+//  	tree.prettyPrintKeysOnly
+// 	println( tree.delete( "b" ) )
+//  	tree.prettyPrintKeysOnly
+//  	println( tree.wellConstructed )
 // 	map += ("asdf" -> 123)
 // 	println( map )
+	println( build("([ab   bc cd] \n([de ef]))") )
 }
