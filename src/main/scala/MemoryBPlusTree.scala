@@ -12,6 +12,12 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	protected var root: Node[K, V] = first
 	protected var lastlen = 0
 	
+  protected def addBranch( node: Node[K, V], branch: Node[K,V] ) = node.asInternal.branches += branch
+		
+	protected def addKey( node: Node[K, V], key: K ) = node.keys += key
+	
+	protected def addValue[V1 >: V]( node: Node[K, V], value: V1 ) = node.asInstanceOf[Node[K, V1]].asLeaf.values += value
+
 	protected def freeNode( node: Node[K, V] ) {}
 
 	protected def getBranch( n: Node[K, V], index: Int ) = n.asInternal.branches( index )

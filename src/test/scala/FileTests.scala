@@ -7,7 +7,7 @@ import prop.PropertyChecks
 class FileTests extends FreeSpec with PropertyChecks with Matchers {
 	
 	"ascending insertion (order 3)" in {
-		val tree = new FileBPlusTree( "btree", 3, true )
+		val tree = new FileBPlusTree[String, Any]( "btree", 3, true )
 	
 		tree.prettyString shouldBe "[n0: (null, null, null)]"
 		tree.insert( "a", 1 )
@@ -42,7 +42,7 @@ class FileTests extends FreeSpec with PropertyChecks with Matchers {
 	}
 	
 	"descending insertion (order 3)" in {
-		val tree = new FileBPlusTree( "btree", 3, true )
+		val tree = new FileBPlusTree[String, Any]( "btree", 3, true )
 	
 		tree.insertKeysAndCheck( "g", "f" ) shouldBe "true"
 		tree.prettyString shouldBe "[n0: (null, null, null) f g]"
@@ -72,7 +72,7 @@ class FileTests extends FreeSpec with PropertyChecks with Matchers {
 	}
 	
 	"random insertion (order 3)" in	{
-		val tree = new FileBPlusTree( "btree", 3, true )
+		val tree = new FileBPlusTree[String, Any]( "btree", 3, true )
 	
 		tree.insertKeysAndCheck( "v", "t", "u", "j", "g", "w", "y", "c", "n", "l", "a", "r", "b", "s", "e", "f", "i", "z", "h", "d", "p", "x", "m", "k", "o", "q" ) shouldBe "true"
 		tree.prettyString shouldBe
@@ -84,7 +84,7 @@ class FileTests extends FreeSpec with PropertyChecks with Matchers {
 	}
 	
 	"ascending insertion (order 4)" in {
-		val tree = new FileBPlusTree( "btree", 4, true )
+		val tree = new FileBPlusTree[String, Any]( "btree", 4, true )
 	
 		tree.prettyString shouldBe "[n0: (null, null, null)]"
 		tree.insert( "a" )
@@ -112,7 +112,7 @@ class FileTests extends FreeSpec with PropertyChecks with Matchers {
 	}
 	
 	"descending insertion (order 4)" in {
-		val tree = new FileBPlusTree( "btree", 4, true )
+		val tree = new FileBPlusTree[String, Any]( "btree", 4, true )
 	
 		tree.insertKeysAndCheck( "p", "o", "n", "m", "l", "k", "j", "i", "h", "g", "f", "e", "d", "c", "b", "a" ) shouldBe "true"
 		tree.prettyString shouldBe
@@ -123,7 +123,7 @@ class FileTests extends FreeSpec with PropertyChecks with Matchers {
 	}
 	
 	"random insertion (order 4)" in	{
-		val tree = new FileBPlusTree( "btree", 4, true )
+		val tree = new FileBPlusTree[String, Any]( "btree", 4, true )
 	
 		tree.insertKeysAndCheck( "v", "t", "u", "j", "g", "w", "y", "c", "n", "l", "a", "r", "b", "s", "e", "f", "i", "z", "h", "d", "p", "x", "m", "k", "o", "q" ) shouldBe "true"
 		tree.prettyString shouldBe

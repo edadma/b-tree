@@ -10,6 +10,11 @@ import java.io.PrintWriter
 
 /**
  * Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially.  An empty B+ Tree consists of a single empty leaf node as the root.  Also the `first` and `last` should refer to the root leaf node, and the `lastlen` variable should be 0.
+ * 
+ * @param order the branching factor (maximum number of branches in an internal node) of the tree
+ * 
+ * @tparam K the type of the keys contained in this map.
+ * @tparam V the type of the values associated with the keys.
  */
 abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	/**
@@ -36,6 +41,21 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	 * Length of the last leaf node.  This just speeds up bulk loading (the `load` method). Implementations are required to set this.
 	 */
 	protected var lastlen: Int
+	
+	/**
+	 * Adds a new `branch` to (internal) `node`. `branch` is placed at an index equal to the length of `node`, given that the length of a node is the number of keys. Therefore, this method should be called after `addKey`.
+	 */
+	protected def addBranch( node: N, branch: N )
+		
+	/**
+	 * Adds a new `key` to `node`. The length of `node` will increase by one as a result. This method should be called before either `addBranch` or `addValue` since those methods use the current node length to determine placemenet.
+	 */
+	protected def addKey( node: N, key: K )
+	
+	/**
+	 * Adds a new `value` to (leaf) `node`. `value` is placed at an index equal to the length of `node` minus one, given that the length of a node is the number of keys. Therefore, this method should be called after `addKey`.
+	 */
+	protected def addValue[V1 >: V]( node: N, value: V1 )
 	
 	/**
 	 * Frees that storage previously allocated for `node`. For in-memory implementations, this method probably won't do anything.
@@ -646,6 +666,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 		lookup( key ) match {
 			case (true, leaf, index) =>
 				val key = getKey( leaf, index )
+				println( leaf, index )
 				val len = removeLeaf( leaf, index )
 				
 				if (len < order/2) {

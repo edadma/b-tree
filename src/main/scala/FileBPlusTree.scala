@@ -9,7 +9,7 @@ import collection.AbstractSeq
 import java.io.{File, RandomAccessFile}
 
 
-class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) extends AbstractBPlusTree[String, Any]( order ) {
+class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: Boolean = false ) extends AbstractBPlusTree[K, V]( order ) {
 	protected type N = Long
 	
 	protected val NUL = 0
@@ -52,8 +52,8 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 	protected val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
 	
 	private var savedNode: Long = NUL
-	private var savedKeys = new ArrayBuffer[String]
-	private var savedValues = new ArrayBuffer[Any]
+	private var savedKeys = new ArrayBuffer[K]
+	private var savedValues = new ArrayBuffer[V]
 	private var savedBranches = new ArrayBuffer[Long]
 	
  	if (newfile)
@@ -91,6 +91,18 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		lastlen = nodeLength( last )
 	}
 	
+  protected def addBranch( node: Long, branch: Long ) {
+		
+  }
+		
+	protected def addKey( node: Long, key: K ) {
+		
+	}
+	
+	protected def addValue[V1 >: V]( node: Long, value: V1 ) {
+		
+	}
+	
 	protected def freeNode( node: Long ) = free( node, BLOCK_SIZE )
 	
 	protected def getBranch( node: Long, index: Int ) = {
@@ -109,10 +121,10 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		if (savedNode == node)
 			savedKeys(index)
 		else
-			readString( node + NODE_KEYS + index*DATUM_SIZE )
+			readDatum( node + NODE_KEYS + index*DATUM_SIZE ).asInstanceOf[K]
 	
-	protected def getKeys( node: Long ): Seq[String] =
-		new AbstractSeq[String] with IndexedSeq[String] {
+	protected def getKeys( node: Long ): Seq[K] =
+		new AbstractSeq[K] with IndexedSeq[K] {
 			def apply( idx: Int ) = getKey( node, idx )
 				
 			def length = nodeLength( node )
@@ -133,16 +145,16 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file readLong
 	}
 	
-	protected def getValue( node: Long, index: Int ) = readDatum( node + LEAF_VALUES + index*DATUM_SIZE )
+	protected def getValue( node: Long, index: Int ) = readDatum( node + LEAF_VALUES + index*DATUM_SIZE ).asInstanceOf[V]
 	
 	protected def getValues( node: Long ) =
-		new AbstractSeq[Any] with IndexedSeq[Any] {
+		new AbstractSeq[V] with IndexedSeq[V] {
 			def apply( idx: Int ) = getValue( node, idx )
 				
 			def length = nodeLength( node )
 		}
 	
-	protected def insertInternal( node: Long, index: Int, key: String, branch: Long ) {
+	protected def insertInternal( node: Long, index: Int, key: K, branch: Long ) {
 		val len = nodeLength( node )
 		
 		if (len < order - 1) {
@@ -176,7 +188,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		}
 	}
 	
-	protected def insertLeaf[V1 >: Any]( node: Long, index: Int, key: String, value: V1 ) {
+	protected def insertLeaf[V1 >: V]( node: Long, index: Int, key: K, value: V1 ) {
 		val len = nodeLength( node )
 		
 		if (len < order - 1) {
@@ -196,7 +208,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 			savedKeys ++= getKeys( node )
 			savedValues ++= getValues( node )
 			savedKeys.insert( index, key )
-			savedValues.insert( index, value )
+			savedValues.asInstanceOf[ArrayBuffer[V1]].insert( index, value )
 			savedNode = node
 		}
 	}
@@ -219,7 +231,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 			file write data
 			nodeLength( dst, end - begin )
 		} else {
-			val dstKeys = new ArrayBuffer[String]
+			val dstKeys = new ArrayBuffer[K]
 			val dstBranches = new ArrayBuffer[Long]
 			
 			savedKeys.view( begin, end ) copyToBuffer dstKeys
@@ -254,8 +266,8 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 			nodeLength( src, nodeLength(src) - (end - begin) )
 			nodeLength( dst, dstlen + end - begin )
 		} else {
-			val dstKeys = new ArrayBuffer[String]
-			val dstValues = new ArrayBuffer[Any]
+			val dstKeys = new ArrayBuffer[K]
+			val dstValues = new ArrayBuffer[V]
 			val len = end - begin
 			
 			savedKeys.view( begin, end ) copyToBuffer dstKeys
@@ -362,7 +374,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file writeLong leaf
 	}
 
-	protected def setKey( node: Long, index: Int, key: String ) = writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
+	protected def setKey( node: Long, index: Int, key: K ) = writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
 
 	protected def setLast( leaf: Long ) {
 		file seek FILE_LAST_PTR
@@ -389,7 +401,7 @@ class FileBPlusTree( filename: String, order: Int, newfile: Boolean = false ) ex
 		file writeLong node
 	}
 	
-	protected def setValue[V1 >: Any]( node: Long, index: Int, v: V1 ) = writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, v )
+	protected def setValue[V1 >: V]( node: Long, index: Int, v: V1 ) = writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, v )
 	
 		
 	def close = file.close
