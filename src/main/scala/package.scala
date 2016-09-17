@@ -8,4 +8,10 @@ package xyz.hyperreal
  * 
  * There are two examples that extend `AbstractBPlusTree`: `MemoryBPlusTree` and `FileBPlusTree`. [[MemoryBPlusTree]] implements a B+ Tree in-memory and is essentially a map implementation.  [[FileBPlusTree]] implements a B+ Tree on-disk and is sort-of a very simple database.
  */
-package object btree {}
+package object btree {
+	def build( s: String ): Node[String, Null] = {
+		var lastleaf: LeafNode[String, Null] = null
+		
+		
+	}
+}
