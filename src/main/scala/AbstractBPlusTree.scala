@@ -674,12 +674,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						val next = getNext( leaf )
 						
 						if (next != nul && getParent( next ) == par) {
-							(next, len, 0, leaf, next, if (len == 0) key else getKey( leaf, nodeLength(leaf) - 1 ))
+							(next, len, 0, leaf, next, if (len == 0) key else getKey( leaf, 0 ))
 						} else {
 							val prev = getPrev( leaf )
 							
 							if (prev != nul && getParent( prev ) == par)
-								(prev, 0, nodeLength( prev ) - 1, prev, leaf, getKey( prev, nodeLength(prev) - 1 ))
+								(prev, 0, nodeLength( prev ) - 1, prev, leaf, getKey( prev, 0 ))
 							else
 								sys.error( "no sibling" )
 						}
@@ -687,7 +687,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					
 					val index =
 						binarySearch( par, parkey ) match {
-							case ind if ind >= 0 => ind
+							case ind if ind >= 0 => ind + 1 // add one because if it's found then it's the wrong one
 							case ind => -(ind + 1)
 						}
 					
@@ -695,9 +695,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
 						setKey( par, index, getKey(right, 0) )
 					} else {
-						println(left, right)
 						moveLeaf( right, 0, nodeLength(right), left, nodeLength(left) )
-						println(left, right)
 						
 						val next = getNext( right )
 						
@@ -709,7 +707,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							lastlen = nodeLength( left )
 						}
 					
-						println( getNext(first) == left, left)
 						freeNode( right )
 						
 						var len = removeInternal( par, index )
@@ -765,10 +762,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				} else if (nodeLength( n ) < cbo2 - 1 || nodeLength( n ) > order - 1)
 					return "non-root leaf node length out of range"
 					
-				if (prevnode == nul && first != n) {
-					println( first, n )
+				if (prevnode == nul && first != n)
 					return "incorrect first pointer"
-				}
 					
 				if (prevnode != getPrev( n ))
 					return "incorrect prev pointer"
