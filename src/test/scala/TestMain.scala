@@ -6,9 +6,9 @@ object TestMain extends App {
 	val tree = new MemoryBPlusTree[String, Any]( 3 )
 // 	val map = new MutableSortedMap[String, Any]
 	
-	tree.insert( "a" )
-	tree.insert( "b" )
- 	tree.insert( "c" )
+// 	tree.insert( "a" )
+// 	tree.insert( "b" )
+//  	tree.insert( "c" )
 // 	tree.insert( "d" )
 //	tree.insert( "e" )
 // 	tree.insert( "f" )
@@ -51,7 +51,8 @@ object TestMain extends App {
 //	println( tree.reverseKeysIterator.toList )
 //	println( tree.boundedIterator(('>, "a"), ('<, "d")) map {case (k, _) => k} toList )
 //	println( tree.boundedIteratorOverKeys(('<=, "z")) toList )
-//  	tree.prettyPrintKeysOnly
+	tree.insertKeys( "v", "t", "u", "j", "g" )
+  	tree.prettyPrintKeysOnly
 // 	println( tree.delete( "c" ) )
 //  	tree.prettyPrintKeysOnly
 // 	println( tree.delete( "b" ) )
@@ -59,5 +60,9 @@ object TestMain extends App {
 //  	println( tree.wellConstructed )
 // 	map += ("asdf" -> 123)
 // 	println( map )
-	println( build("([ab   bc cd] \n([de ef]))") )
+	tree.build( """
+		(
+			[g] j 	[j t] u [u v]
+		)
+		""" ).prettyPrintKeysOnly
 }
