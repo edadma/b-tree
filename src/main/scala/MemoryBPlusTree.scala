@@ -1,7 +1,6 @@
 package xyz.hyperreal.btree
 
 import collection.mutable.ArrayBuffer
-import util.matching.Regex.Match
 
 
 class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTree[K, V]( order ) {
@@ -106,74 +105,6 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	protected def setRoot( node: Node[K, V] ) {}
 	
 	protected def setValue[V1 >: V]( node: Node[K, V], index: Int, v: V1 ) = node.asInstanceOf[Node[K, V1]].asLeaf.values(index) = v
-	
-	/**
-	 * Returns a B+ Tree build from a string representation of the tree. The syntax of the input string is simple: internal nodes are coded as lists of nodes alternating with keys (alpha strings with no quotation marks) using parentheses with elements separated by space, leaf nodes are coded as lists of alpha strings (no quotation marks) using brackets with elements separated by space.
-	 * 
-	 * @example
-	 * 
-	 * {{{
-	 * (
-	 *   [g] j [j t] u [u v]
-	 * )
-	 * }}}
-	 * 
-	 * produces a tree that pretty prints as
-	 * 
-	 * {{{
-	 * [n0: (null) n1 | j | n2 | u | n3]
-	 * [n1: (null, n0, n2) g] [n2: (n1, n0, n3) j t] [n3: (n2, n0, null) u v]
-	 * }}}
-	 */
-	def build( s: String ) = {
-		val it = """[a-z]+|\n|.""".r.findAllMatchIn(s) filterNot (m => m.matched.head.isWhitespace)
-		var prev: LeafNode[K, V] = null
-		
-		def internal( it: Iterator[Match], node: InternalNode[K, V] ): Node[K, V] =
-			it.next.matched match {
-				case "(" =>
-					assert( node.keys.length == node.branches.length, "illegal internal node" )
-					node.branches += internal( it, new InternalNode[K, V](node) )
-					internal( it, node )
-				case "[" =>
-					assert( node.keys.length == node.branches.length, "illegal leaf node" )
-					node.branches += leaf( it, new LeafNode[K, V](node) )
-					internal( it, node )
-				case ")" => node
-				case key if key.head.isLetter =>
-					assert( node.keys.length == node.branches.length - 1, "illegal key" )
-					node.keys += key.asInstanceOf[K]
-					internal( it, node )
-				case t => sys.error( "unexpected token: " + t )
-			}
-			
-		def leaf( it: Iterator[Match], node: LeafNode[K, V] ): LeafNode[K, V] =
-			it.next.matched match {
-				case "]" =>
-					last = node
-					lastlen = node.length
-					
-					if (prev != nul)
-						prev.next = node
-						
-					node.prev = prev
-					prev = node
-					node
-				case key if key.head.isLetter =>
-					node.keys += key.asInstanceOf[K]
-					leaf( it, node )
-				case t => sys.error( "unexpected token: " + t )
-			}
-		
-		first = null
-		root =
-			it.next.matched match {
-				case "(" => internal( it, new InternalNode[K, V](null) )
-				case "[" => leaf( it, new LeafNode[K, V](null) )
-				case t => sys.error( "unexpected token: " + t.head.toInt )
-			}
-		this
-	}
 }
 
 abstract class Node[K, V] {

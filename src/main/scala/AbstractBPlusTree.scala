@@ -4,6 +4,7 @@ import scala.sys.process._
 import collection.mutable.{HashMap, ArrayBuffer}
 import collection.immutable.ListMap
 import collection.AbstractIterator
+import util.matching.Regex.Match
 
 import java.io.PrintWriter
 
@@ -957,5 +958,72 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 		file.close
 		s"dot -Tsvg $name.dot -o $name.svg".!
 		s"convert $name.svg $name.png".!
+	}
+	
+	/**
+	 * Returns a B+ Tree build from a string representation of the tree. The syntax of the input string is simple: internal nodes are coded as lists of nodes alternating with keys (alpha strings with no quotation marks) using parentheses with elements separated by space, leaf nodes are coded as lists of alpha strings (no quotation marks) using brackets with elements separated by space.
+	 * 
+	 * @example
+	 * 
+	 * {{{
+	 * (
+	 *   [g] j [j t] u [u v]
+	 * )
+	 * }}}
+	 * 
+	 * produces a tree that pretty prints as
+	 * 
+	 * {{{
+	 * [n0: (null) n1 | j | n2 | u | n3]
+	 * [n1: (null, n0, n2) g] [n2: (n1, n0, n3) j t] [n3: (n2, n0, null) u v]
+	 * }}}
+	 */
+	def build( s: String ) = {
+		val it = """[a-z]+|\n|.""".r.findAllMatchIn(s) filterNot (m => m.matched.head.isWhitespace)
+		var prev: N = nul
+		
+		def internal( it: Iterator[Match], node: N ): N =
+			it.next.matched match {
+				case "(" =>
+					addBranch( node, internal(it, newInternal(node)) )
+					internal( it, node )
+				case "[" =>
+					addBranch( node, leaf(it, newLeaf(node)) )
+					internal( it, node )
+				case ")" => node
+				case key if key.head.isLetter =>
+					addKey( node, key.asInstanceOf[K] )
+					internal( it, node )
+				case t => sys.error( "unexpected token: " + t )
+			}
+			
+		def leaf( it: Iterator[Match], node: N ): N =
+			it.next.matched match {
+				case "]" =>
+					last = node
+					lastlen = nodeLength( node )
+					
+					if (prev != nul)
+						setNext( prev, node )
+						
+					setPrev( node, prev )
+					prev = node
+					node
+				case key if key.head.isLetter =>
+					addKey( node, key.asInstanceOf[K] )
+					addValue( node, null.asInstanceOf[V] )
+					leaf( it, node )
+				case t => sys.error( "unexpected token: " + t )
+			}
+		
+		freeNode( root )
+		first = nul
+		root =
+			it.next.matched match {
+				case "(" => internal( it, newInternal(nul) )
+				case "[" => leaf( it, newLeaf(nul) )
+				case t => sys.error( "unexpected token: " + t.head.toInt )
+			}
+		this
 	}
 }
