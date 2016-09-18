@@ -49,7 +49,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially.  An empty B+ Tree consists of a single empty leaf node as the root.  Also the <code>first</code> and <code>last</code> should refer to the root leaf node, and the <code>lastlen</code> variable should be 0.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially. An empty B+ Tree consists of a single empty leaf node as the root. Also the <code>first</code> and <code>last</code> should refer to the root leaf node, and the <code>lastlen</code> variable should be 0. For on-disk implementations it should be possible to open an existing B+ Tree or optionally create a new one.
 </p></div><dl class="paramcmts block"><dt class="tparam">K</dt><dd class="cmt"><p>the type of the keys contained in this map.</p></dd><dt class="tparam">V</dt><dd class="cmt"><p>the type of the values associated with the keys.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -108,7 +108,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">order</dt><dd class="cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></dd></dl></div>
+      <p class="shortcomment cmt">creates an object providing access to a B+ Tree with a branching factor of <code>order</code> and possibly creating an empty tree.</p><div class="fullcomment"><div class="comment cmt"><p>creates an object providing access to a B+ Tree with a branching factor of <code>order</code> and possibly creating an empty tree.</p></div><dl class="paramcmts block"><dt class="param">order</dt><dd class="cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -153,7 +153,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Adds a new <code>branch</code> to (internal) <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>branch</code> to (internal) <code>node</code>. <code>branch</code> is placed at an index equal to the length of <code>node</code>, given that the length of a node is the number of keys. Therefore, this method should be called after <code>addKey</code>.
+      <p class="shortcomment cmt">Adds a new <code>branch</code> to (internal) <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>branch</code> to (internal) <code>node</code>. <code>branch</code> is placed at an index equal to the length of <code>node</code>, given that the length of a node is the number of keys.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#addKey" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="addKey(node:AbstractBPlusTree.this.N,key:K):Unit"></a>
@@ -189,7 +189,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Adds a new <code>value</code> to (leaf) <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>value</code> to (leaf) <code>node</code>. <code>value</code> is placed at an index equal to the length of <code>node</code> minus one, given that the length of a node is the number of keys. Therefore, this method should be called after <code>addKey</code>.
+      <p class="shortcomment cmt">Adds a new <code>value</code> to (leaf) <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>value</code> to (leaf) <code>node</code>. <code>value</code> is placed at an index equal to the length of <code>node</code> minus one, given that the length of a node is the number of keys. Therefore, this method should be called after <code>addKey</code> if a key/value pair are being added.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#first" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="first:AbstractBPlusTree.this.N"></a>

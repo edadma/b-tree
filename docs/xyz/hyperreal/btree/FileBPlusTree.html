@@ -49,7 +49,8 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>An on-disk B+ Tree implementation.
+</p></div><dl class="paramcmts block"><dt class="tparam">K</dt><dd class="cmt"><p>the type of the keys contained in this map.</p></dd><dt class="tparam">V</dt><dd class="cmt"><p>the type of the values associated with the keys.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -88,7 +89,7 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="xyz.hyperreal.btree.FileBPlusTree#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="xyz.hyperreal.btree.FileBPlusTree#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="&lt;init&gt;(filename:String,order:Int,newfile:Boolean)(implicitevidence$1:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]"></a>
       <a id="&lt;init&gt;:FileBPlusTree[K,V]"></a>
       <h4 class="signature">
@@ -104,7 +105,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">creates an object to provide access to an on-disk B+ Tree with a branching factor of <code>order</code>.</p><div class="fullcomment"><div class="comment cmt"><p>creates an object to provide access to an on-disk B+ Tree with a branching factor of <code>order</code>. The on-disk tree's order must be equal to <code>order</code> or an exception will be thrown.</p></div><dl class="paramcmts block"><dt class="param">filename</dt><dd class="cmt"><p>path to the file to contain the tree. The file created is completely self contained: if the file alread exists (and <code>newfile</code> is <code>false</code>) then the object opens the file and provides continued access to the tree</p></dd><dt class="param">order</dt><dd class="cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></dd><dt class="param">newfile</dt><dd class="cmt"><p><code>true</code> causes any existing file at <code>filename</code> to be deleted and a new empty tree created, <code>false</code> (the default) causes an empty tree to be created only if there is no file at <code>filename</code></p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -712,7 +713,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Adds a new <code>branch</code> to (internal) <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>branch</code> to (internal) <code>node</code>. <code>branch</code> is placed at an index equal to the length of <code>node</code>, given that the length of a node is the number of keys. Therefore, this method should be called after <code>addKey</code>.
+      <p class="shortcomment cmt">Adds a new <code>branch</code> to (internal) <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>branch</code> to (internal) <code>node</code>. <code>branch</code> is placed at an index equal to the length of <code>node</code>, given that the length of a node is the number of keys.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#addKey" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="addKey(node:Long,key:K):Unit"></a>
@@ -748,7 +749,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Adds a new <code>value</code> to (leaf) <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>value</code> to (leaf) <code>node</code>. <code>value</code> is placed at an index equal to the length of <code>node</code> minus one, given that the length of a node is the number of keys. Therefore, this method should be called after <code>addKey</code>.
+      <p class="shortcomment cmt">Adds a new <code>value</code> to (leaf) <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>value</code> to (leaf) <code>node</code>. <code>value</code> is placed at an index equal to the length of <code>node</code> minus one, given that the length of a node is the number of keys. Therefore, this method should be called after <code>addKey</code> if a key/value pair are being added.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#alloc" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="alloc(size:Int):Long"></a>

@@ -105,9 +105,9 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).</p><div class="fullcomment"><div class="comment cmt"><p>Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially.  An empty B+ Tree consists of a single empty leaf node as the root.  Also the <code>first</code> and <code>last</code> should refer to the root leaf node, and the <code>lastlen</code> variable should be 0.
+      <p class="shortcomment cmt">Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).</p><div class="fullcomment"><div class="comment cmt"><p>Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially. An empty B+ Tree consists of a single empty leaf node as the root. Also the <code>first</code> and <code>last</code> should refer to the root leaf node, and the <code>lastlen</code> variable should be 0. For on-disk implementations it should be possible to open an existing B+ Tree or optionally create a new one.
 </p></div><dl class="paramcmts block"><dt class="tparam">K</dt><dd class="cmt"><p>the type of the keys contained in this map.</p></dd><dt class="tparam">V</dt><dd class="cmt"><p>the type of the values associated with the keys.</p></dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="FileBPlusTree[K,V]extendsAbstractBPlusTree[K,V]"></a>
       <a id="FileBPlusTree[K,V]:FileBPlusTree[K,V]"></a>
       <h4 class="signature">
@@ -123,42 +123,9 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="xyz.hyperreal.btree.InternalNode" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="InternalNode[K,V]extendsNode[K,V]"></a>
-      <a id="InternalNode[K,V]:InternalNode[K,V]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="InternalNode.html"><span class="name">InternalNode</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <a href="Node.html" class="extype" name="xyz.hyperreal.btree.Node">Node</a>[<span class="extype" name="xyz.hyperreal.btree.InternalNode.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.InternalNode.V">V</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.package@InternalNode[K,V]extendsNode[K,V]" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="xyz.hyperreal.btree.LeafNode" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LeafNode[K,V]extendsNode[K,V]"></a>
-      <a id="LeafNode[K,V]:LeafNode[K,V]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="LeafNode.html"><span class="name">LeafNode</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <a href="Node.html" class="extype" name="xyz.hyperreal.btree.Node">Node</a>[<span class="extype" name="xyz.hyperreal.btree.LeafNode.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.LeafNode.V">V</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.package@LeafNode[K,V]extendsNode[K,V]" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="xyz.hyperreal.btree.MemoryBPlusTree" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">An on-disk B+ Tree implementation.</p><div class="fullcomment"><div class="comment cmt"><p>An on-disk B+ Tree implementation.
+</p></div><dl class="paramcmts block"><dt class="tparam">K</dt><dd class="cmt"><p>the type of the keys contained in this map.</p></dd><dt class="tparam">V</dt><dd class="cmt"><p>the type of the values associated with the keys.</p></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.MemoryBPlusTree" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="MemoryBPlusTree[K,V]extendsAbstractBPlusTree[K,V]"></a>
       <a id="MemoryBPlusTree[K,V]:MemoryBPlusTree[K,V]"></a>
       <h4 class="signature">
@@ -174,7 +141,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">An in-memory B+ Tree implementation.</p><div class="fullcomment"><div class="comment cmt"><p>An in-memory B+ Tree implementation.
+</p></div><dl class="paramcmts block"><dt class="tparam">K</dt><dd class="cmt"><p>the type of the keys contained in this map.</p></dd><dt class="tparam">V</dt><dd class="cmt"><p>the type of the values associated with the keys.</p></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.MutableSortedMap" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="MutableSortedMap[K,V]extendsSortedMap[K,V]"></a>
       <a id="MutableSortedMap[K,V]:MutableSortedMap[K,V]"></a>
@@ -188,23 +156,6 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.package@MutableSortedMap[K,V]extendsSortedMap[K,V]" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="xyz.hyperreal.btree.Node" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Node[K,V]extendsAnyRef"></a>
-      <a id="Node[K,V]:Node[K,V]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="Node.html"><span class="name">Node</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.package@Node[K,V]extendsAnyRef" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
