@@ -3,6 +3,14 @@ package xyz.hyperreal.btree
 import collection.mutable.ArrayBuffer
 
 
+/**
+ * An in-memory B+ Tree implementation.
+ * 
+ * @constructor creates an in-memory B+ Tree with a branching factor of `order`.
+ * @param order the branching factor (maximum number of branches in an internal node) of the tree
+ * @tparam K the type of the keys contained in this map.
+ * @tparam V the type of the values associated with the keys.
+ */
 class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTree[K, V]( order ) {
 	protected type N = Node[K, V]
 	
@@ -105,31 +113,31 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	protected def setRoot( node: Node[K, V] ) {}
 	
 	protected def setValue[V1 >: V]( node: Node[K, V], index: Int, v: V1 ) = node.asInstanceOf[Node[K, V1]].asLeaf.values(index) = v
-}
 
-abstract class Node[K, V] {
-	var parent: InternalNode[K, V]
-	val keys = new ArrayBuffer[K]
-	
-	def length = keys.size
-	
-	def isLeaf: Boolean
-	
-	def asInternal = asInstanceOf[InternalNode[K, V]]
-	
-	def asLeaf = asInstanceOf[LeafNode[K, V]]
-}
+	protected abstract class Node[K, V] {
+		var parent: InternalNode[K, V]
+		val keys = new ArrayBuffer[K]
+		
+		def length = keys.size
+		
+		def isLeaf: Boolean
+		
+		def asInternal = asInstanceOf[InternalNode[K, V]]
+		
+		def asLeaf = asInstanceOf[LeafNode[K, V]]
+	}
 
-class InternalNode[K, V]( var parent: InternalNode[K, V] ) extends Node[K, V] {
-	val isLeaf = false
-	val branches = new ArrayBuffer[Node[K, V]]
-}
+	protected class InternalNode[K, V]( var parent: InternalNode[K, V] ) extends Node[K, V] {
+		val isLeaf = false
+		val branches = new ArrayBuffer[Node[K, V]]
+	}
 
-class LeafNode[K, V]( var parent: InternalNode[K, V] ) extends Node[K, V] {
-	val isLeaf = true
-	val values = new ArrayBuffer[V]
-	var prev: LeafNode[K, V] = null
-	var next: LeafNode[K, V] = null
-	
-	override def toString = keys.mkString( "[keys: ", ", ", "| ") + values.mkString( "values: ", ", ", "]" )
+	protected class LeafNode[K, V]( var parent: InternalNode[K, V] ) extends Node[K, V] {
+		val isLeaf = true
+		val values = new ArrayBuffer[V]
+		var prev: LeafNode[K, V] = null
+		var next: LeafNode[K, V] = null
+		
+		override def toString = keys.mkString( "[keys: ", ", ", "| ") + values.mkString( "values: ", ", ", "]" )
+	}
 }
