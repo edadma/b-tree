@@ -25,7 +25,6 @@ class MultiOrderTests extends FreeSpec with PropertyChecks with Matchers {
 		val t = gen()
 		
 		("iterator: " + storage + ", order " + order) in {
-		
 			t.iterator.isEmpty shouldBe true
 			t.reverseIterator.isEmpty shouldBe true
 			t.boundedIterator( ('>=, "a") ).isEmpty shouldBe true

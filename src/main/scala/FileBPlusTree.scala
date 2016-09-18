@@ -59,7 +59,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
  	if (newfile)
 // 		RamFile.delete( filename )
 		new File( filename ).delete
-		
+	
 // 	protected val file = new RamFile( filename )
  	protected val file = new RandomAccessFile( filename, "rw" )		
 	protected var root: Long = _
