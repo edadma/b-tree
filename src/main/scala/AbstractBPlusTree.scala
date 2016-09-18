@@ -10,10 +10,10 @@ import java.io.PrintWriter
 
 
 /**
- * Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially.  An empty B+ Tree consists of a single empty leaf node as the root.  Also the `first` and `last` should refer to the root leaf node, and the `lastlen` variable should be 0.
+ * Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially. An empty B+ Tree consists of a single empty leaf node as the root. Also the `first` and `last` should refer to the root leaf node, and the `lastlen` variable should be 0. For on-disk implementations it should be possible to open an existing B+ Tree or optionally create a new one.
  * 
+ * @constructor creates an object providing access to a B+ Tree with a branching factor of `order` and possibly creating an empty tree.
  * @param order the branching factor (maximum number of branches in an internal node) of the tree
- * 
  * @tparam K the type of the keys contained in this map.
  * @tparam V the type of the values associated with the keys.
  */
