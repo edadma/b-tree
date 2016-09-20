@@ -36,7 +36,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	protected val TYPE_STRING = 0x14
 	protected val TYPE_NULL = 0x15
 	
-	protected val DATUM_SIZE = 1 + 8		// type + datum
+	protected val DATUM_SIZE = 1 + 8		// type + contents
 	protected val POINTER_SIZE = 8
 	protected val DATA_ARRAY_SIZE = (order - 1)*DATUM_SIZE
 	
@@ -50,16 +50,16 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	
 	protected val NODE_TYPE = 0
 	protected val NODE_PARENT_PTR = NODE_TYPE + 1
-	protected val NODE_LENGTH = NODE_PARENT_PTR + POINTER_SIZE
+	protected val NODE_PREV_PTR = NODE_PARENT_PTR + POINTER_SIZE
+	protected val NODE_NEXT_PTR = NODE_PREV_PTR + POINTER_SIZE
+	protected val NODE_LENGTH = NODE_NEXT_PTR + POINTER_SIZE
 	protected val NODE_KEYS = NODE_LENGTH + 2
 	
-	protected val LEAF_PREV_PTR = NODE_KEYS + DATA_ARRAY_SIZE	
-	protected val LEAF_NEXT_PTR = LEAF_PREV_PTR + POINTER_SIZE
-	protected val LEAF_VALUES = LEAF_NEXT_PTR + POINTER_SIZE
+	protected val LEAF_VALUES = NODE_KEYS + DATA_ARRAY_SIZE
 	
 	protected val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
 	
-	protected val BLOCK_SIZE = LEAF_VALUES + DATA_ARRAY_SIZE
+	protected val BLOCK_SIZE = LEAF_VALUES + (((order - 1)*DATUM_SIZE) max (order*POINTER_SIZE))
 	
 	private var savedNode: Long = NUL
 	private var savedKeys = new ArrayBuffer[K]
@@ -138,7 +138,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		}
 	
 	protected def getNext( node: Long ): Long = {
-		file seek (node + LEAF_NEXT_PTR)
+		file seek (node + NODE_NEXT_PTR)
 		file readLong
 	}
 	
@@ -148,7 +148,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	}
 	
 	protected def getPrev( node: Long ): Long = {
-		file seek (node + LEAF_PREV_PTR)
+		file seek (node + NODE_PREV_PTR)
 		file readLong
 	}
 	
@@ -170,7 +170,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 			if (index < len) {
 				copyKeys( node, index, len, node, index + 1 )
 			
-				val data = new Array[Byte]( (len - index + 1)*POINTER_SIZE )
+				val data = new Array[Byte]( (len - index)*POINTER_SIZE )
 			
 				file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
 				file readFully data
@@ -178,7 +178,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 				file write data
 			}
 			
-			writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
+			setKey( node, index, key )
 			file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
 			file writeLong branch
 		} else {
@@ -204,7 +204,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 			if (index < len)
 				copy( node, index, len, node, index + 1 )
 			
-			writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
+			setKey( node, index, key )
 			setValue( node, index, value )
 		} else {
 			if (savedNode != NUL)
@@ -303,6 +303,8 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		
 		file write INTERNAL_NODE
 		file writeLong parent
+		file writeLong nul
+		file writeLong nul
 		file writeShort 0
 		node
 	}
@@ -312,6 +314,8 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		
 		file write LEAF_NODE
 		file writeLong parent
+		file writeLong nul
+		file writeLong nul
 		file writeShort 0
 		node
 	}
@@ -389,7 +393,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	}
 	
 	protected def setNext( node: Long, p: Long ) {
-		file seek (node + LEAF_NEXT_PTR)
+		file seek (node + NODE_NEXT_PTR)
 		file writeLong p
 	}
 	
@@ -399,7 +403,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	}
 	
 	protected def setPrev( node: Long, p: Long ) {
-		file seek (node + LEAF_PREV_PTR)
+		file seek (node + NODE_PREV_PTR)
 		file writeLong p
 	}
 	

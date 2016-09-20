@@ -35,11 +35,11 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	
 	protected def getKeys( node: Node[K, V] ) = node.keys
 	
-	protected def getNext( node: Node[K, V] ) = node.asLeaf.next
+	protected def getNext( node: Node[K, V] ) = node.next
 	
 	protected def getParent( node: Node[K, V] ) = node.parent
 	
-	protected def getPrev( node: Node[K, V] ) = node.asLeaf.prev
+	protected def getPrev( node: Node[K, V] ) = node.prev
 	
 	protected def getValue( n: Node[K, V], index: Int ) = n.asLeaf.values( index )
 		
@@ -104,11 +104,11 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 
 	protected def setLast( leaf: Node[K, V] ) {}
 	
-	protected def setNext( node: Node[K, V], p: Node[K, V] ) = node.asLeaf.next = p.asInstanceOf[LeafNode[K, V]]
+	protected def setNext( node: Node[K, V], p: Node[K, V] ) = node.next = p.asInstanceOf[LeafNode[K, V]]
 	
 	protected def setParent( node: Node[K, V], p: Node[K, V] ) = node.parent = p.asInstanceOf[InternalNode[K, V]]
 	
-	protected def setPrev( node: Node[K, V], p: Node[K, V] ) = node.asLeaf.prev = p.asInstanceOf[LeafNode[K, V]]
+	protected def setPrev( node: Node[K, V], p: Node[K, V] ) = node.prev = p.asInstanceOf[LeafNode[K, V]]
 		
 	protected def setRoot( node: Node[K, V] ) {}
 	
@@ -116,11 +116,14 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 
 	protected abstract class Node[K, V] {
 		var parent: InternalNode[K, V]
+		
+		def isLeaf: Boolean
+		
+		var prev: LeafNode[K, V] = null
+		var next: LeafNode[K, V] = null
 		val keys = new ArrayBuffer[K]
 		
 		def length = keys.size
-		
-		def isLeaf: Boolean
 		
 		def asInternal = asInstanceOf[InternalNode[K, V]]
 		
@@ -135,8 +138,6 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	protected class LeafNode[K, V]( var parent: InternalNode[K, V] ) extends Node[K, V] {
 		val isLeaf = true
 		val values = new ArrayBuffer[V]
-		var prev: LeafNode[K, V] = null
-		var next: LeafNode[K, V] = null
 		
 		override def toString = keys.mkString( "[keys: ", ", ", "| ") + values.mkString( "values: ", ", ", "]" )
 	}

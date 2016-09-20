@@ -722,55 +722,56 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							while (len < order/2) {
 //
 //
-								par = getParent( leaf )
-								val (sibling, leafside, siblingside, left, right, parkey) = {
-									val next = getNext( leaf )
-									
-									if (next != nul && getParent( next ) == par) {
-										(next, len, 0, leaf, next, if (len == 0) key else getKey( leaf, 0 ))
-									} else {
-										val prev = getPrev( leaf )
-										
-										if (prev != nul && getParent( prev ) == par)
-											(prev, 0, nodeLength( prev ) - 1, prev, leaf, getKey( prev, 0 ))
-										else
-											sys.error( "no sibling" )
-									}
-								}
-								
-								val index =
-									binarySearch( par, parkey ) match {
-										case ind if ind >= 0 => ind + 1 // add one because if it's found then it's the wrong one
-										case ind => -(ind + 1)
-									}
-								
-								if (nodeLength( sibling ) > order/2) {
-									moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
-									setKey( par, index, getKey(right, 0) )
-								} else {
-									moveLeaf( right, 0, nodeLength(right), left, nodeLength(left) )
-									
-									val next = getNext( right )
-									
-									setNext( left, next )
-									
-									if (next == nul) {
-										last = left
-										setLast( left )
-										lastlen = nodeLength( left )
-									}
-								
-									freeNode( right )
-									
-									var len = removeInternal( par, index )
-										
-									if (par == root && len == 0) {
-										freeNode( root )
-										setParent( left, nul )
-										root = left
-										setRoot( left )
-										first = left
-										setFirst( left )
+// 								par = getParent( leaf )
+// 								
+// 								val (sibling, leafside, siblingside, left, right, parkey) = {
+// 									val next = getNext( leaf )
+// 									
+// 									if (next != nul && getParent( next ) == par) {
+// 										(next, len, 0, leaf, next, if (len == 0) key else getKey( leaf, 0 ))
+// 									} else {
+// 										val prev = getPrev( leaf )
+// 										
+// 										if (prev != nul && getParent( prev ) == par)
+// 											(prev, 0, nodeLength( prev ) - 1, prev, leaf, getKey( prev, 0 ))
+// 										else
+// 											sys.error( "no sibling" )
+// 									}
+// 								}
+// 								
+// 								val index =
+// 									binarySearch( par, parkey ) match {
+// 										case ind if ind >= 0 => ind + 1 // add one because if it's found then it's the wrong one
+// 										case ind => -(ind + 1)
+// 									}
+// 								
+// 								if (nodeLength( sibling ) > order/2) {
+// 									moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
+// 									setKey( par, index, getKey(right, 0) )
+// 								} else {
+// 									moveLeaf( right, 0, nodeLength(right), left, nodeLength(left) )
+// 									
+// 									val next = getNext( right )
+// 									
+// 									setNext( left, next )
+// 									
+// 									if (next == nul) {
+// 										last = left
+// 										setLast( left )
+// 										lastlen = nodeLength( left )
+// 									}
+// 								
+// 									freeNode( right )
+// 									
+// 									var len = removeInternal( par, index )
+// 										
+// 									if (par == root && len == 0) {
+// 										freeNode( root )
+// 										setParent( left, nul )
+// 										root = left
+// 										setRoot( left )
+// 										first = left
+// 										setFirst( left )
 //
 //
 							}
