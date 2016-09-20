@@ -15,10 +15,10 @@ class MultiOrderTests extends FreeSpec with PropertyChecks with Matchers {
 			(() => new MemoryBPlusTree[String, Any]( 4 ),    "in memory", 	4),
 			(() => new MemoryBPlusTree[String, Any]( 5 ),    "in memory", 	5),
 			(() => new MemoryBPlusTree[String, Any]( 6 ),    "in memory", 	6),
-			(() => new FileBPlusTree[String, Any]( "btree", 3, true ),    "on disk", 		3),
-			(() => new FileBPlusTree[String, Any]( "btree", 4, true ),    "on disk", 		4),
-			(() => new FileBPlusTree[String, Any]( "btree", 5, true ),    "on disk", 		5),
-			(() => new FileBPlusTree[String, Any]( "btree", 6, true ),    "on disk", 		6)
+			(() => new FileBPlusTree[String, Any]( newfile, 3, true ),    "on disk", 		3),
+			(() => new FileBPlusTree[String, Any]( newfile, 4, true ),    "on disk", 		4),
+			(() => new FileBPlusTree[String, Any]( newfile, 5, true ),    "on disk", 		5),
+			(() => new FileBPlusTree[String, Any]( newfile, 6, true ),    "on disk", 		6)
  			)
 	
 	forAll (treeImplementations) { (gen, storage, order) =>
