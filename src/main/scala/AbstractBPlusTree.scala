@@ -124,7 +124,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected def isLeaf( node: N ): Boolean
 	
 	/**
-	 * Moves key/branch pairs as well as the left branch of the first key from node `src` to node `dst` beginning at index `begin` and ending up to but not including index `end`, and also removes the key at index `begin - 1`.
+	 * Moves key/branch pairs as well as the left branch of the first key from node `src` to node `dst` beginning at index `begin` and ending at but not including index `end`, and also removes the key at index `begin - 1`.
 	 */
 	protected def moveInternal( src: N, begin: Int, end: Int, dst: N )
 	
@@ -447,7 +447,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 			
 			wellConstructed match {
 				case "true" =>
-				case reason => return reason
+				case reason => return reason + " after inserting key " + k
 			}
 		}
 		
@@ -464,9 +464,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 		
 		maxKey match {
 			case None =>
-			case Some( maxkey ) =>
-				if (maxkey >= seq.head._1)
-					sys.error( "can only load into non-empty tree if maximum element is less than minimum element to be loaded" )
+			case Some( maxkey ) => require( maxkey < seq.head._1, "can only load into non-empty tree if maximum element is less than minimum element to be loaded" )
 		}
 		
 		seq foreach {case (k, v) => insertAt( k, v, last, lastlen )}
@@ -738,56 +736,60 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							while (len < order/2) {
 //
 //
-// 								par = getParent( leaf )
-// 								
-// 								val (sibling, leafside, siblingside, left, right, parkey) = {
-// 									val next = getNext( leaf )
-// 									
-// 									if (next != nul && getParent( next ) == par) {
-// 										(next, len, 0, leaf, next, if (len == 0) key else getKey( leaf, 0 ))
-// 									} else {
-// 										val prev = getPrev( leaf )
-// 										
-// 										if (prev != nul && getParent( prev ) == par)
-// 											(prev, 0, nodeLength( prev ) - 1, prev, leaf, getKey( prev, 0 ))
-// 										else
-// 											sys.error( "no sibling" )
-// 									}
-// 								}
-// 								
-// 								val index =
-// 									binarySearch( par, parkey ) match {
-// 										case ind if ind >= 0 => ind + 1 // add one because if it's found then it's the wrong one
-// 										case ind => -(ind + 1)
-// 									}
-// 								
-// 								if (nodeLength( sibling ) > order/2) {
-// 									moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
-// 									setKey( par, index, getKey(right, 0) )
-// 								} else {
-// 									moveLeaf( right, 0, nodeLength(right), left, nodeLength(left) )
-// 									
-// 									val next = getNext( right )
-// 									
-// 									setNext( left, next )
-// 									
-// 									if (next == nul) {
-// 										last = left
-// 										setLast( left )
-// 										lastlen = nodeLength( left )
-// 									}
-// 								
-// 									freeNode( right )
-// 									
-// 									var len = removeInternal( par, index )
-// 										
-// 									if (par == root && len == 0) {
-// 										freeNode( root )
-// 										setParent( left, nul )
-// 										root = left
-// 										setRoot( left )
-// 										first = left
-// 										setFirst( left )
+								val internal = par
+								val (sibling, internalside, siblingside, left, right, parkey) = {
+									val next = getNext( internal )
+									
+									if (next != nul) {
+										(next, len, 0, internal, next, if (len == 0) key else getKey( internal, 0 ))
+									} else {
+										val prev = getPrev( internal )
+										
+										if (prev != nul)
+											(prev, 0, nodeLength( prev ) - 1, prev, internal, getKey( prev, 0 ))
+										else
+											sys.error( "no sibling" )
+									}
+								}
+							
+								par = getParent( par )
+								
+								//
+								//
+								
+								val index =
+									binarySearch( par, parkey ) match {
+										case ind if ind >= 0 => ind + 1 // add one because if it's found then it's the wrong one
+										case ind => -(ind + 1)
+									}
+								
+								if (nodeLength( sibling ) > order/2) {
+//									moveInternalDelete( sibling, siblingside, siblingside + 1, leaf, leafside )
+									setKey( par, index, getKey(right, 0) )
+								} else {
+//									moveInternalDelete( right, 0, nodeLength(right), left, nodeLength(left) )
+									
+									val next = getNext( right )
+									
+									setNext( left, next )
+									
+									if (next == nul) {
+										last = left
+										setLast( left )
+										lastlen = nodeLength( left )
+									}
+								
+									freeNode( right )
+									
+									var len = removeInternal( par, index )
+										
+									if (par == root && len == 0) {
+										freeNode( root )
+										setParent( left, nul )
+										root = left
+										setRoot( left )
+									}
+								}
 //
 //
 							}

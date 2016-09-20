@@ -291,7 +291,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 				setKey( dst, i, k )
 				setValue( dst, i, v )
 			}
-				
+			
 			nodeLength( src, savedKeys.length )
 			nodeLength( dst, len )
 			savedNode = NUL
@@ -365,12 +365,13 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	}
 
 	protected def removeLeaf( node: Long, index: Int ) = {
-		val newlen = nodeLength( node ) - 1
+		val len = nodeLength( node )
+		val newlen = len - 1
 		
 		nodeLength( node, newlen )
 		
 		if (index < newlen)
-			copy( node, index + 1, newlen + 1, node, index - 1 )
+			copy( node, index + 1, len, node, index )
 			
 		newlen
 	}
