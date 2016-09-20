@@ -236,7 +236,6 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 			file readFully data
 			file seek (dst + INTERNAL_BRANCHES)
 			file write data
-			nodeLength( dst, end - begin )
 		} else {
 			val dstKeys = new ArrayBuffer[K]
 			val dstBranches = new ArrayBuffer[Long]
@@ -259,9 +258,10 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 				setBranch( dst, i, b )
 				
 			nodeLength( src, savedKeys.length )
-			nodeLength( dst, end - begin )
 			savedNode = NUL
 		}
+		
+		nodeLength( dst, end - begin )
 	}
 	
 	protected def moveLeaf( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {

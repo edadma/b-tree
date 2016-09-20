@@ -628,7 +628,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						insertInternal( par, -(insertion + 1), getKey(newleaf, 0), newleaf )
 				
 						while (nodeLength( par ) == order) {
-							val newinternal = newInternal( getParent(par) )
+							val parpar = getParent( par )
+							val newinternal = newInternal( parpar )
 							val len = nodeLength( par )
 							val mid = len/2
 							val middle = getKey( par, mid )
@@ -638,6 +639,21 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							for (child <- getBranches( newinternal ))
 								setParent( child, newinternal )
 								
+							if (!isLeaf( getBranch(par, 0) )) {
+								setNext( getBranch(par, nodeLength( par ) - 1), nul )	// compute nodeLength( par )
+								setPrev( getBranch(newinternal, 0), nul )
+							}
+							
+							val internalnext = getNext( par )
+							
+							setNext( newinternal, internalnext )
+							
+							if (internalnext != nul)
+								setPrev( internalnext, newinternal )
+								
+							setNext( par, newinternal )
+							setPrev( newinternal, par )
+							
 							if (getParent( par ) == nul) {
 								root = newRoot( par )
 								
@@ -646,7 +662,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 								insertInternal( root, 0, middle, newinternal )
 								par = root
 							} else {
-								par = getParent( par )
+								par = parpar
 								binarySearch( par, middle ) match {
 									case index if index >= 0 => sys.error( "key found in internal node" )
 									case insertion => insertInternal( par, -(insertion + 1), middle, newinternal )
@@ -790,14 +806,13 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	 * @return `"true"` (as a string) if the tree is a well constructed B+ tree, a string description of the flaw otherwise.
 	 */
 	def wellConstructed: String = {
-		val nodes = new ArrayBuffer[N]
 		var depth = -1
 		var prevnode: N = nul
 		var nextptr: N = nul
 		val cbo2 = order/2 + order%2
 		
 		def check( n: N, p: N, d: Int ): String = {
-			if (!(getKeys( n ).dropRight( 1 ) zip getKeys( n ).drop( 1 ) forall( p => p._1 < p._2 )))
+			if (!(getKeys( n ) dropRight 1 zip (getKeys( n ) drop 1) forall (p => p._1 < p._2)))
 				return "incorrectly ordered keys"
 			
 			if (getParent( n ) != p)
@@ -842,15 +857,31 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					return "empty internal node"
 				
 				if (getParent( n ) == nul) {
+					if (getPrev( n ) != nul)
+						return "non-null prev pointer"
+						
+					if (getNext( n ) != nul)
+						return "non-null next pointer"
+						
 					if (nodeLength( n ) < 1 || nodeLength( n ) >= order)
 						return "root internal node length out of range"
-				} else if (nodeLength( n ) < cbo2 - 1 || nodeLength( n ) > order - 1)
-					return "non-root internal node length out of range"
-					
+				} else {
+// 					if (!(getBranches( n ) dropRight 1 zip (getBranches( n ) drop 1) forall {case (n1, n2) => getNext( n1 ) == n2}) ||
+// 						getNext( getBranches(n).last ) != nul)
+// 						return "incorrect next pointer"
+						
+					if (!(getBranches( n ) dropRight 1 zip (getBranches( n ) drop 1) forall {case (n1, n2) => n1 == getPrev( n2 )}) /*||
+						getPrev( getBranch(n, 0) ) != nul*/)
+						return "incorrect prev pointer"
+						
+					if (nodeLength( n ) < cbo2 - 1 || nodeLength( n ) > order - 1)
+						return "non-root internal node length out of range"
+				}
+				
 				if (getKeys( getBranch(n, 0) ).last >= getKey( n, 0 ))
 					return "left internal node branch not strictly less than"
 					
-				if (!(getKeys( n ) drop 1 zip getBranches( n ) drop 1 forall (p => getKey( p._2, 0 ) < p._1)))
+				if (!(getKeys( n ) drop 1 zip (getBranches( n ) drop 1) forall (p => getKey( p._2, 0 ) < p._1)))
 					return "right internal node branch not greater than or equal"
 				
 				for (b <- getBranches( n ))
@@ -968,12 +999,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	/**
 	 * Returns a string containing a readable representation of the structure and contents of the tree, omitting the values and only printing the keys. This method is used mainly for unit testing.
 	 */
-	def prettyString = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(getParent(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(getPrev(n)) + ", " + id(getParent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + getKeys(n).mkString(" ") + "]", "" )
+	def prettyString = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(getPrev(n)) + ", " + id(getParent(n)) + ", " + id(getNext(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(getPrev(n)) + ", " + id(getParent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + getKeys(n).mkString(" ") + "]", "" )
 	
 	/**
 	 * Returns a string containing a readable representation of the structure and contents of the tree. This method is used mainly for unit testing.
 	 */
-	def prettyStringWithValues = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(getParent(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(getPrev(n)) + ", " + id(getParent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + (getKeys(n) zip getValues(n) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " ") + "]", "" )
+	def prettyStringWithValues = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(getPrev(n)) + ", " + id(getParent(n)) + ", " + id(getNext(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(getPrev(n)) + ", " + id(getParent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + (getKeys(n) zip getValues(n) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " ") + "]", "" )
 	
 	/**
 	 * Creates a PNG image file called `name` (with `.png` added) which visually represents the structure and contents of the tree, only showing the keys. This method uses GraphViz (specifically the `dot` command) to produce the diagram, and ImageMagik (specifically the `convert` command) to convert it from SVG to PNG. `dot` can product PNG files directly but I got better results producing SVG and converting to PNG.

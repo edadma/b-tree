@@ -104,11 +104,11 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 
 	protected def setLast( leaf: Node[K, V] ) {}
 	
-	protected def setNext( node: Node[K, V], p: Node[K, V] ) = node.next = p.asInstanceOf[LeafNode[K, V]]
+	protected def setNext( node: Node[K, V], p: Node[K, V] ) = node.next = p
 	
 	protected def setParent( node: Node[K, V], p: Node[K, V] ) = node.parent = p.asInstanceOf[InternalNode[K, V]]
 	
-	protected def setPrev( node: Node[K, V], p: Node[K, V] ) = node.prev = p.asInstanceOf[LeafNode[K, V]]
+	protected def setPrev( node: Node[K, V], p: Node[K, V] ) = node.prev = p
 		
 	protected def setRoot( node: Node[K, V] ) {}
 	
@@ -119,8 +119,8 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 		
 		def isLeaf: Boolean
 		
-		var prev: LeafNode[K, V] = null
-		var next: LeafNode[K, V] = null
+		var prev: Node[K, V] = null
+		var next: Node[K, V] = null
 		val keys = new ArrayBuffer[K]
 		
 		def length = keys.size
