@@ -24,7 +24,7 @@ class DeletionTests extends FreeSpec with PropertyChecks with Matchers {
 				[a] b [c]
 			)
 			""" ).prettyString shouldBe
-			"""	|[n0: (null) n1 | b | n2]
+			"""	|[n0: (null, null, null) n1 | b | n2]
 					|[n1: (null, n0, n2) a] [n2: (n1, n0, null) c]""".stripMargin
 
 			t.wellConstructed shouldBe "true"

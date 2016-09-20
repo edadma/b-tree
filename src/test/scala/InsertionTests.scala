@@ -99,7 +99,7 @@ class InsertionTests extends FreeSpec with PropertyChecks with Matchers {
 			t.insertKeysAndCheck( "v", "t", "u", "j", "g", "w", "y", "c", "n", "l", "a", "r", "b", "s", "e", "f", "i", "z", "h", "d", "p", "x", "m", "k", "o", "q" ) shouldBe "true"
 			t.prettyString shouldBe
 				"""	|[n0: (null, null, null) n1 | g | n2 | r | n3]
-						|[n1: (null, n0, n2) n4 | e | n5] [n2: (n1, n0, null) n6 | j | n7 | n | n8] [n3: (n2, n0, null) n9 | u | n10 | w | n11]
+						|[n1: (null, n0, n2) n4 | e | n5] [n2: (n1, n0, n3) n6 | j | n7 | n | n8] [n3: (n2, n0, null) n9 | u | n10 | w | n11]
 						|[n4: (null, n1, n5) n12 | c | n13] [n5: (n4, n1, null) n14 | f | n15] [n6: (null, n2, n7) n16 | h | n17] [n7: (n6, n2, n8) n18 | l | n19] [n8: (n7, n2, null) n20 | o | n21 | p | n22] [n9: (null, n3, n10) n23 | s | n24] [n10: (n9, n3, n11) n25 | v | n26] [n11: (n10, n3, null) n27 | y | n28]
 						|[n12: (null, n4, n13) a b] [n13: (n12, n4, n14) c d] [n14: (n13, n5, n15) e] [n15: (n14, n5, n16) f] [n16: (n15, n6, n17) g] [n17: (n16, n6, n18) h i] [n18: (n17, n7, n19) j k] [n19: (n18, n7, n20) l m] [n20: (n19, n8, n21) n] [n21: (n20, n8, n22) o] [n22: (n21, n8, n23) p q] [n23: (n22, n9, n24) r] [n24: (n23, n9, n25) s t] [n25: (n24, n10, n26) u] [n26: (n25, n10, n27) v] [n27: (n26, n11, n28) w x] [n28: (n27, n11, null) y z]""".stripMargin
 			t.prettySearch( "i" ) shouldBe "n17 null 1"
@@ -130,7 +130,7 @@ class InsertionTests extends FreeSpec with PropertyChecks with Matchers {
 			t.wellConstructed shouldBe "true"
 			t.prettyString shouldBe
 				"""	|[n0: (null, null, null) n1 | g | n2 | m | n3]
-						|[n1: (n0) n4 | c | n5 | e | n6] [n2: (n0) n7 | i | n8 | k | n9] [n3: (n0) n10 | o | n11]
+						|[n1: (null, n0, n2) n4 | c | n5 | e | n6] [n2: (n1, n0, n3) n7 | i | n8 | k | n9] [n3: (n2, n0, null) n10 | o | n11]
 						|[n4: (null, n1, n5) a b] [n5: (n4, n1, n6) c d] [n6: (n5, n1, n7) e f] [n7: (n6, n2, n8) g h] [n8: (n7, n2, n9) i j] [n9: (n8, n2, n10) k l] [n10: (n9, n3, n11) m n] [n11: (n10, n3, null) o p]""".stripMargin
 			t.prettySearch( "h" ) shouldBe "n7 null 1"
 		}

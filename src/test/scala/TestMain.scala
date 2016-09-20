@@ -74,7 +74,7 @@ object TestMain extends App {
 // 	tree.delete( "c" )
 //  	tree.prettyPrintKeysOnly
 //  	println( tree.wellConstructed )
-	println( tree.insertKeysAndCheck( "v", "t", "u", "j", "g", "w", "y", "c", "n", "l", "a", "r", "b", "s", "e", "f", "i", "z", "h", "d", "p", "x", "m", "k", "o", "q" ) )
+	println( tree.insertKeysAndCheck( "v", "t", "u", "j", "g", "w", "y", "c", "n", "l", "a", "r", "b", "s"/*, "e", "f", "i", "z", "h", "d", "p", "x", "m", "k", "o", "q"*/ ) )
 	tree.prettyPrintKeysOnly
 	println( tree.wellConstructed )
 }

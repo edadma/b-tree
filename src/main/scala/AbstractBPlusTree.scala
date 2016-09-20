@@ -640,7 +640,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 								setParent( child, newinternal )
 								
 							if (!isLeaf( getBranch(par, 0) )) {
-								setNext( getBranch(par, nodeLength( par ) - 1), nul )	// compute nodeLength( par )
+								setNext( getBranch(par, nodeLength( par )), nul )	// compute nodeLength( par )
 								setPrev( getBranch(newinternal, 0), nul )
 							}
 							
@@ -1057,7 +1057,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	 * produces a tree that pretty prints as
 	 * 
 	 * {{{
-	 * [n0: (null) n1 | j | n2 | u | n3]
+	 * [n0: (null, null, null) n1 | j | n2 | u | n3]
 	 * [n1: (null, n0, n2) g] [n2: (n1, n0, n3) j t] [n3: (n2, n0, null) u v]
 	 * }}}
 	 */
@@ -1073,7 +1073,16 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				case "[" =>
 					addBranch( node, leaf(it, newLeaf(node)) )
 					internal( it, node )
-				case ")" => node
+				case ")" =>
+					if (!isLeaf( getBranch(node, 0) )) {
+						getBranches( node ) dropRight 1 zip (getBranches( node ) drop 1) foreach {
+							case (n1, n2) =>
+								setNext( n1, n2 )
+								setPrev( n2, n1 )
+						}
+					}
+					
+					node
 				case key if key.head.isLetter =>
 					addKey( node, key.asInstanceOf[K] )
 					internal( it, node )
