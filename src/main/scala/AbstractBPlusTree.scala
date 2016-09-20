@@ -10,9 +10,9 @@ import java.io.PrintWriter
 
 
 /**
- * Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially. An empty B+ Tree consists of a single empty leaf node as the root. Also the `first` and `last` should refer to the root leaf node, and the `lastlen` variable should be 0. For on-disk implementations it should be possible to open an existing B+ Tree or optionally create a new one.
+ * Provides for interaction (searching, insertion, update, deletion) with a B+ tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ tree initially. An empty B+ tree consists of a single empty leaf node as the root. Also the `first` and `last` should refer to the root leaf node, and the `lastlen` variable should be 0. For on-disk implementations it should be possible to open an existing B+ tree or optionally create a new one.
  * 
- * @constructor creates an object providing access to a B+ Tree with a branching factor of `order` and possibly creating an empty tree.
+ * @constructor creates an object providing access to a B+ tree with a branching factor of `order` and possibly creating an empty tree.
  * @param order the branching factor (maximum number of branches in an internal node) of the tree
  * @tparam K the type of the keys contained in this map.
  * @tparam V the type of the values associated with the keys.
@@ -455,7 +455,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	}
 	
 	/**
-   * Performs the B+ Tree bulk loading algorithm to insert key/value pairs `kvs` into the tree efficiently. This method is more efficient than using `insert` because `insert` performs a search to determine the correct insertion point for the key whereas `load` does not. `load` can only work if the tree is empty, or if the minimum key to be inserted is greater than the maximum key in the tree.
+   * Performs the B+ tree bulk loading algorithm to insert key/value pairs `kvs` into the tree efficiently. This method is more efficient than using `insert` because `insert` performs a search to determine the correct insertion point for the key whereas `load` does not. `load` can only work if the tree is empty, or if the minimum key to be inserted is greater than the maximum key in the tree.
    */
 	def load[V1 >: V]( kvs: (K, V1)* ) {
 		require( !kvs.isEmpty, "expected some key/value pairs to load" )
@@ -509,7 +509,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	}
 	
 	/**
-	 * Performs the B+ Tree lookup algorithm (tail recursively) beginning at the root, in search of the location (if found) or correct insertion point (if not found) of `key`.
+	 * Performs the B+ tree lookup algorithm (tail recursively) beginning at the root, in search of the location (if found) or correct insertion point (if not found) of `key`.
 	 * 
 	 * @return a triple where the first element is `true` if `key` exists and `false` otherwise, the second element is the node containing `key` if found or the correct insertion point for `key` if not found, the third is the index within that node.
 	 */
@@ -577,7 +577,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 		}
 	
 	/**
-	 * Performs the B+ Tree insertion algorithm to insert `key` and associated `value` into the tree, specifically in `leaf` at `index`, rebalancing the tree if necessary. If `leaf` and `index` is not the correct insertion point for `key` then this method will probably result in an invalid B+ Tree.
+	 * Performs the B+ tree insertion algorithm to insert `key` and associated `value` into the tree, specifically in `leaf` at `index`, rebalancing the tree if necessary. If `leaf` and `index` is not the correct insertion point for `key` then this method will probably result in an invalid B+ tree.
 	 */
 	protected def insertAt[V1 >: V]( key: K, value: V1, leaf: N, index: Int ) {
 		def split = {
@@ -659,7 +659,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	}
 	
 	/**
-	 * Performs the B+ Tree deletion algorithm to remove `key` and it's associated value from the tree, rebalancing the tree if necessary.
+	 * Performs the B+ tree deletion algorithm to remove `key` and it's associated value from the tree, rebalancing the tree if necessary.
 	 * 
 	 * @return `true` if `key` was found (and therefore removed), `false` otherwise
 	 */
@@ -719,9 +719,61 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							first = left
 							setFirst( left )
 						} else if (par != root) {
-// 							while (len < order/2) {
-// 								
-// 							}
+							while (len < order/2) {
+//
+//
+								par = getParent( leaf )
+								val (sibling, leafside, siblingside, left, right, parkey) = {
+									val next = getNext( leaf )
+									
+									if (next != nul && getParent( next ) == par) {
+										(next, len, 0, leaf, next, if (len == 0) key else getKey( leaf, 0 ))
+									} else {
+										val prev = getPrev( leaf )
+										
+										if (prev != nul && getParent( prev ) == par)
+											(prev, 0, nodeLength( prev ) - 1, prev, leaf, getKey( prev, 0 ))
+										else
+											sys.error( "no sibling" )
+									}
+								}
+								
+								val index =
+									binarySearch( par, parkey ) match {
+										case ind if ind >= 0 => ind + 1 // add one because if it's found then it's the wrong one
+										case ind => -(ind + 1)
+									}
+								
+								if (nodeLength( sibling ) > order/2) {
+									moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
+									setKey( par, index, getKey(right, 0) )
+								} else {
+									moveLeaf( right, 0, nodeLength(right), left, nodeLength(left) )
+									
+									val next = getNext( right )
+									
+									setNext( left, next )
+									
+									if (next == nul) {
+										last = left
+										setLast( left )
+										lastlen = nodeLength( left )
+									}
+								
+									freeNode( right )
+									
+									var len = removeInternal( par, index )
+										
+									if (par == root && len == 0) {
+										freeNode( root )
+										setParent( left, nul )
+										root = left
+										setRoot( left )
+										first = left
+										setFirst( left )
+//
+//
+							}
 						}
 					}
 				}
@@ -734,7 +786,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	/**
 	 * Analyzes the tree to determine if it is well constructed.
 	 * 
-	 * @return `"true"` (as a string) if the tree is a well constructed B+ Tree, a string description of the flaw otherwise.
+	 * @return `"true"` (as a string) if the tree is a well constructed B+ tree, a string description of the flaw otherwise.
 	 */
 	def wellConstructed: String = {
 		val nodes = new ArrayBuffer[N]
@@ -960,7 +1012,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	}
 	
 	/**
-	 * Returns a B+ Tree build from a string representation of the tree. The syntax of the input string is simple: internal nodes are coded as lists of nodes alternating with keys (alpha strings with no quotation marks) using parentheses with elements separated by space, leaf nodes are coded as lists of alpha strings (no quotation marks) using brackets with elements separated by space.
+	 * Returns a B+ tree build from a string representation of the tree. The syntax of the input string is simple: internal nodes are coded as lists of nodes alternating with keys (alpha strings with no quotation marks) using parentheses with elements separated by space, leaf nodes are coded as lists of alpha strings (no quotation marks) using brackets with elements separated by space.
 	 * 
 	 * @example
 	 * 
@@ -1026,6 +1078,10 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				case "[" => leaf( it, newLeaf(nul) )
 				case t => sys.error( "unexpected token: " + t.head.toInt )
 			}
-		this
+			
+		wellConstructed match {
+			case "true" => this
+			case reason => sys.error( reason )
+		}
 	}
 }

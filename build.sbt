@@ -23,7 +23,7 @@ libraryDependencies ++= Seq(
 
 parallelExecution in Test := false
 
-libraryDependencies += "xyz.hyperreal" %% "ramfile" % "0.3"
+//libraryDependencies += "xyz.hyperreal" %% "ramfile" % "0.3"
 
 mainClass in (Compile, run) := Some( "xyz.hyperreal." + "btree" + ".TestMain" )
 
@@ -39,12 +39,12 @@ pomIncludeRepository := { _ => false }
 
 licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 
-homepage := Some(url("https://github.com/edadma/sscheme"))
+homepage := Some(url("https://github.com/edadma/b-tree"))
 
 pomExtra := (
   <scm>
-    <url>git@github.com:edadma/sscheme.git</url>
-    <connection>scm:git:git@github.com:edadma/sscheme.git</connection>
+    <url>git@github.com:edadma/b-tree.git</url>
+    <connection>scm:git:git@github.com:edadma/b-tree.git</connection>
   </scm>
   <developers>
     <developer>
