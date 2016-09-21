@@ -735,8 +735,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							setRoot( left )
 							first = left
 							setFirst( left )
-						} else if (par != root)
-							while (par != nul && len < order/2) {
+						} else
+							while (par != root && len < order/2) {
 								val internal = par
 								val (sibling, internalside, siblingside, left, right, parkey) = {
 									val next = getNext( internal )
@@ -762,7 +762,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									}
 								
 								if (nodeLength( sibling ) > order/2) {
-									println(123)
 									moveInternalDelete( sibling, siblingside, siblingside + 1, internal, internalside )
 									setKey( par, index, getKey(right, 0) )
 								} else {
@@ -781,15 +780,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									
 									var len = removeInternal( par, index )
 										
-									if (par == root) {
-										if (len == 0) {
-											freeNode( root )
-											setParent( left, nul )
-											root = left
-											setRoot( left )
-										}
-										
-										par = nul
+									if (par == root && len == 0) {
+										freeNode( root )
+										setParent( left, nul )
+										root = left
+										setRoot( left )
+										par = root
 									}
 								}
 							}
