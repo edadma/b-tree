@@ -849,16 +849,25 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					return "incorrect next pointer"
 				else
 					nextptr = getNext( n )
-			}
-			else {
+			} else {
 				if (getBranches( n ) exists (p => p == nul))
 					return "null branch pointer"
 					
 				if (getKeys( getBranch(n, 0) ) isEmpty)
-					return "empty internal node"
+					return "empty internal node branch"
 					
 				if (getKeys( n ) isEmpty)
 					return "empty internal node"
+				
+				if (!isLeaf( getBranch(n, 0) )) {
+					if (!(getBranches( n ) dropRight 1 zip (getBranches( n ) drop 1) forall {case (n1, n2) => getNext( n1 ) == n2}) ||
+						getNext( getBranches(n).last ) != nul)
+						return "incorrect next pointer"
+						
+					if (!(getBranches( n ) dropRight 1 zip (getBranches( n ) drop 1) forall {case (n1, n2) => n1 == getPrev( n2 )}) ||
+						getPrev( getBranch(n, 0) ) != nul)
+						return "incorrect prev pointer"
+				}
 				
 				if (getParent( n ) == nul) {
 					if (getPrev( n ) != nul)
@@ -870,14 +879,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					if (nodeLength( n ) < 1 || nodeLength( n ) >= order)
 						return "root internal node length out of range"
 				} else {
-// 					if (!(getBranches( n ) dropRight 1 zip (getBranches( n ) drop 1) forall {case (n1, n2) => getNext( n1 ) == n2}) ||
-// 						getNext( getBranches(n).last ) != nul)
-// 						return "incorrect next pointer"
-						
-					if (!(getBranches( n ) dropRight 1 zip (getBranches( n ) drop 1) forall {case (n1, n2) => n1 == getPrev( n2 )}) /*||
-						getPrev( getBranch(n, 0) ) != nul*/)
-						return "incorrect prev pointer"
-						
 					if (nodeLength( n ) < cbo2 - 1 || nodeLength( n ) > order - 1)
 						return "non-root internal node length out of range"
 				}
@@ -1123,7 +1124,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				case "[" => leaf( it, newLeaf(nul) )
 				case t => sys.error( "unexpected token: " + t.head.toInt )
 			}
-			
+		
 		wellConstructed match {
 			case "true" => this
 			case reason => sys.error( reason )
