@@ -684,7 +684,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 			case (true, leaf, index) =>
 				val len = removeLeaf( leaf, index )
 				
-				if (len < order/2) {
+				if (leaf != root && len < order/2) {
 					var par = getParent( leaf )
 					val (sibling, leafside, siblingside, left, right, parkey) = {
 						val next = getNext( leaf )
