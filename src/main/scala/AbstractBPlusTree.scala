@@ -672,6 +672,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 		}
 	}
 	
+	def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int )
+	
 	/**
 	 * Performs the B+ tree deletion algorithm to remove `key` and it's associated value from the tree, rebalancing the tree if necessary.
 	 * 
@@ -764,10 +766,10 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									}
 								
 								if (nodeLength( sibling ) > order/2) {
-//									moveInternalDelete( sibling, siblingside, siblingside + 1, leaf, leafside )
+									moveInternalDelete( sibling, siblingside, siblingside + 1, leaf, leafside )
 									setKey( par, index, getKey(right, 0) )
 								} else {
-//									moveInternalDelete( right, 0, nodeLength(right), left, nodeLength(left) )
+									moveInternalDelete( right, 0, nodeLength(right), left, nodeLength(left) )
 									
 									val next = getNext( right )
 									

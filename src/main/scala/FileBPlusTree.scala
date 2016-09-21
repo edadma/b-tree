@@ -225,6 +225,10 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		file.read == LEAF_NODE
 	}
 	
+	def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int ) {
+		
+	}
+	
 	protected def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
 		if (savedNode == NUL) {
 			copyKeys( src, begin, end, dst, 0 )

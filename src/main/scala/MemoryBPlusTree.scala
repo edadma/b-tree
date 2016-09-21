@@ -59,6 +59,10 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	
 	protected def nodeLength( node: Node[K, V] ) = node.keys.length
 	
+	def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int ) {
+		
+	}
+	
 	protected def moveInternal( src: Node[K, V], begin: Int, end: Int, dst: Node[K, V] ) {
 		src.keys.view( begin, end ) copyToBuffer dst.keys
 		src.keys.remove( begin - 1, end - begin + 1 )
