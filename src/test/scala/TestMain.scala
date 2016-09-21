@@ -67,22 +67,19 @@ object TestMain extends App {
 //  	println( tree.wellConstructed )
 	tree.build( """
 		(
-			([a] b [b c]) d ([d] e [e])
+			([a] b [b]) d ([d] e [e])
 		)
 		""" ).prettyPrintKeysOnly
- 	tree.delete( "b" )
+ 	tree.delete( "d" )
+ 	tree.prettyPrintKeysOnly
+ 	println( tree.wellConstructed )
+ 	tree.delete( "e" )
  	tree.prettyPrintKeysOnly
  	println( tree.wellConstructed )
  	tree.delete( "a" )
  	tree.prettyPrintKeysOnly
  	println( tree.wellConstructed )
- 	tree.delete( "c" )
- 	tree.prettyPrintKeysOnly
- 	println( tree.wellConstructed )
- 	tree.delete( "d" )
- 	tree.prettyPrintKeysOnly
- 	println( tree.wellConstructed )
- 	tree.delete( "e" )
+ 	tree.delete( "b" )
  	tree.prettyPrintKeysOnly
  	println( tree.wellConstructed )
 }
