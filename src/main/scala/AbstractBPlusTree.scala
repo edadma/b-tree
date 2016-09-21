@@ -721,7 +721,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							last = left
 							setLast( left )
 							lastlen = nodeLength( left )
-						}
+						} else
+							setPrev( next, left )
 					
 						freeNode( right )
 						
@@ -772,7 +773,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									
 									addBranch( left, second )
 									moveInternalDelete( right, 0, nodeLength(right), left, nodeLength(left) )
-									setPrev( second, getBranch(left, 0) ) // sometimes works
+//									setPrev( second, getBranch(left, 0) ) // sometimes works
 									getBranches( left ) drop 1 foreach (setParent( _, left ))
 									
 									val next = getNext( right )

@@ -70,7 +70,7 @@ object TestMain extends App {
 			([a] b [b]) d ([d] e [e])
 		)
 		""" ).prettyPrintKeysOnly
- 	tree.delete( "d" )
+ 	tree.delete( "e" )
  	tree.prettyPrintKeysOnly
  	println( tree.wellConstructed )
 }
