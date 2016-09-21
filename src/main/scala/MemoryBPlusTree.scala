@@ -60,7 +60,10 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	protected def nodeLength( node: Node[K, V] ) = node.keys.length
 	
 	def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int ) {
-		
+		dst.keys.insertAll( index, src.keys.view(begin, end) ) 
+		src.keys.remove( begin, end - begin )
+		dst.asInternal.branches.insertAll( index + 1, src.asInternal.branches.view(begin + 1, end + 1) )
+		src.asInternal.branches.remove( begin + 1, end - begin )
 	}
 	
 	protected def moveInternal( src: Node[K, V], begin: Int, end: Int, dst: Node[K, V] ) {
@@ -137,12 +140,14 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	protected class InternalNode[K, V]( var parent: InternalNode[K, V] ) extends Node[K, V] {
 		val isLeaf = false
 		val branches = new ArrayBuffer[Node[K, V]]
+		
+		override def toString = keys.mkString( "internal[", ", ", "]" )
 	}
 
 	protected class LeafNode[K, V]( var parent: InternalNode[K, V] ) extends Node[K, V] {
 		val isLeaf = true
 		val values = new ArrayBuffer[V]
 		
-		override def toString = keys.mkString( "[keys: ", ", ", "| ") + values.mkString( "values: ", ", ", "]" )
+		override def toString = keys.mkString( "leaf[", ", ", "]" )
 	}
 }

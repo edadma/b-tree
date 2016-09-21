@@ -734,8 +734,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							setRoot( left )
 							first = left
 							setFirst( left )
-						} else if (par != root) {
-							while (len < order/2) {
+						} else if (par != root)
+							while (par != nul && len < order/2) {
 //
 //
 								val internal = par
@@ -756,9 +756,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							
 								par = getParent( par )
 								
-								//
-								//
-								
 								val index =
 									binarySearch( par, parkey ) match {
 										case ind if ind >= 0 => ind + 1 // add one because if it's found then it's the wrong one
@@ -769,17 +766,24 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									moveInternalDelete( sibling, siblingside, siblingside + 1, leaf, leafside )
 									setKey( par, index, getKey(right, 0) )
 								} else {
+									addKey( left, getKey(getBranch(right, 0), 0) )
+									
+									val second = getBranch( right, 0 )
+									
+									addBranch( left, second )
 									moveInternalDelete( right, 0, nodeLength(right), left, nodeLength(left) )
+									setPrev( second, getBranch(left, 0) )
+									getBranches( left ) drop 1 foreach (setParent( _, left ))
 									
 									val next = getNext( right )
 									
 									setNext( left, next )
 									
-									if (next == nul) {
-										last = left
-										setLast( left )
-										lastlen = nodeLength( left )
-									}
+// 									if (next == nul) {
+// 										last = left
+// 										setLast( left )
+// 										lastlen = nodeLength( left )
+// 									}
 								
 									freeNode( right )
 									
@@ -790,12 +794,10 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 										setParent( left, nul )
 										root = left
 										setRoot( left )
+										par = nul
 									}
 								}
-//
-//
 							}
-						}
 					}
 				}
 				

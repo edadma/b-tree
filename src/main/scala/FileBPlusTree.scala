@@ -202,7 +202,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 			nodeLength( node, len + 1 )
 			
 			if (index < len)
-				copy( node, index, len, node, index + 1 )
+				copyLeaf( node, index, len, node, index + 1 )
 			
 			setKey( node, index, key )
 			setValue( node, index, value )
@@ -226,7 +226,12 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	}
 	
 	def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int ) {
+		val dstlen = nodeLength( dst )
 		
+		copyInternal( dst, index, dstlen, dst, index + end - begin )
+		copyInternal( src, begin, end, dst, index )
+		nodeLength( src, nodeLength(src) - (end - begin) )
+		nodeLength( dst, dstlen + end - begin )
 	}
 	
 	protected def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
@@ -272,8 +277,8 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		val dstlen = nodeLength( dst )
 			
 		if (savedNode == NUL) {
-			copy( dst, index, dstlen, dst, index + end - begin )
-			copy( src, begin, end, dst, index )
+			copyLeaf( dst, index, dstlen, dst, index + end - begin )
+			copyLeaf( src, begin, end, dst, index )
 			nodeLength( src, nodeLength(src) - (end - begin) )
 			nodeLength( dst, dstlen + end - begin )
 		} else {
@@ -375,7 +380,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		nodeLength( node, newlen )
 		
 		if (index < newlen)
-			copy( node, index + 1, len, node, index )
+			copyLeaf( node, index + 1, len, node, index )
 			
 		newlen
 	}
@@ -433,13 +438,23 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		data
 	}
 	
-	protected def copy( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
+	protected def copyLeaf( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
 		val data = copyKeys( src, begin, end, dst, index )
 		
 		file seek (src + LEAF_VALUES + begin*DATUM_SIZE)
 		file readFully data
 		file seek (dst + LEAF_VALUES + index*DATUM_SIZE)
 		file write data
+	}
+	
+	protected def copyInternal( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
+		val data = copyKeys( src, begin, end, dst, index )
+		val branchlen = (end - begin)*POINTER_SIZE
+		
+		file seek (src + INTERNAL_BRANCHES + (begin + 1)*POINTER_SIZE)
+		file readFully (data, 0, branchlen)
+		file seek (dst + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
+		file write (data, 0, branchlen)
 	}
 	
 	protected def freeDatum( addr: Long ) = {
