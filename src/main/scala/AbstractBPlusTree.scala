@@ -737,8 +737,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							setFirst( left )
 						} else if (par != root)
 							while (par != nul && len < order/2) {
-//
-//
 								val internal = par
 								val (sibling, internalside, siblingside, left, right, parkey) = {
 									val next = getNext( internal )
@@ -764,7 +762,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									}
 								
 								if (nodeLength( sibling ) > order/2) {
-									moveInternalDelete( sibling, siblingside, siblingside + 1, leaf, leafside )
+									println(123)
+									moveInternalDelete( sibling, siblingside, siblingside + 1, internal, internalside )
 									setKey( par, index, getKey(right, 0) )
 								} else {
 									addKey( left, getKey(getBranch(right, 0), 0) )
@@ -773,7 +772,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									
 									addBranch( left, second )
 									moveInternalDelete( right, 0, nodeLength(right), left, nodeLength(left) )
-//									setPrev( second, getBranch(left, 0) ) // sometimes works
 									getBranches( left ) drop 1 foreach (setParent( _, left ))
 									
 									val next = getNext( right )
@@ -783,11 +781,14 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									
 									var len = removeInternal( par, index )
 										
-									if (par == root && len == 0) {
-										freeNode( root )
-										setParent( left, nul )
-										root = left
-										setRoot( left )
+									if (par == root) {
+										if (len == 0) {
+											freeNode( root )
+											setParent( left, nul )
+											root = left
+											setRoot( left )
+										}
+										
 										par = nul
 									}
 								}
@@ -1063,9 +1064,15 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	 * }}}
 	 */
 	def build( s: String ) = {
-		val it = """[a-z]+|\n|.""".r.findAllMatchIn(s) filterNot (m => m.matched.head.isWhitespace)
+		val it = """[a-zA-Z0-9]+|\n|.""".r.findAllMatchIn(s) filterNot (m => m.matched.head.isWhitespace)
 		var prev: N = nul
 		
+		def readKey( key: String ) =
+			if (key forall (_.isDigit))
+				key.toInt.asInstanceOf[K]
+			else
+				key.asInstanceOf[K]
+				
 		def internal( it: Iterator[Match], node: N ): N =
 			it.next.matched match {
 				case "(" =>
@@ -1084,8 +1091,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					}
 					
 					node
-				case key if key.head.isLetter =>
-					addKey( node, key.asInstanceOf[K] )
+				case key if key.head.isLetterOrDigit =>
+					addKey( node, readKey(key) )
 					internal( it, node )
 				case t => sys.error( "unexpected token: " + t )
 			}
@@ -1105,11 +1112,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					setPrev( node, prev )
 					prev = node
 					node
-				case key if key.head.isLetter =>
-					addKey( node, key.asInstanceOf[K] )
+				case key if key.head.isLetterOrDigit =>
+					addKey( node, readKey(key) )
 					addValue( node, null.asInstanceOf[V] )
 					leaf( it, node )
-				case t => sys.error( "unexpected token: " + t )
+				case t => sys.error( "unexpected token: '" + t + "'" )
 			}
 		
 		freeNode( root )

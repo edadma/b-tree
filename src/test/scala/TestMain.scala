@@ -3,7 +3,7 @@ package xyz.hyperreal.btree
 
 object TestMain extends App {
 //	val tree = new FileBPlusTree[String, Any]( "btree", 3 )
-	val tree = new MemoryBPlusTree[String, Any]( 3 )
+	val tree = new MemoryBPlusTree[Int, Any]( 3 )
 // 	val map = new MutableSortedMap[String, Any]
 	
 // 	tree.insert( "a" )
@@ -67,19 +67,16 @@ object TestMain extends App {
 //  	println( tree.wellConstructed )
 	tree.build( """
 		(
-			([a] b [b]) d ([d] e [e])
+			([1] 2 [2]) 3 ([3] 4 [4]) 5 ([5] 6 [6 7])
 		)
 		""" ).prettyPrintKeysOnly
- 	tree.delete( "d" )
- 	tree.prettyPrintKeysOnly
- 	println( tree.wellConstructed )
- 	tree.delete( "e" )
- 	tree.prettyPrintKeysOnly
- 	println( tree.wellConstructed )
- 	tree.delete( "a" )
- 	tree.prettyPrintKeysOnly
- 	println( tree.wellConstructed )
- 	tree.delete( "b" )
+//  	tree.delete( "d" )
+//  	tree.prettyPrintKeysOnly
+//  	println( tree.wellConstructed )
+	
+// 	tree.insertKeys( util.Random.shuffle(1 to 7): _* )
+//  	tree.prettyPrintKeysOnly
+	tree.delete( 4 )
  	tree.prettyPrintKeysOnly
  	println( tree.wellConstructed )
 }
