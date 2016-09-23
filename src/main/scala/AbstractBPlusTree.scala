@@ -802,23 +802,23 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									moveInternalDelete( right, 0, nodeLength(right), left, nodeLength(left) )
 									getBranches( left ) drop 1 foreach (setParent( _, left ))
 									
-									setNext( left, getNext(right) )
-
 									freeNode( right )
 									
-// 									if (!isLeaf( getBranch(left, 0) )) {
-// 										for ((l, r) <- getBranches( left ) drop 1 zip (getBranches( left ) dropRight 1)) {
-// 											setNext( l, r )
-// 											setPrev( r, l )
-// 										}
-// 									}
+									if (!isLeaf( getBranch(left, 0) )) {
+										for ((l, r) <- getBranches( left ) dropRight 1 zip (getBranches( left ) drop 1)) {
+											setNext( l, r )
+											setPrev( r, l )
+										}
+									}
+									
+//										setPrev( getBranch(left, 0), nul )
+										setNext( left, nul )
 									
 									len = removeInternal( par, index )
 										
 									if (par == root && len == 0) {
 										freeNode( root )
 										setParent( left, nul )
-//										setNext( left, nul )
 										root = left
 										setRoot( left )
 										par = root

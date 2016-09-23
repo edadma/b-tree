@@ -222,4 +222,28 @@ class DeletionTests extends FreeSpec with PropertyChecks with Matchers {
 			t.wellConstructed shouldBe "true"
 		}
 	}
+	
+// 	forAll (order3int_temp) { (gen, storage) =>
+// 		val t = gen()
+// 		
+// 		("deletion (merge up to root, 4 level tree): " + storage + ", order 3") in {
+// 			t.build( """
+// 			(
+// 				(
+// 					([1 2] 3 [3]) 4 ([4] 5 [5])
+// 				)
+// 				7
+// 				(
+// 					([7] 8 [8 9]) 10 ([10] 11 [11 12])
+// 				)
+// 			)
+// 			""" )
+// 			t.delete( 5 ) shouldBe true
+// 			t.prettyString shouldBe
+// 				"""	|[n0: (null, null, null) n1 | 7 | n2 | 10 | n3]
+// 						|[n1: (null, n0, n2) n4 | 3 | n5 | 4 | n6] [n2: (n1, n0, n3) n7 | 8 | n8] [n3: (n2, n0, null) n9 | 11 | n10]
+// 						|[n4: (null, n1, n5) 1 2] [n5: (n4, n1, n6) 3] [n6: (n5, n1, n7) 4] [n7: (n6, n2, n8) 7] [n8: (n7, n2, n9) 8 9] [n9: (n8, n3, n10) 10] [n10: (n9, n3, null) 11 12]""".stripMargin
+// 			t.wellConstructed shouldBe "true"
+// 		}
+// 	}
 }
