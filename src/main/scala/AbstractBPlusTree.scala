@@ -790,6 +790,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									removeKey( right, 0 )
 									removeBranch( right, 0 )
 									setKey( par, 0, leftmost(right) )
+									par = root
 								} else {
 									addKey( left, leftmost(right) )
 									
