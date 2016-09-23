@@ -353,6 +353,22 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	
 	protected def nul = 0
 
+	def removeBranch( node: Long, index: Int ) {
+		
+	}
+	
+	def removeKey( node: Long, index: Int ) {
+		
+	}
+	
+	def insertBranch( node: Long, index: Int, branch: Long ) {
+		
+	}
+	
+	def insertKey( node: Long, index: Int, key: K ) {
+		
+	}
+
 	protected def removeInternal( node: Long, index: Int ) = {
 		val len = nodeLength( node )
 		val newlen = len - 1

@@ -93,6 +93,14 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTre
 	
 	protected def nul = null
 
+	def removeBranch( node: Node[K, V], index: Int ) = node.asInternal.branches.remove( index, 1 )
+	
+	def removeKey( node: Node[K, V], index: Int ) = node.keys.remove( index, 1 )
+	
+	def insertBranch( node: Node[K, V], index: Int, branch: Node[K, V] ) = node.asInternal.branches.insert( index, branch )
+	
+	def insertKey( node: Node[K, V], index: Int, key: K ) = node.keys.insert( index, key )
+
 	protected def removeInternal( node: Node[K, V], index: Int ) = {
 		node.keys.remove( index, 1 )
 		node.asInternal.branches.remove( index + 1, 1 )

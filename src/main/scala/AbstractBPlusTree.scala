@@ -158,6 +158,14 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	 */
 	protected def nul: N
 
+	def removeBranch( node: N, index: Int )
+	
+	def removeKey( node: N, index: Int )
+	
+	def insertBranch( node: N, index: Int, branch: N )
+	
+	def insertKey( node: N, index: Int, key: K )
+	
 	/**
 	 * Removes the key/branch pair from internal `node` at `index`. The branch that is removed is the one to the right of the key being removed, i.e. the branch at (`index` + 1). This method is perhaps poorly named: it does not remove an internal node from the tree.
 	 * 
@@ -673,6 +681,18 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	}
 	
 	def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int )
+		
+	def leftmost( node: N ): K =
+		if (isLeaf( node ))
+			getKey( node, 0 )
+		else
+			leftmost( getBranch(node, 0) )
+	
+	def rightmost( node: N ): K =
+		if (isLeaf( node ))
+			getKey( node, nodeLength(node) - 1 )
+		else
+			rightmost( getBranch(node, nodeLength(node)) )
 	
 	/**
 	 * Performs the B+ tree deletion algorithm to remove `key` and it's associated value from the tree, rebalancing the tree if necessary.
@@ -742,12 +762,12 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									val next = getNext( internal )
 									
 									if (next != nul) {
-										(next, len, 0, internal, next, if (len == 0) key else getKey( internal, 0 ))
+										(next, len + 1, 0, internal, next, if (len == 0) key else getKey( internal, 0 ))
 									} else {
 										val prev = getPrev( internal )
 										
 										if (prev != nul)
-											(prev, 0, nodeLength( prev ) - 1, prev, internal, getKey( prev, 0 ))
+											(prev, 0, nodeLength( prev ), prev, internal, getKey( prev, 0 ))
 										else
 											sys.error( "no sibling" )
 									}
@@ -762,10 +782,16 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									}
 								
 								if (nodeLength( sibling ) > order/2) {
-									moveInternalDelete( sibling, siblingside, siblingside + 1, internal, internalside )
-									setKey( par, index, getKey(right, 0) )
+									val branch = getBranch(right, 0)
+									
+									addKey( left, leftmost(branch) )
+									addBranch( left, branch )
+									setParent( branch, left )
+									removeKey( right, 0 )
+									removeBranch( right, 0 )
+									setKey( par, 0, leftmost(right) )
 								} else {
-									addKey( left, getKey(getBranch(right, 0), 0) )
+									addKey( left, leftmost(right) )
 									
 									val second = getBranch( right, 0 )
 									
