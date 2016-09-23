@@ -758,16 +758,20 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						} else
 							while (par != root && len < order/2) {
 								val internal = par
-								val (sibling, internalside, siblingside, left, right, parkey) = {
+								val (sibling, internalsidekey, siblingsidekey, internalsidebranch, siblingsidebranch, left, right, parkey, branch, keytoadd, keytoset) = {
 									val next = getNext( internal )
 									
 									if (next != nul) {
-										(next, len + 1, 0, internal, next, if (len == 0) key else getKey( internal, 0 ))
+										val br = getBranch( next, 0 )
+										
+										(next, len, 0, len + 1, 0, internal, next, if (len == 0) key else getKey( internal, 0 ), br, leftmost( br ), leftmost( getBranch(next, 1) ))
 									} else {
 										val prev = getPrev( internal )
+										val prevlen = nodeLength( prev )
+										val br = getBranch( prev, prevlen )
 										
 										if (prev != nul)
-											(prev, 0, nodeLength( prev ), prev, internal, getKey( prev, 0 ))
+											(prev, 0, prevlen - 1, 0, prevlen, prev, internal, getKey( prev, 0 ), br, rightmost( internal ), rightmost( br ))
 										else
 											sys.error( "no sibling" )
 									}
@@ -782,34 +786,39 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									}
 								
 								if (nodeLength( sibling ) > order/2) {
-									val branch = getBranch(right, 0)
-									
-									addKey( left, leftmost(branch) )
-									addBranch( left, branch )
-									setParent( branch, left )
-									removeKey( right, 0 )
-									removeBranch( right, 0 )
-									setKey( par, 0, leftmost(right) )
+									insertKey( internal, internalsidekey, keytoadd )
+									insertBranch( internal, internalsidebranch, branch )
+									setParent( branch, internal )
+									removeKey( sibling, siblingsidekey )
+									removeBranch( sibling, siblingsidebranch )
+									setKey( par, index, keytoset )
 									par = root
 								} else {
 									addKey( left, leftmost(right) )
 									
-									val second = getBranch( right, 0 )
+									val middle = getBranch( right, 0 )
 									
-									addBranch( left, second )
+									addBranch( left, middle )
 									moveInternalDelete( right, 0, nodeLength(right), left, nodeLength(left) )
 									getBranches( left ) drop 1 foreach (setParent( _, left ))
 									
-									val next = getNext( right )
-									
-									setNext( left, next )
+									setNext( left, getNext(right) )
+
 									freeNode( right )
 									
-									var len = removeInternal( par, index )
+// 									if (!isLeaf( getBranch(left, 0) )) {
+// 										for ((l, r) <- getBranches( left ) drop 1 zip (getBranches( left ) dropRight 1)) {
+// 											setNext( l, r )
+// 											setPrev( r, l )
+// 										}
+// 									}
+									
+									len = removeInternal( par, index )
 										
 									if (par == root && len == 0) {
 										freeNode( root )
 										setParent( left, nul )
+//										setNext( left, nul )
 										root = left
 										setRoot( left )
 										par = root

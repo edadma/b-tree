@@ -1,5 +1,7 @@
 package xyz.hyperreal.btree
 
+import util.Random
+
 
 object TestMain extends App {
 //	val tree = new FileBPlusTree[String, Any]( "btree", 3 )
@@ -70,18 +72,57 @@ object TestMain extends App {
 // 			([1 2] 3 [3]) 4 ([4] 5 [5]) 6 ([6 7] 8 [8] 9 [9 10])
 // 		)
 // 		""" ).prettyPrintKeysOnly
-	tree.build( """
-		(
-			([4] 5 [5]) 6 ([6] 8 [8] 9 [9])
-		)
-		""" ).prettyPrintKeysOnly
 //  	tree.delete( "d" )
 //  	tree.prettyPrintKeysOnly
 //  	println( tree.wellConstructed )
 	
-// 	tree.insertKeys( util.Random.shuffle(1 to 10): _* )
-//  	tree.prettyPrintKeysOnly
-	tree.delete( 4 )
+// 	tree.insertKeys( Random.shuffle(1 to 12): _* )
+// 	tree.prettyPrintKeysOnly
+// 	println( tree.wellConstructed )
+// 	
+// 	for (k <- Random.shuffle( 1 to 12 )) {
+// 		tree.delete( k )
+// 		println( "delete " + k )
+// 		tree.prettyPrintKeysOnly
+// 		
+// 		tree.wellConstructed match {
+// 			case "true" =>
+// 			case r =>
+// 				println( r )
+// 				sys.exit
+// 		}
+// 	}
+
+	tree.build( """
+		(
+			(
+				([1 2] 3 [3]) 4 ([4] 5 [5])
+			)
+			7
+			(
+				([7] 8 [8 9]) 10 ([10] 11 [11 12])
+			)
+		)
+		""" ).prettyPrintKeysOnly
+	tree.delete( 5 )
  	tree.prettyPrintKeysOnly
  	println( tree.wellConstructed )
+	
+// 	tree.build( """
+// 		(
+// 			([4] 5 [5]) 6 ([6] 8 [8] 9 [9])
+// 		)
+// 		""" ).prettyPrintKeysOnly
+// 	tree.delete( 4 )
+// 	tree.prettyPrintKeysOnly
+// 	println( tree.wellConstructed )
+// 	
+// 	tree.build( """
+// 		(
+// 			([4] 5 [5] 6 [6]) 8 ([8] 9 [9])
+// 		)
+// 		""" ).prettyPrintKeysOnly
+// 	tree.delete( 8 )
+// 	tree.prettyPrintKeysOnly
+// 	println( tree.wellConstructed )
 }
