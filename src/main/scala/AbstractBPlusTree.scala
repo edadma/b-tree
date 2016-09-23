@@ -816,13 +816,18 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									
 									len = removeInternal( par, index )
 										
-									if (par == root && len == 0) {
-										freeNode( root )
-										setParent( left, nul )
-										root = left
-										setRoot( left )
-										par = root
-									}
+									if (par == root)
+										if (len == 0) {
+											freeNode( root )
+											setParent( left, nul )
+											root = left
+											setRoot( left )
+											par = root
+										} else if (!isLeaf( getBranch(root, 0) ))
+											for ((l, r) <- getBranches( root ) dropRight 1 zip (getBranches( root ) drop 1)) {
+												setNext( l, r )
+												setPrev( r, l )
+											}
 								}
 							}
 					}
