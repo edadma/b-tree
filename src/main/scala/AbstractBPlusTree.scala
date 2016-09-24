@@ -731,7 +731,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
 						setKey( par, index, getKey(right, 0) )
 					} else {
-						println("merge " + left + " " + right)
+//						println("merge " + left + " " + right)
 						moveLeaf( right, 0, nodeLength(right), left, nodeLength(left) )
 						
 						val next = getNext( right )
@@ -747,7 +747,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					
 						freeNode( right )
 						
-						println("remove (leaf) " + par + " " + index)
+//						println("remove (leaf) " + par + " " + index)
 						var len = removeInternal( par, index )
 							
 						if (par == root && len == 0) {
@@ -771,12 +771,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 										val prev = getPrev( internal )
 										val prevlen = nodeLength( prev )
 										val br = getBranch( prev, prevlen )
-										println("* keytoadd " + internal + " " + rightmost( internal ))
-										println(prev)
+//										println("* keytoadd " + internal + " " + leftmost( internal ))
+//										println("* keytoset " + internal + " " + leftmost( br ))
 										
 										if (prev != nul)
-// 											(prev, 0, prevlen - 1, 0, prevlen, prev, internal, getKey( prev, 0 ), br, rightmost( internal ), rightmost( br ))
-											(prev, 0, prevlen - 1, 0, prevlen, prev, internal, getKey( prev, 0 ), br, leftmost( internal ), rightmost( br ))
+											(prev, 0, prevlen - 1, 0, prevlen, prev, internal, getKey( prev, 0 ), br, leftmost( internal ), leftmost( br ))
 										else
 											sys.error( "no sibling" )
 									}
@@ -791,8 +790,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									}
 								
 								if (nodeLength( sibling ) > order/2) {
-						println("borrow " + internal + " " + sibling)
-						println("insertKey " + internal + " " + keytoadd)
+//						println("borrow " + internal + " " + sibling)
+//						println("insertKey " + internal + " " + keytoadd)
 									insertKey( internal, internalsidekey, keytoadd )
 									insertBranch( internal, internalsidebranch, branch )
 									setParent( branch, internal )
@@ -819,8 +818,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									
 									par = root
 								} else {
-						println("merge " + left + " " + right)
-						println("addKey " + leftmost(right))
+//						println("merge " + left + " " + right)
+//						println("addKey " + leftmost(right))
 									addKey( left, leftmost(right) )
 									
 									val middle = getBranch( right, 0 )
@@ -837,10 +836,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 											setPrev( r, l )
 										}
 									
-//										setPrev( getBranch(left, 0), nul )
 										setNext( left, nul )
 									
-						println("remove (internal) " + par + " " + index)
+//						println("remove (internal) " + par + " " + index)
 									len = removeInternal( par, index )
 										
 									if (par == root) {
@@ -949,7 +947,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						return "root internal node length out of range"
 				} else {
 					if (nodeLength( n ) < cbo2 - 1 || nodeLength( n ) > order - 1)
-						return "non-root internal node length out of range"
+						return "non-root internal node length out of range: " + nodeLength( n ) + ", " + n
 				}
 				
 				if (getKeys( getBranch(n, 0) ).last >= getKey( n, 0 ))

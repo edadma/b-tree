@@ -5,7 +5,7 @@ import util.Random
 
 object TestMain extends App {
 //	val tree = new FileBPlusTree[String, Any]( "btree", 3 )
-	val tree = new MemoryBPlusTree[Int, Any]( 3 )
+	val tree = new MemoryBPlusTree[Int, Any]( 100 )
 // 	val map = new MutableSortedMap[String, Any]
 	
 // 	tree.insert( "a" )
@@ -68,42 +68,50 @@ object TestMain extends App {
 //  	tree.prettyPrintKeysOnly
 //  	println( tree.wellConstructed )
 
-// 	tree.insertKeysAndCheck( Random.shuffle(1 to 40): _* ) match {
-// 		case "true" =>
-// 		case r =>
-// 			println( r )
-// 			sys.exit
-// 	}
-// 
-// 	tree.prettyPrintKeysOnly
-// 		
-// 	for (k <- Random.shuffle( 1 to 40 )) {
-// 		tree.delete( k )
-// 		println( "delete " + k )
-// 		tree.prettyPrintKeysOnly
-// 		
-// 		tree.wellConstructed match {
-// 			case "true" =>
-// 			case r =>
-// 				println( r )
-// 				sys.exit
-// 		}
-// 	}
+	println( "inserting..." )
+	
+	tree.insertKeysAndCheck( Random.shuffle(1 to 20000): _* ) match {
+		case "true" =>
+		case r =>
+			println( r )
+			sys.exit
+	}
 
-	tree.build( """
-		(
-			(
-				([1] 2 [2 3]) 4 ([5] 7 [7]) 8 ([8] 9 [9])
-			)
-			11
-			(
-				([12] 13 [13]) 14 ([14 15] 16 [16 17])
-			)
-		)
-		""" ).prettyPrintKeysOnly
-	tree.delete( 13 )
- 	tree.prettyPrintKeysOnly
- 	println( tree.wellConstructed )
+	println( "deleting..." )
+		
+	for (k <- Random.shuffle( 1 to 20000 )) {
+		tree.delete( k ) match {
+			case true =>
+			case _ =>
+				println( "key " + k + " not found" )
+				tree.prettyPrintKeysOnly
+				sys.exit
+		}
+
+		tree.wellConstructed match {
+			case "true" =>
+			case r =>
+				println( r )
+				sys.exit
+		}
+	}
+	
+	tree.prettyPrintKeysOnly
+
+// 	tree.build( """
+// 		(
+// 			(
+// 				([1] 2 [2 3]) 4 ([5] 7 [7]) 8 ([8] 9 [9])
+// 			)
+// 			11
+// 			(
+// 				([12] 13 [13]) 14 ([14 15] 16 [16 17])
+// 			)
+// 		)
+// 		""" ).prettyPrintKeysOnly
+// 	tree.delete( 13 )
+//  	tree.prettyPrintKeysOnly
+//  	println( tree.wellConstructed )
 	
 // 	tree.build( """
 // 		(
