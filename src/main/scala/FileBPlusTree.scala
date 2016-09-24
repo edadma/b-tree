@@ -161,25 +161,26 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 			def length = nodeLength( node )
 		}
 	
-	protected def insertInternal( node: Long, index: Int, key: K, branch: Long ) {
+	protected def insertInternal( node: Long, keyIndex: Int, key: K, branchIndex: Int, branch: Long ) {
 		val len = nodeLength( node )
 		
 		if (len < order - 1) {
 			nodeLength( node, len + 1 )
 			
-			if (index < len) {
-				copyKeys( node, index, len, node, index + 1 )
+			if (keyIndex < len)
+				copyKeys( node, keyIndex, len, node, keyIndex + 1 )
 			
-				val data = new Array[Byte]( (len - index)*POINTER_SIZE )
+			if (branchIndex < len + 1) {
+				val data = new Array[Byte]( (len + 1 - branchIndex)*POINTER_SIZE )
 			
-				file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
+				file seek (node + INTERNAL_BRANCHES + branchIndex*POINTER_SIZE)
 				file readFully data
-				file seek (node + INTERNAL_BRANCHES + (index + 2)*POINTER_SIZE)
+				file seek (node + INTERNAL_BRANCHES + (branchIndex + 1)*POINTER_SIZE)
 				file write data
 			}
 			
-			setKey( node, index, key )
-			file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
+			setKey( node, keyIndex, key )
+			file seek (node + INTERNAL_BRANCHES + branchIndex*POINTER_SIZE)
 			file writeLong branch
 		} else {
 			if (savedNode != NUL)
@@ -189,8 +190,8 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 			savedBranches.clear
 			savedKeys ++= getKeys( node )
 			savedBranches ++= getBranches( node )
-			savedKeys.insert( index, key )
-			savedBranches.insert( index + 1, branch )
+			savedKeys.insert( keyIndex, key )
+			savedBranches.insert( branchIndex, branch )
 			savedNode = node
 		}
 	}

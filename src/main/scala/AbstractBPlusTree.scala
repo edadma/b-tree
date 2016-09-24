@@ -116,7 +116,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	/**
 	 * Inserts `key` and `branch` into (internal) `node` at `index`. The branch is the right branch immediately to the right of `key`.
 	 */
-	protected def insertInternal( node: N, index: Int, key: K, branch: N )
+	protected def insertInternal( node: N, keyIndex: Int, key: K, branchIndex: Int, branch: N )
 	
 	/**
 	 * Inserts `key` and `value` into (leaf) `node` at `index`.
@@ -624,7 +624,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				
 				val newleaf = split
 				
-				insertInternal( root, 0, getKey(newleaf, 0), newleaf )
+				insertInternal( root, 0, getKey(newleaf, 0), 1, newleaf )
 			} else {
 				var par = getParent( leaf )
 				val newleaf = split
@@ -632,7 +632,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				binarySearch( par, getKey(newleaf, 0) ) match {
 					case index if index >= 0 => sys.error( "key found in internal node" )
 					case insertion =>
-						insertInternal( par, -(insertion + 1), getKey(newleaf, 0), newleaf )
+						insertInternal( par, -(insertion + 1), getKey(newleaf, 0), -(insertion + 1) + 1, newleaf )
 				
 						while (nodeLength( par ) == order) {
 							val parpar = getParent( par )
@@ -666,13 +666,13 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 								
 								setParent( newinternal, root )
 								setParent( par, root )
-								insertInternal( root, 0, middle, newinternal )
+								insertInternal( root, 0, middle, 1, newinternal )
 								par = root
 							} else {
 								par = parpar
 								binarySearch( par, middle ) match {
 									case index if index >= 0 => sys.error( "key found in internal node" )
-									case insertion => insertInternal( par, -(insertion + 1), middle, newinternal )
+									case insertion => insertInternal( par, -(insertion + 1), middle, -(insertion + 1) + 1, newinternal )
 								}
 							}
 						}
@@ -793,8 +793,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 								if (nodeLength( sibling ) > minlen) {
 //						println("borrow " + internal + " " + sibling)
 //						println("insertKey " + internal + " " + keytoadd)
-									insertKey( internal, internalsidekey, keytoadd )
-									insertBranch( internal, internalsidebranch, branch )
+									insertInternal( internal, internalsidekey, keytoadd, internalsidebranch, branch )
 									setParent( branch, internal )
 									removeInternal( sibling, siblingsidekey, siblingsidebranch )
 									setKey( par, index, keytoset )
