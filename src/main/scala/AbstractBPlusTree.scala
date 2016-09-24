@@ -792,6 +792,24 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									removeKey( sibling, siblingsidekey )
 									removeBranch( sibling, siblingsidebranch )
 									setKey( par, index, keytoset )
+									
+									if (!isLeaf( getBranch(sibling, 0) )) {
+										for ((l, r) <- getBranches( internal ) dropRight 1 zip (getBranches( internal ) drop 1)) {
+											setNext( l, r )
+											setPrev( r, l )
+										}
+										
+										for ((l, r) <- getBranches( sibling ) dropRight 1 zip (getBranches( sibling ) drop 1)) {
+											setNext( l, r )
+											setPrev( r, l )
+										}
+										
+										setPrev( getBranch(sibling, 0), nul )
+										setNext( getBranch( sibling, nodeLength(sibling) ), nul )
+										setPrev( getBranch(internal, 0), nul )
+										setNext( getBranch( internal, nodeLength(internal) ), nul )
+									}
+									
 									par = root
 								} else {
 									addKey( left, leftmost(right) )
@@ -804,19 +822,18 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									
 									freeNode( right )
 									
-									if (!isLeaf( getBranch(left, 0) )) {
+									if (!isLeaf( getBranch(left, 0) ))
 										for ((l, r) <- getBranches( left ) dropRight 1 zip (getBranches( left ) drop 1)) {
 											setNext( l, r )
 											setPrev( r, l )
 										}
-									}
 									
 //										setPrev( getBranch(left, 0), nul )
 										setNext( left, nul )
 									
 									len = removeInternal( par, index )
 										
-									if (par == root)
+									if (par == root) {
 										if (len == 0) {
 											freeNode( root )
 											setParent( left, nul )
@@ -828,6 +845,14 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 												setNext( l, r )
 												setPrev( r, l )
 											}
+									} else {
+										if (len >= order/2)
+											if (!isLeaf( getBranch(par, 0) ))
+												for ((l, r) <- getBranches( par ) dropRight 1 zip (getBranches( par ) drop 1)) {
+													setNext( l, r )
+													setPrev( r, l )
+												}
+									}
 								}
 							}
 					}
@@ -920,8 +945,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				if (getKeys( getBranch(n, 0) ).last >= getKey( n, 0 ))
 					return "left internal node branch not strictly less than"
 					
-				if (!(getKeys( n ) drop 1 zip (getBranches( n ) drop 1) forall (p => getKey( p._2, 0 ) < p._1)))
-					return "right internal node branch not greater than or equal"
+				if (!(getKeys( n ) zip (getBranches( n ) drop 1) forall {case (k, b) => k <= getKey( b, 0 )})) {
+					return "right internal node branch not greater than or equal: " + n
+				}
 				
 				for (b <- getBranches( n ))
 					check( b, n, d + 1 ) match {

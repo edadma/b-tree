@@ -264,4 +264,29 @@ class DeletionTests extends FreeSpec with PropertyChecks with Matchers {
 			t.wellConstructed shouldBe "true"
 		}
 	}
+	
+	forAll (order3int_temp) { (gen, storage) =>
+		val t = gen()
+		
+		("deletion (merge followed by borrow, 4 level tree): " + storage + ", order 3") in {
+			t.build( """
+			(
+				(
+					([1] 2 [2 3]) 4 ([5] 7 [7]) 8 ([8] 9 [9])
+				)
+				11
+				(
+					([12] 13 [13]) 14 ([14 15] 16 [16 17])
+				)
+			)
+			""" )
+			t.delete( 13 ) shouldBe true
+			t.prettyString shouldBe
+				"""	|[n0: (null, null, null) n1 | 9 | n2]
+						|[n1: (null, n0, n2) n3 | 4 | n4] [n2: (n1, n0, null) n5 | 17 | n6]
+						|[n3: (null, n1, n4) n7 | 2 | n8] [n4: (n3, n1, null) n9 | 7 | n10] [n5: (null, n2, n6) n11 | 9 | n12] [n6: (n5, n2, null) n13 | 14 | n14 | 16 | n15]
+						|[n7: (null, n3, n8) 1] [n8: (n7, n3, n9) 2 3] [n9: (n8, n4, n10) 5] [n10: (n9, n4, n11) 7] [n11: (n10, n5, n12) 8] [n12: (n11, n5, n13) 9] [n13: (n12, n6, n14) 12] [n14: (n13, n6, n15) 14 15] [n15: (n14, n6, null) 16 17]""".stripMargin
+			t.wellConstructed shouldBe "true"
+		}
+	}
 }
