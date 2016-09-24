@@ -352,14 +352,6 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	}
 	
 	protected def nul = 0
-
-	def removeBranch( node: Long, index: Int ) {
-		
-	}
-	
-	def removeKey( node: Long, index: Int ) {
-		
-	}
 	
 	def insertBranch( node: Long, index: Int, branch: Long ) {
 		
@@ -369,20 +361,21 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		
 	}
 
-	protected def removeInternal( node: Long, index: Int ) = {
+	protected def removeInternal( node: Long, keyIndex: Int, branchIndex: Int ) = {
 		val len = nodeLength( node )
 		val newlen = len - 1
 		
 		nodeLength( node, newlen )
 		
-		if (index < newlen) {
-			copyKeys( node, index + 1, len, node, index )
+		if (keyIndex < newlen)
+			copyKeys( node, keyIndex + 1, len, node, keyIndex )
 			
-			val data = new Array[Byte]( (len - (index + 1))*POINTER_SIZE )
+		if (branchIndex < len) {
+			val data = new Array[Byte]( (len + 1 - (branchIndex + 1))*POINTER_SIZE )
 			
-			file seek (node + INTERNAL_BRANCHES + (index + 2)*POINTER_SIZE)
+			file seek (node + INTERNAL_BRANCHES + (branchIndex + 1)*POINTER_SIZE)
 			file readFully data
-			file seek (node + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
+			file seek (node + INTERNAL_BRANCHES + branchIndex*POINTER_SIZE)
 			file write data
 		}
 		

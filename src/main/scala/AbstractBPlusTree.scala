@@ -162,10 +162,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	 * Returns the ''null'' node pointer. For in-memory implementations this will usually be a Scala `null` value. For on-disk it would make sense for this to be `0L`.
 	 */
 	protected def nul: N
-
-	def removeBranch( node: N, index: Int )
-	
-	def removeKey( node: N, index: Int )
 	
 	def insertBranch( node: N, index: Int, branch: N )
 	
@@ -176,7 +172,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	 * 
 	 * @return length of `node` after removal
 	 */
-	protected def removeInternal( node: N, index: Int ): Int
+	protected def removeInternal( node: N, keyIndex: Int, branchIndex: Int ): Int
 
 	/**
 	 * Removes the key/value pair from leaf `node` at `index`. This method is perhaps poorly named: it does not remove a leaf node from the tree.
@@ -753,7 +749,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						freeNode( right )
 						
 //						println("remove (leaf) " + par + " " + index)
-						var len = removeInternal( par, index )
+						var len = removeInternal( par, index, index + 1 )
 							
 						if (par == root && len == 0) {
 							freeNode( root )
@@ -800,8 +796,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									insertKey( internal, internalsidekey, keytoadd )
 									insertBranch( internal, internalsidebranch, branch )
 									setParent( branch, internal )
-									removeKey( sibling, siblingsidekey )
-									removeBranch( sibling, siblingsidebranch )
+									removeInternal( sibling, siblingsidekey, siblingsidebranch )
 									setKey( par, index, keytoset )
 									
 									if (!isLeaf( getBranch(sibling, 0) )) {
@@ -844,7 +839,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 										setNext( left, nul )
 									
 //						println("remove (internal) " + par + " " + index)
-									len = removeInternal( par, index )
+									len = removeInternal( par, index, index + 1 )
 										
 									if (par == root) {
 										if (len == 0) {
