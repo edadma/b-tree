@@ -68,7 +68,7 @@ object TestMain extends App {
 //  	tree.prettyPrintKeysOnly
 //  	println( tree.wellConstructed )
 
-// 	tree.insertKeysAndCheck( Random.shuffle(1 to 30): _* ) match {
+// 	tree.insertKeysAndCheck( Random.shuffle(1 to 40): _* ) match {
 // 		case "true" =>
 // 		case r =>
 // 			println( r )
@@ -77,7 +77,7 @@ object TestMain extends App {
 // 
 // 	tree.prettyPrintKeysOnly
 // 		
-// 	for (k <- Random.shuffle( 1 to 30 )) {
+// 	for (k <- Random.shuffle( 1 to 40 )) {
 // 		tree.delete( k )
 // 		println( "delete " + k )
 // 		tree.prettyPrintKeysOnly
