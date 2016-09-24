@@ -44,6 +44,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected var lastlen: Int
 	
 	/**
+	 * The minimum length (number of keys) that a non-root node (internal or leaf) may have is `ceil(order/2) - 1`. The minimum length for a root leaf node is 0. The minimum length for a root internal node is 1.
+	 */
+	protected val minlen = order/2 + order%2 - 1
+	
+	/**
 	 * Adds a new `branch` to (internal) `node`. `branch` is placed at an index equal to the length of `node`, given that the length of a node is the number of keys.
 	 */
 	protected def addBranch( node: N, branch: N )
@@ -704,7 +709,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 			case (true, leaf, index) =>
 				val len = removeLeaf( leaf, index )
 				
-				if (leaf != root && len < order/2) {
+				if (leaf != root && len < minlen) {
 					var par = getParent( leaf )
 					val (sibling, leafside, siblingside, left, right, parkey) = {
 						val next = getNext( leaf )
@@ -727,7 +732,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							case ind => -(ind + 1)
 						}
 					
-					if (nodeLength( sibling ) > order/2) {
+					if (nodeLength( sibling ) > minlen) {
 						moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
 						setKey( par, index, getKey(right, 0) )
 					} else {
@@ -758,7 +763,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							first = left
 							setFirst( left )
 						} else
-							while (par != root && len < order/2) {
+							while (par != root && len < minlen) {
 								val internal = par
 								val (sibling, internalsidekey, siblingsidekey, internalsidebranch, siblingsidebranch, left, right, parkey, branch, keytoadd, keytoset) = {
 									val next = getNext( internal )
@@ -789,7 +794,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 										case ind => -(ind + 1)
 									}
 								
-								if (nodeLength( sibling ) > order/2) {
+								if (nodeLength( sibling ) > minlen) {
 //						println("borrow " + internal + " " + sibling)
 //						println("insertKey " + internal + " " + keytoadd)
 									insertKey( internal, internalsidekey, keytoadd )
@@ -854,7 +859,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 												setPrev( r, l )
 											}
 									} else {
-										if (len >= order/2)
+										if (len >= minlen)
 											if (!isLeaf( getBranch(par, 0) ))
 												for ((l, r) <- getBranches( par ) dropRight 1 zip (getBranches( par ) drop 1)) {
 													setNext( l, r )
@@ -880,7 +885,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 		var depth = -1
 		var prevnode: N = nul
 		var nextptr: N = nul
-		val cbo2 = order/2 + order%2
 		
 		def check( n: N, p: N, d: Int ): String = {
 			if (!(getKeys( n ) dropRight 1 zip (getKeys( n ) drop 1) forall (p => p._1 < p._2)))
@@ -898,7 +902,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				if (getParent( n ) == nul) {
 					if (nodeLength( n ) >= order)
 						return "root leaf node length out of range"
-				} else if (nodeLength( n ) < cbo2 - 1 || nodeLength( n ) > order - 1)
+				} else if (nodeLength( n ) < minlen || nodeLength( n ) > order - 1)
 					return "non-root leaf node length out of range"
 					
 				if (prevnode == nul && first != n)
@@ -943,10 +947,10 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					if (getNext( n ) != nul)
 						return "non-null next pointer"
 						
-					if (nodeLength( n ) < 1 || nodeLength( n ) >= order)
+					if (nodeLength( n ) < 1 || nodeLength( n ) > order - 1)
 						return "root internal node length out of range"
 				} else {
-					if (nodeLength( n ) < cbo2 - 1 || nodeLength( n ) > order - 1)
+					if (nodeLength( n ) < minlen || nodeLength( n ) > order - 1)
 						return "non-root internal node length out of range: " + nodeLength( n ) + ", " + n
 				}
 				

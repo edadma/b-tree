@@ -5,7 +5,7 @@ import util.Random
 
 object TestMain extends App {
 //	val tree = new FileBPlusTree[String, Any]( "btree", 3 )
-	val tree = new MemoryBPlusTree[Int, Any]( 100 )
+	val tree = new MemoryBPlusTree[Int, Any]( 99 )
 // 	val map = new MutableSortedMap[String, Any]
 	
 // 	tree.insert( "a" )
