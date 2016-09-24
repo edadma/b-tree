@@ -9,6 +9,20 @@ import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class StressTests extends FreeSpec with PropertyChecks with Matchers {
 
+	val shorter =
+		Table(
+			("object generator", 													"storage",		"order",   "size"),
+			//----------------                               -------     -----      ----
+			(() => new MemoryBPlusTree[Int, Any]( 3 ),    "in memory", 3, 1000),
+//			(() => new FileBPlusTree[Int, Any]( newfile, 3, true ),    "on disk", 3, 1000),
+			(() => new MemoryBPlusTree[Int, Any]( 4 ),    "in memory", 4, 1000),
+//			(() => new FileBPlusTree[Int, Any]( newfile, 4, true ),    "on disk", 4, 1000),
+ 			(() => new MemoryBPlusTree[Int, Any]( 5 ),    "in memory", 5, 2000),
+//			(() => new FileBPlusTree[Int, Any]( newfile, 5, true ),    "on disk", 5, 2000),
+			(() => new MemoryBPlusTree[Int, Any]( 6 ),    "in memory", 6, 2000)
+//			(() => new FileBPlusTree[Int, Any]( newfile, 6, true ),    "on disk", 6, 2000)
+			)
+
 	val tests =
 		Table(
 			("object generator", 													"storage",		"order",   "size"),
@@ -31,16 +45,16 @@ class StressTests extends FreeSpec with PropertyChecks with Matchers {
 //			(() => new FileBPlusTree[Int, Any]( newfile, 100, true ),    "on disk", 100, 20000)
  			)
 	
-	forAll (tests) { (gen, storage, order, size) =>
+	forAll (shorter) { (gen, storage, order, size) =>
 		val t = gen()
 		
 		(storage + ", " + order + ", " + size) in {
-			t.insertKeysAndCheck( Random.shuffle(1 to 20000): _* ) shouldBe "true"
+			t.insertKeysAndCheck( Random.shuffle(1 to size): _* ) shouldBe "true"
 		
-			for (k <- Random.shuffle( 1 to 20000 ))
+			for (k <- Random.shuffle( 1 to size )) {
 				t.delete( k ) shouldBe true
-				
-			t.wellConstructed shouldBe "true"
+				t.wellConstructed shouldBe "true"
+			}
 		}
 	}
 		
