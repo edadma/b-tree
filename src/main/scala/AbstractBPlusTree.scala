@@ -677,7 +677,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 		}
 	}
 	
-	def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int )
+	protected def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int )
 		
 	def leftmost( node: N ): K =
 		if (isLeaf( node ))

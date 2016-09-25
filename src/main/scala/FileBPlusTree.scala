@@ -226,7 +226,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		file.read == LEAF_NODE
 	}
 	
-	def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int ) {
+	protected def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int ) {
 		val dstlen = nodeLength( dst )
 		
 		copyInternal( dst, index, dstlen, dst, index + end - begin )
