@@ -114,7 +114,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected def getValues( node: N ): Seq[V]
 	
 	/**
-	 * Inserts `key` and `branch` into (internal) `node` at `index`. The branch is the right branch immediately to the right of `key`.
+	 * Inserts `key` and `branch` into (internal) `node` at `keyIndex` and `branchIndex`, respectively.
 	 */
 	protected def insertInternal( node: N, keyIndex: Int, key: K, branchIndex: Int, branch: N )
 	
@@ -163,12 +163,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	 */
 	protected def nul: N
 	
-	def insertBranch( node: N, index: Int, branch: N )
-	
-	def insertKey( node: N, index: Int, key: K )
-	
 	/**
-	 * Removes the key/branch pair from internal `node` at `index`. The branch that is removed is the one to the right of the key being removed, i.e. the branch at (`index` + 1). This method is perhaps poorly named: it does not remove an internal node from the tree.
+	 * Removes the key and branch pair from internal `node` at `keyIndex` and `branchIndex`, respectively. This method is perhaps poorly named: it does not remove an internal node from the tree.
 	 * 
 	 * @return length of `node` after removal
 	 */
@@ -951,7 +947,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				if (getKeys( getBranch(n, 0) ).last >= getKey( n, 0 ))
 					return "left internal node branch not strictly less than"
 					
-				if (!(getKeys( n ) zip (getBranches( n ) drop 1) forall {case (k, b) => k <= leftmost( b )}))
+				if (!(getKeys( n ) zip (getBranches( n ) drop 1) forall {case (k, b) => k <= leftmost( b ) && k <= getKey( b, 0 )}))
 					return "right internal node branch not greater than or equal: " + n
 				
 				for (b <- getBranches( n ))
