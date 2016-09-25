@@ -49,7 +49,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Provides for interaction (searching, insertion, update, deletion) with a B+ Tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ Tree initially. An empty B+ Tree consists of a single empty leaf node as the root. Also the <code>first</code> and <code>last</code> should refer to the root leaf node, and the <code>lastlen</code> variable should be 0. For on-disk implementations it should be possible to open an existing B+ Tree or optionally create a new one.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Provides for interaction (searching, insertion, update, deletion) with a B+ tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ tree initially. An empty B+ tree consists of a single empty leaf node as the root. Also the <code>first</code> and <code>last</code> should refer to the root leaf node, and the <code>lastlen</code> variable should be 0. For on-disk implementations it should be possible to open an existing B+ tree or optionally create a new one.
 </p></div><dl class="paramcmts block"><dt class="tparam">K</dt><dd class="cmt"><p>the type of the keys contained in this map.</p></dd><dt class="tparam">V</dt><dd class="cmt"><p>the type of the values associated with the keys.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -108,7 +108,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">creates an object providing access to a B+ Tree with a branching factor of <code>order</code> and possibly creating an empty tree.</p><div class="fullcomment"><div class="comment cmt"><p>creates an object providing access to a B+ Tree with a branching factor of <code>order</code> and possibly creating an empty tree.</p></div><dl class="paramcmts block"><dt class="param">order</dt><dd class="cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></dd></dl></div>
+      <p class="shortcomment cmt">creates an object providing access to a B+ tree with a branching factor of <code>order</code> and possibly creating an empty tree.</p><div class="fullcomment"><div class="comment cmt"><p>creates an object providing access to a B+ tree with a branching factor of <code>order</code> and possibly creating an empty tree.</p></div><dl class="paramcmts block"><dt class="param">order</dt><dd class="cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -390,22 +390,22 @@
       <p class="shortcomment cmt">Gets the values of <code>node</code> as a non-strict immutable sequence.</p><div class="fullcomment"><div class="comment cmt"><p>Gets the values of <code>node</code> as a non-strict immutable sequence.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#insertInternal" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="insertInternal(node:AbstractBPlusTree.this.N,index:Int,key:K,branch:AbstractBPlusTree.this.N):Unit"></a>
-      <a id="insertInternal(N,Int,K,N):Unit"></a>
+      <a id="insertInternal(node:AbstractBPlusTree.this.N,keyIndex:Int,key:K,branchIndex:Int,branch:AbstractBPlusTree.this.N):Unit"></a>
+      <a id="insertInternal(N,Int,K,Int,N):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">insertInternal</span><span class="params">(<span name="node">node: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>, <span name="key">key: <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.K">K</span></span>, <span name="branch">branch: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">insertInternal</span><span class="params">(<span name="node">node: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>, <span name="keyIndex">keyIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="key">key: <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.K">K</span></span>, <span name="branchIndex">branchIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="branch">branch: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@insertInternal(node:AbstractBPlusTree.this.N,index:Int,key:K,branch:AbstractBPlusTree.this.N):Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@insertInternal(node:AbstractBPlusTree.this.N,keyIndex:Int,key:K,branchIndex:Int,branch:AbstractBPlusTree.this.N):Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Inserts <code>key</code> and <code>branch</code> into (internal) <code>node</code> at <code>index</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Inserts <code>key</code> and <code>branch</code> into (internal) <code>node</code> at <code>index</code>. The branch is the right branch immediately to the right of <code>key</code>.
+      <p class="shortcomment cmt">Inserts <code>key</code> and <code>branch</code> into (internal) <code>node</code> at <code>keyIndex</code> and <code>branchIndex</code>, respectively.</p><div class="fullcomment"><div class="comment cmt"><p>Inserts <code>key</code> and <code>branch</code> into (internal) <code>node</code> at <code>keyIndex</code> and <code>branchIndex</code>, respectively.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#insertLeaf" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="insertLeaf[V1&gt;:V](node:AbstractBPlusTree.this.N,index:Int,key:K,value:V1):Unit"></a>
@@ -496,8 +496,25 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Moves key/branch pairs as well as the left branch of the first key from node <code>src</code> to node <code>dst</code> beginning at index <code>begin</code> and ending up to but not including index <code>end</code>, and also removes the key at index <code>begin - 1</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Moves key/branch pairs as well as the left branch of the first key from node <code>src</code> to node <code>dst</code> beginning at index <code>begin</code> and ending up to but not including index <code>end</code>, and also removes the key at index <code>begin - 1</code>.
+      <p class="shortcomment cmt">Moves key/branch pairs as well as the left branch of the first key from node <code>src</code> to node <code>dst</code> beginning at index <code>begin</code> and ending at but not including index <code>end</code>, and also removes the key at index <code>begin - 1</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Moves key/branch pairs as well as the left branch of the first key from node <code>src</code> to node <code>dst</code> beginning at index <code>begin</code> and ending at but not including index <code>end</code>, and also removes the key at index <code>begin - 1</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#moveInternalDelete" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="moveInternalDelete(src:AbstractBPlusTree.this.N,begin:Int,end:Int,dst:AbstractBPlusTree.this.N,index:Int):Unit"></a>
+      <a id="moveInternalDelete(N,Int,Int,N,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">moveInternalDelete</span><span class="params">(<span name="src">src: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>, <span name="begin">begin: <span class="extype" name="scala.Int">Int</span></span>, <span name="end">end: <span class="extype" name="scala.Int">Int</span></span>, <span name="dst">dst: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@moveInternalDelete(src:AbstractBPlusTree.this.N,begin:Int,end:Int,dst:AbstractBPlusTree.this.N,index:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#moveLeaf" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="moveLeaf(src:AbstractBPlusTree.this.N,begin:Int,end:Int,dst:AbstractBPlusTree.this.N,index:Int):Unit"></a>
       <a id="moveLeaf(N,Int,Int,N,Int):Unit"></a>
@@ -607,22 +624,22 @@
       <p class="shortcomment cmt">Returns the <i>null</i> node pointer.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the <i>null</i> node pointer. For in-memory implementations this will usually be a Scala <code>null</code> value. For on-disk it would make sense for this to be <code>0L</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#removeInternal" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="removeInternal(node:AbstractBPlusTree.this.N,index:Int):Int"></a>
-      <a id="removeInternal(N,Int):Int"></a>
+      <a id="removeInternal(node:AbstractBPlusTree.this.N,keyIndex:Int,branchIndex:Int):Int"></a>
+      <a id="removeInternal(N,Int,Int):Int"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">removeInternal</span><span class="params">(<span name="node">node: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span class="name">removeInternal</span><span class="params">(<span name="node">node: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>, <span name="keyIndex">keyIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="branchIndex">branchIndex: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@removeInternal(node:AbstractBPlusTree.this.N,index:Int):Int" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@removeInternal(node:AbstractBPlusTree.this.N,keyIndex:Int,branchIndex:Int):Int" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Removes the key/branch pair from internal <code>node</code> at <code>index</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Removes the key/branch pair from internal <code>node</code> at <code>index</code>. The branch that is removed is the one to the right of the key being removed, i.e. the branch at (<code>index</code> + 1). This method is perhaps poorly named: it does not remove an internal node from the tree.
+      <p class="shortcomment cmt">Removes the key and branch pair from internal <code>node</code> at <code>keyIndex</code> and <code>branchIndex</code>, respectively.</p><div class="fullcomment"><div class="comment cmt"><p>Removes the key and branch pair from internal <code>node</code> at <code>keyIndex</code> and <code>branchIndex</code>, respectively. This method is perhaps poorly named: it does not remove an internal node from the tree.
 </p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>length of <code>node</code> after removal</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#removeLeaf" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="removeLeaf(node:AbstractBPlusTree.this.N,index:Int):Int"></a>
@@ -983,11 +1000,11 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a B+ Tree build from a string representation of the tree.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a B+ Tree build from a string representation of the tree. The syntax of the input string is simple: internal nodes are coded as lists of nodes alternating with keys (alpha strings with no quotation marks) using parentheses with elements separated by space, leaf nodes are coded as lists of alpha strings (no quotation marks) using brackets with elements separated by space.
+      <p class="shortcomment cmt">Returns a B+ tree build from a string representation of the tree.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a B+ tree build from a string representation of the tree. The syntax of the input string is simple: internal nodes are coded as lists of nodes alternating with keys (alpha strings with no quotation marks) using parentheses with elements separated by space, leaf nodes are coded as lists of alpha strings (no quotation marks) using brackets with elements separated by space.
 </p></div><dl class="attributes block"> <div class="block">Example:
                <ol><li class="cmt"><p></p><pre>(
   [g] j [j t] u [u v]
-)</pre><p>produces a tree that pretty prints as</p><pre>[n0: (<span class="kw">null</span>) n1 | j | n2 | u | n3]
+)</pre><p>produces a tree that pretty prints as</p><pre>[n0: (<span class="kw">null</span>, <span class="kw">null</span>, <span class="kw">null</span>) n1 | j | n2 | u | n3]
 [n1: (<span class="kw">null</span>, n0, n2) g] [n2: (n1, n0, n3) j t] [n3: (n2, n0, <span class="kw">null</span>) u v]</pre></li></ol>
             </div></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -1029,7 +1046,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Performs the B+ Tree deletion algorithm to remove <code>key</code> and it's associated value from the tree, rebalancing the tree if necessary.</p><div class="fullcomment"><div class="comment cmt"><p>Performs the B+ Tree deletion algorithm to remove <code>key</code> and it's associated value from the tree, rebalancing the tree if necessary.
+      <p class="shortcomment cmt">Performs the B+ tree deletion algorithm to remove <code>key</code> and it's associated value from the tree, rebalancing the tree if necessary.</p><div class="fullcomment"><div class="comment cmt"><p>Performs the B+ tree deletion algorithm to remove <code>key</code> and it's associated value from the tree, rebalancing the tree if necessary.
 </p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p><code>true</code> if <code>key</code> was found (and therefore removed), <code>false</code> otherwise</p></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#diagram" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="diagram(name:String):Unit"></a>
@@ -1192,7 +1209,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Performs the B+ Tree insertion algorithm to insert <code>key</code> and associated <code>value</code> into the tree, specifically in <code>leaf</code> at <code>index</code>, rebalancing the tree if necessary.</p><div class="fullcomment"><div class="comment cmt"><p>Performs the B+ Tree insertion algorithm to insert <code>key</code> and associated <code>value</code> into the tree, specifically in <code>leaf</code> at <code>index</code>, rebalancing the tree if necessary. If <code>leaf</code> and <code>index</code> is not the correct insertion point for <code>key</code> then this method will probably result in an invalid B+ Tree.
+      <p class="shortcomment cmt">Performs the B+ tree insertion algorithm to insert <code>key</code> and associated <code>value</code> into the tree, specifically in <code>leaf</code> at <code>index</code>, rebalancing the tree if necessary.</p><div class="fullcomment"><div class="comment cmt"><p>Performs the B+ tree insertion algorithm to insert <code>key</code> and associated <code>value</code> into the tree, specifically in <code>leaf</code> at <code>index</code>, rebalancing the tree if necessary. If <code>leaf</code> and <code>index</code> is not the correct insertion point for <code>key</code> then this method will probably result in an invalid B+ tree.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#insertIfNotFound" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="insertIfNotFound[V1&gt;:V](key:K,value:V1):Boolean"></a>
@@ -1316,6 +1333,23 @@
       </a>
     </span>
       <p class="shortcomment cmt">Returns an iterator over all keys in the tree in ascending sorted order.</p>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#leftmost" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="leftmost(node:AbstractBPlusTree.this.N):K"></a>
+      <a id="leftmost(N):K"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">leftmost</span><span class="params">(<span name="node">node: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>)</span><span class="result">: <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.K">K</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@leftmost(node:AbstractBPlusTree.this.N):K" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#load" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="load[V1&gt;:V](kvs:(K,V1)*):Unit"></a>
       <a id="load[V1&gt;:V]((K,V1)*):Unit"></a>
@@ -1332,7 +1366,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Performs the B+ Tree bulk loading algorithm to insert key/value pairs <code>kvs</code> into the tree efficiently.</p><div class="fullcomment"><div class="comment cmt"><p>Performs the B+ Tree bulk loading algorithm to insert key/value pairs <code>kvs</code> into the tree efficiently. This method is more efficient than using <code>insert</code> because <code>insert</code> performs a search to determine the correct insertion point for the key whereas <code>load</code> does not. <code>load</code> can only work if the tree is empty, or if the minimum key to be inserted is greater than the maximum key in the tree.
+      <p class="shortcomment cmt">Performs the B+ tree bulk loading algorithm to insert key/value pairs <code>kvs</code> into the tree efficiently.</p><div class="fullcomment"><div class="comment cmt"><p>Performs the B+ tree bulk loading algorithm to insert key/value pairs <code>kvs</code> into the tree efficiently. This method is more efficient than using <code>insert</code> because <code>insert</code> performs a search to determine the correct insertion point for the key whereas <code>load</code> does not. <code>load</code> can only work if the tree is empty, or if the minimum key to be inserted is greater than the maximum key in the tree.
 </p></div></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#lookup" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="lookup(key:K):(Boolean,AbstractBPlusTree.this.N,Int)"></a>
@@ -1350,7 +1384,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Performs the B+ Tree lookup algorithm (tail recursively) beginning at the root, in search of the location (if found) or correct insertion point (if not found) of <code>key</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Performs the B+ Tree lookup algorithm (tail recursively) beginning at the root, in search of the location (if found) or correct insertion point (if not found) of <code>key</code>.
+      <p class="shortcomment cmt">Performs the B+ tree lookup algorithm (tail recursively) beginning at the root, in search of the location (if found) or correct insertion point (if not found) of <code>key</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Performs the B+ tree lookup algorithm (tail recursively) beginning at the root, in search of the location (if found) or correct insertion point (if not found) of <code>key</code>.
 </p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a triple where the first element is <code>true</code> if <code>key</code> exists and <code>false</code> otherwise, the second element is the node containing <code>key</code> if found or the correct insertion point for <code>key</code> if not found, the third is the index within that node.</p></dd></dl><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#lookupGTE" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="lookupGTE(key:K):(Boolean,AbstractBPlusTree.this.N,Int)"></a>
@@ -1440,6 +1474,24 @@
       </a>
     </span>
       <p class="shortcomment cmt">Returns the minimum key.</p>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#minlen" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="minlen:Int"></a>
+      <a id="minlen:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">minlen</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@minlen:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The minimum length (number of keys) that a non-root node (internal or leaf) may have is <code>ceil(order/2) - 1</code>.</p><div class="fullcomment"><div class="comment cmt"><p>The minimum length (number of keys) that a non-root node (internal or leaf) may have is <code>ceil(order/2) - 1</code>. The minimum length for a root leaf node is 0. The minimum length for a root internal node is 1.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -1703,6 +1755,23 @@
     </span>
       <p class="shortcomment cmt">Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted order.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#rightmost" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="rightmost(node:AbstractBPlusTree.this.N):K"></a>
+      <a id="rightmost(N):K"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">rightmost</span><span class="params">(<span name="node">node: <a href="#N" class="extmbr" name="xyz.hyperreal.btree.AbstractBPlusTree.N">N</a></span>)</span><span class="result">: <span class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree.K">K</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.AbstractBPlusTree@rightmost(node:AbstractBPlusTree.this.N):K" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="xyz.hyperreal.btree.AbstractBPlusTree#search" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="search(key:K):Option[V]"></a>
       <a id="search(K):Option[V]"></a>
@@ -1859,7 +1928,7 @@
       </a>
     </span>
       <p class="shortcomment cmt">Analyzes the tree to determine if it is well constructed.</p><div class="fullcomment"><div class="comment cmt"><p>Analyzes the tree to determine if it is well constructed.
-</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p><code>&quot;true&quot;</code> (as a string) if the tree is a well constructed B+ Tree, a string description of the flaw otherwise.</p></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p><code>&quot;true&quot;</code> (as a string) if the tree is a well constructed B+ tree, a string description of the flaw otherwise.</p></dd></dl></div>
     </li></ol>
             </div>
 
