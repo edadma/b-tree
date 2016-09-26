@@ -59,11 +59,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected def addKey( node: N, key: K )
 	
 	/**
-	 * Adds a new `value` to (leaf) `node`. `value` is placed at an index equal to the length of `node` minus one, given that the length of a node is the number of keys. Therefore, this method should be called after `addKey` if a key/value pair are being added.
-	 */
-	protected def addValue[V1 >: V]( node: N, value: V1 )
-	
-	/**
 	 * Frees that storage previously allocated for `node`. For in-memory implementations, this method probably won't do anything.
 	 */
 	protected def freeNode( node: N )
@@ -727,6 +722,11 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					if (nodeLength( sibling ) > minlen) {
 						moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
 						setKey( par, index, getKey(right, 0) )
+						
+						if (leaf == last)
+							lastlen = nodeLength( leaf )
+						else if (sibling == last)
+							lastlen = nodeLength( sibling )
 					} else {
 //						println("merge " + left + " " + right)
 						moveLeaf( right, 0, nodeLength(right), left, nodeLength(left) )
@@ -741,7 +741,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							lastlen = nodeLength( left )
 						} else
 							setPrev( next, left )
-					
+						
 						freeNode( right )
 						
 //						println("remove (leaf) " + par + " " + index)
@@ -831,7 +831,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 											setPrev( r, l )
 										}
 									
-										setNext( left, nul )
+									setNext( left, nul )
 									
 //						println("remove (internal) " + par + " " + index)
 									len = removeInternal( par, index, index + 1 )
@@ -859,7 +859,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 								}
 							}
 					}
-				}
+				} else if (leaf == last)
+					lastlen -= 1
 				
 				true
 			case (false, leaf, index) => false
@@ -1177,8 +1178,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					prev = node
 					node
 				case key if key.head.isLetterOrDigit =>
-					addKey( node, readKey(key) )
-					addValue( node, null.asInstanceOf[V] )
+					insertLeaf( node, nodeLength(node), readKey(key), null.asInstanceOf[V] )
 					leaf( it, node )
 				case t => sys.error( "unexpected token: '" + t + "'" )
 			}

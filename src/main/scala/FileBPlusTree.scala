@@ -108,8 +108,6 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		nodeLength( node, nodeLength(node) + 1 )
 	}
 	
-	protected def addValue[V1 >: V]( node: Long, value: V1 ) = setValue( node, nodeLength(node) - 1, value )
-	
 	protected def freeNode( node: Long ) = free( node, BLOCK_SIZE )
 	
 	protected def getBranch( node: Long, index: Int ) = {

@@ -14,7 +14,7 @@ class StressTests extends FreeSpec with PropertyChecks with Matchers {
 			("object generator", 													"storage",		"order",   "size"),
 			//----------------                               -------     -----      ----
 			(() => new MemoryBPlusTree[Int, Any]( 3 ),    "in memory", 3, 1000),
-//			(() => new FileBPlusTree[Int, Any]( newfile, 3, true ),    "on disk", 3, 1000),
+//			(() => new FileBPlusTree[Int, Any]( newfile, 3, true ),    "on disk", 3, 50),
 			(() => new MemoryBPlusTree[Int, Any]( 4 ),    "in memory", 4, 1000),
 //			(() => new FileBPlusTree[Int, Any]( newfile, 4, true ),    "on disk", 4, 1000),
  			(() => new MemoryBPlusTree[Int, Any]( 5 ),    "in memory", 5, 2000),
@@ -55,6 +55,9 @@ class StressTests extends FreeSpec with PropertyChecks with Matchers {
 				t.delete( k ) shouldBe true
 				t.wellConstructed shouldBe "true"
 			}
+			
+			t.isEmpty shouldBe true
+			t.iterator.isEmpty shouldBe true
 		}
 	}
 		
