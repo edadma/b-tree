@@ -23,13 +23,6 @@ class DeletionTests extends FreeSpec with PropertyChecks with Matchers {
 			(() => new FileBPlusTree[Int, Any]( newfile, 3, true ),    "on disk")
  			)
 	
-	val order3int_temp =
-		Table(
-			("object generator", 													"storage"),
-			//----------------                               -------
-			(() => new MemoryBPlusTree[Int, Any]( 3 ),    "in memory")
- 			)
-	
 	forAll (order3) { (gen, storage) =>
 		val t = gen()
 		
@@ -187,7 +180,7 @@ class DeletionTests extends FreeSpec with PropertyChecks with Matchers {
 		}
 	}
 	
-	forAll (order3int_temp) { (gen, storage) =>
+	forAll (order3int) { (gen, storage) =>
 		val t = gen()
 		
 		("deletion (non-leaf borrow from right): " + storage + ", order 3") in {
@@ -205,7 +198,7 @@ class DeletionTests extends FreeSpec with PropertyChecks with Matchers {
 		}
 	}
 	
-	forAll (order3int_temp) { (gen, storage) =>
+	forAll (order3int) { (gen, storage) =>
 		val t = gen()
 		
 		("deletion (non-leaf borrow from left): " + storage + ", order 3") in {
@@ -223,7 +216,7 @@ class DeletionTests extends FreeSpec with PropertyChecks with Matchers {
 		}
 	}
 	
-	forAll (order3int_temp) { (gen, storage) =>
+	forAll (order3int) { (gen, storage) =>
 		val t = gen()
 		
 		("deletion (merge up to root, 4 level tree): " + storage + ", order 3") in {
@@ -247,7 +240,7 @@ class DeletionTests extends FreeSpec with PropertyChecks with Matchers {
 		}
 	}
 	
-	forAll (order3int_temp) { (gen, storage) =>
+	forAll (order3int) { (gen, storage) =>
 		val t = gen()
 		
 		("deletion (merge not up to root, 3 level tree): " + storage + ", order 3") in {
@@ -265,7 +258,7 @@ class DeletionTests extends FreeSpec with PropertyChecks with Matchers {
 		}
 	}
 	
-	forAll (order3int_temp) { (gen, storage) =>
+	forAll (order3int) { (gen, storage) =>
 		val t = gen()
 		
 		("deletion (merge followed by borrow, 4 level tree): " + storage + ", order 3") in {
