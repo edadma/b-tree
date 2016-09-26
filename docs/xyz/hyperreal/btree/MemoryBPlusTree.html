@@ -274,24 +274,6 @@
     </span>
       <p class="shortcomment cmt">Adds a new <code>key</code> to <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>key</code> to <code>node</code>. The length of <code>node</code> will increase by one as a result. This method should be called before either <code>addBranch</code> or <code>addValue</code> since those methods use the current node length to determine placemenet.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree">MemoryBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.MemoryBPlusTree#addValue" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="addValue[V1&gt;:V](node:MemoryBPlusTree.this.Node[K,V],value:V1):Unit"></a>
-      <a id="addValue[V1&gt;:V](Node[K,V],V1):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">addValue</span><span class="tparams">[<span name="V1">V1 &gt;: <span class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree.V">V</span></span>]</span><span class="params">(<span name="node">node: <a href="MemoryBPlusTree$Node.html" class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree.Node">Node</a>[<span class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree.V">V</span>]</span>, <span name="value">value: <span class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree.addValue.V1">V1</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.MemoryBPlusTree@addValue[V1&gt;:V](node:MemoryBPlusTree.this.Node[K,V],value:V1):Unit" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Adds a new <code>value</code> to (leaf) <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Adds a new <code>value</code> to (leaf) <code>node</code>. <code>value</code> is placed at an index equal to the length of <code>node</code> minus one, given that the length of a node is the number of keys. Therefore, this method should be called after <code>addKey</code> if a key/value pair are being added.
-</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree">MemoryBPlusTree</a> → <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
