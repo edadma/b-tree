@@ -674,17 +674,24 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	
 	protected def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int )
 		
-	def leftmost( node: N ): K =
+	protected def leftmost( node: N ): K =
 		if (isLeaf( node ))
 			getKey( node, 0 )
 		else
 			leftmost( getBranch(node, 0) )
 	
-	def rightmost( node: N ): K =
+	protected def rightmost( node: N ): K =
 		if (isLeaf( node ))
 			getKey( node, nodeLength(node) - 1 )
 		else
 			rightmost( getBranch(node, nodeLength(node)) )
+	
+	protected def str( node: N ) = {
+		if (isLeaf( node ))
+			getKeys( node ).mkString( "leaf[", ", ", "]" )
+		else
+			getKeys( node ).mkString( "internal[", ", ", "]" )
+	}
 	
 	/**
 	 * Performs the B+ tree deletion algorithm to remove `key` and it's associated value from the tree, rebalancing the tree if necessary.
@@ -720,7 +727,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						}
 					
 					if (nodeLength( sibling ) > minlen) {
+//						println( "borrow from " + str(sibling) + " to " + str(leaf) )
 						moveLeaf( sibling, siblingside, siblingside + 1, leaf, leafside )
+//						println( getKey(right, 0) )
 						setKey( par, index, getKey(right, 0) )
 						
 						if (leaf == last)
@@ -787,8 +796,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									}
 								
 								if (nodeLength( sibling ) > minlen) {
-//						println("borrow " + internal + " " + sibling)
-//						println("insertKey " + internal + " " + keytoadd)
+// 						println("borrow " + internal + " " + sibling)
+// 						println("insertKey " + internal + " " + keytoadd)
 									insertInternal( internal, internalsidekey, keytoadd, internalsidebranch, branch )
 									setParent( branch, internal )
 									removeInternal( sibling, siblingsidekey, siblingsidebranch )
@@ -813,8 +822,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									
 									par = root
 								} else {
-//						println("merge " + left + " " + right)
-//						println("addKey " + leftmost(right))
+// 						println("merge " + left + " " + right)
+// 						println("addKey " + leftmost(right))
 									addKey( left, leftmost(right) )
 									
 									val middle = getBranch( right, 0 )

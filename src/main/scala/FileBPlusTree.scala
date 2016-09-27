@@ -273,12 +273,14 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	}
 	
 	protected def moveLeaf( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
+		val srclen = nodeLength( src )
 		val dstlen = nodeLength( dst )
 			
 		if (savedNode == NUL) {
 			copyLeaf( dst, index, dstlen, dst, index + end - begin )
 			copyLeaf( src, begin, end, dst, index )
-			nodeLength( src, nodeLength(src) - (end - begin) )
+			copyLeaf( src, end, srclen, src, begin )
+			nodeLength( src, srclen - (end - begin) )
 			nodeLength( dst, dstlen + end - begin )
 		} else {
 			val dstKeys = new ArrayBuffer[K]

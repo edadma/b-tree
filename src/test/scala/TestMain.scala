@@ -139,8 +139,8 @@ object TestMain extends App {
 	tree.delete( 2 )
 	tree.delete( 5 )
 	tree.delete( 9 )
-//	tree.delete( 8 )
-//	tree.delete( 1 )
+	tree.delete( 8 )
+	tree.delete( 1 )
 	tree.prettyPrintKeysOnly
 	println( tree.wellConstructed )
 	
