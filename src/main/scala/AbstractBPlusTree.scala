@@ -126,7 +126,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	/**
 	 * Moves key/branch pairs as well as the left branch of the first key from node `src` to node `dst` beginning at index `begin` and ending at but not including index `end`, and also removes the key at index `begin - 1`.
 	 */
-	protected def moveInternal( src: N, begin: Int, end: Int, dst: N )
+	protected def moveInternal( src: N, begin: Int, end: Int, dst: N, index: Int )
 	
 	/**
 	 * Moves key/value pairs from node `src` to node `dst` beginning at index `begin` and ending up to but not including index `end`.
@@ -632,7 +632,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							val mid = len/2
 							val middle = getKey( par, mid )
 							
-							moveInternal( par, mid + 1, len, newinternal )
+							addBranch( newinternal, getBranch(par, mid + 1) )
+							moveInternal( par, mid + 1, len, newinternal, 0 )
+							removeInternal( par, mid, mid + 1 )
 							
 							for (child <- getBranches( newinternal ))
 								setParent( child, newinternal )
@@ -671,8 +673,6 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 			}
 		}
 	}
-	
-	protected def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int )
 		
 	protected def leftmost( node: N ): K =
 		if (isLeaf( node ))
@@ -829,7 +829,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									val middle = getBranch( right, 0 )
 									
 									addBranch( left, middle )
-									moveInternalDelete( right, 0, nodeLength(right), left, nodeLength(left) )
+									moveInternal( right, 0, nodeLength(right), left, nodeLength(left) )
 									getBranches( left ) drop 1 foreach (setParent( _, left ))
 									
 									freeNode( right )

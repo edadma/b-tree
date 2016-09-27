@@ -59,7 +59,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	
 	protected val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
 	
-	protected val BLOCK_SIZE = LEAF_VALUES + (((order - 1)*DATUM_SIZE) max (order*POINTER_SIZE))
+	protected val BLOCK_SIZE = LEAF_VALUES + (((order - 1)*DATUM_SIZE) max (order*POINTER_SIZE)) + 100
 	
 	private var savedNode: Long = NUL
 	private var savedKeys = new ArrayBuffer[K]
@@ -162,7 +162,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	protected def insertInternal( node: Long, keyIndex: Int, key: K, branchIndex: Int, branch: Long ) {
 		val len = nodeLength( node )
 		
-		if (len < order - 1) {
+//		if (len < order - 1) {
 			nodeLength( node, len + 1 )
 			
 			if (keyIndex < len)
@@ -180,18 +180,18 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 			setKey( node, keyIndex, key )
 			file seek (node + INTERNAL_BRANCHES + branchIndex*POINTER_SIZE)
 			file writeLong branch
-		} else {
-			if (savedNode != NUL)
-				sys.error( "a node is already being saved" )
-				
-			savedKeys.clear
-			savedBranches.clear
-			savedKeys ++= getKeys( node )
-			savedBranches ++= getBranches( node )
-			savedKeys.insert( keyIndex, key )
-			savedBranches.insert( branchIndex, branch )
-			savedNode = node
-		}
+// 		} else {
+// 			if (savedNode != NUL)
+// 				sys.error( "a node is already being saved" )
+// 				
+// 			savedKeys.clear
+// 			savedBranches.clear
+// 			savedKeys ++= getKeys( node )
+// 			savedBranches ++= getBranches( node )
+// 			savedKeys.insert( keyIndex, key )
+// 			savedBranches.insert( branchIndex, branch )
+// 			savedNode = node
+// 		}
 	}
 	
 	protected def insertLeaf[V1 >: V]( node: Long, index: Int, key: K, value: V1 ) {
@@ -224,34 +224,33 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		file.read == LEAF_NODE
 	}
 	
-	protected def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int ) {
-		val dstlen = nodeLength( dst )
-		
-		copyInternal( dst, index, dstlen, dst, index + end - begin )
-		copyInternal( src, begin, end, dst, index )
-		nodeLength( src, nodeLength(src) - (end - begin) )
-		nodeLength( dst, dstlen + end - begin )
-	}
+// 	protected def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int ) {
+// 		val dstlen = nodeLength( dst )
+// 		
+// 		copyInternal( dst, index, dstlen, dst, index + end - begin )
+// 		copyInternal( src, begin, end, dst, index )
+// 		nodeLength( src, nodeLength(src) - (end - begin) )
+// 		nodeLength( dst, dstlen + end - begin )
+// 	}
 	
-	protected def moveInternal( src: Long, begin: Int, end: Int, dst: Long ) {
+	protected def moveInternal( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
 		if (savedNode == NUL) {
-			copyKeys( src, begin, end, dst, 0 )
-			nodeLength( src, nodeLength(src) - (end - begin) - 1 )
+			val dstlen = nodeLength( dst )
+			val srclen = nodeLength( src )
 			
-			val data = new Array[Byte]( (end - begin + 1)*POINTER_SIZE )
-			
-			file seek (src + INTERNAL_BRANCHES + begin*POINTER_SIZE)
-			file readFully data
-			file seek (dst + INTERNAL_BRANCHES)
-			file write data
+			copyInternal( dst, index, dstlen, dst, index + end - begin )
+			copyInternal( src, begin, end, dst, index )
+			copyInternal( src, end, srclen, src, begin )
+			nodeLength( src, srclen - (end - begin) )
+			nodeLength( dst, dstlen + end - begin )
 		} else {
 			val dstKeys = new ArrayBuffer[K]
 			val dstBranches = new ArrayBuffer[Long]
 			
-			savedKeys.view( begin, end ) copyToBuffer dstKeys
-			savedKeys.remove( begin - 1, end - begin + 1 )
-			savedBranches.view( begin, end + 1 ) copyToBuffer dstBranches
-			savedBranches.remove( begin, end - begin + 1 )
+			dstKeys.insertAll( 0, savedKeys.view(begin, end) )
+			savedKeys.remove( begin, end - begin )
+			dstBranches.insertAll( 0, savedBranches.view(begin + 1, end + 1) )
+			savedBranches.remove( begin + 1, end - begin )
 			
 			for ((k, i) <- savedKeys zipWithIndex)
 				setKey( src, i, k )
@@ -263,13 +262,12 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 				setBranch( src, i, b )
 
 			for ((b, i) <- dstBranches zipWithIndex)
-				setBranch( dst, i, b )
+				setBranch( dst, i + 1, b )
 				
 			nodeLength( src, savedKeys.length )
+			nodeLength( dst, end - begin )
 			savedNode = NUL
 		}
-		
-		nodeLength( dst, end - begin )
 	}
 	
 	protected def moveLeaf( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
@@ -450,13 +448,14 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	}
 	
 	protected def copyInternal( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
-		val data = copyKeys( src, begin, end, dst, index )
-		val branchlen = (end - begin)*POINTER_SIZE
+		copyKeys( src, begin, end, dst, index )
+		
+		val data = new Array[Byte]( (end - begin)*POINTER_SIZE )
 		
 		file seek (src + INTERNAL_BRANCHES + (begin + 1)*POINTER_SIZE)
-		file readFully (data, 0, branchlen)
+		file readFully data
 		file seek (dst + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
-		file write (data, 0, branchlen)
+		file write data
 	}
 	
 	protected def freeDatum( addr: Long ) = {
