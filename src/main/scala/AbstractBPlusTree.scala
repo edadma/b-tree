@@ -878,7 +878,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 		var nextptr: N = nul
 		
 		def check( n: N, p: N, d: Int ): String = {
-			if (!(getKeys( n ) dropRight 1 zip (getKeys( n ) drop 1) forall (p => p._1 < p._2)))
+			if (!(getKeys( n ) dropRight 1 zip (getKeys( n ) drop 1) forall {case (n1, n2) => n1 < n2}))
 				return "incorrectly ordered keys"
 			
 			if (getParent( n ) != p)
@@ -911,6 +911,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 					return "incorrect next pointer"
 				else
 					nextptr = getNext( n )
+					
+				if (getNext( n ) != nul && getKeys( n ).last > getKey( getNext(n), 0 ) || getPrev( n ) != nul && getKeys( getPrev(n) ).last > getKey( n, 0 ))
+						return "leaf node last key not less than or equal to next leaf node first key"
 			} else {
 				if (getBranches( n ) exists (p => p == nul))
 					return "null branch pointer"
@@ -945,9 +948,9 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						return "non-root internal node length out of range: " + nodeLength( n ) + ", " + n
 				}
 				
-				if (getKeys( getBranch(n, 0) ).last >= getKey( n, 0 ))
-					return "left internal node branch not strictly less than"
-					
+				if (!(getKeys( n ) zip (getBranches( n ) dropRight 1) forall {case (k, b) => k > rightmost( b ) && k > getKey( b, 0 )}))
+					return "left internal node branch not strictly less than: " + n
+
 				if (!(getKeys( n ) zip (getBranches( n ) drop 1) forall {case (k, b) => k <= leftmost( b ) && k <= getKey( b, 0 )}))
 					return "right internal node branch not greater than or equal: " + n
 				

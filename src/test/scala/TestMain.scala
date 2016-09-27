@@ -4,8 +4,8 @@ import util.Random
 
 
 object TestMain extends App {
-//	val tree = new FileBPlusTree[String, Any]( "btree", 3 )
-	val tree = new MemoryBPlusTree[Int, Any]( 99 )
+	val tree = new FileBPlusTree[Int, Any]( "btree", 3, true )
+//	val tree = new MemoryBPlusTree[Int, Any]( 3 )
 // 	val map = new MutableSortedMap[String, Any]
 	
 // 	tree.insert( "a" )
@@ -68,35 +68,38 @@ object TestMain extends App {
 //  	tree.prettyPrintKeysOnly
 //  	println( tree.wellConstructed )
 
-	println( "inserting..." )
-	
-	tree.insertKeysAndCheck( Random.shuffle(1 to 20000): _* ) match {
-		case "true" =>
-		case r =>
-			println( r )
-			sys.exit
-	}
-
-	println( "deleting..." )
-		
-	for (k <- Random.shuffle( 1 to 20000 )) {
-		tree.delete( k ) match {
-			case true =>
-			case _ =>
-				println( "key " + k + " not found" )
-				tree.prettyPrintKeysOnly
-				sys.exit
-		}
-
-		tree.wellConstructed match {
-			case "true" =>
-			case r =>
-				println( r )
-				sys.exit
-		}
-	}
-	
-	tree.prettyPrintKeysOnly
+// 	println( "inserting..." )
+// 	
+// 	tree.insertKeysAndCheck( Random.shuffle(1 to 10): _* ) match {
+// 		case "true" =>
+// 		case r =>
+// 			println( r )
+// 			sys.exit
+// 	}
+// 
+// 	tree.prettyPrintKeysOnly
+// 	println( "deleting..." )
+// 		
+// 	for (k <- Random.shuffle( 1 to 10 )) {
+// 		println( k )
+// 		tree.delete( k ) match {
+// 			case true =>
+// 			case _ =>
+// 				println( "key " + k + " not found" )
+// 				tree.prettyPrintKeysOnly
+// 				sys.exit
+// 		}
+// 
+// 		tree.wellConstructed match {
+// 			case "true" =>
+// 			case r =>
+// 				tree.prettyPrintKeysOnly
+// 				println( r )
+// 				sys.exit
+// 		}
+// 	}
+// 	
+// 	tree.prettyPrintKeysOnly
 
 // 	tree.build( """
 // 		(
@@ -113,15 +116,34 @@ object TestMain extends App {
 //  	tree.prettyPrintKeysOnly
 //  	println( tree.wellConstructed )
 	
-// 	tree.build( """
-// 		(
-// 			([1] 2 [2]) 6 ([6 7] 8 [8 9]) 10 ([11] 12 [12])
-// 		)
-// 		""" ).prettyPrintKeysOnly
-// 	tree.delete( 2 )
-// 	tree.prettyPrintKeysOnly
-// 	println( tree.wellConstructed )
-// 	
+// [n0: (null, null, null) n1 | 5 | n2 | 8 | n3]
+// [n1: (null, n0, n2) n4 | 2 | n5 | 3 | n6] [n2: (n1, n0, n3) n7 | 7 | n8] [n3: (n2, n0, null) n9 | 9 | n10]
+// [n4: (null, n1, n5) 1] [n5: (n4, n1, n6) 2] [n6: (n5, n1, n7) 3 4] [n7: (n6, n2, n8) 5 6] [n8: (n7, n2, n9) 7] [n9: (n8, n3, n10) 8] [n10: (n9, n3, null) 9 10]
+
+// 6
+// 2
+// 5
+// 9
+// 8
+// 1
+// [n0: (null, null, null) n1 | 5 | n2]
+// [n1: (null, n0, n2) n3 | 3 | n4] [n2: (n1, n0, null) n5 | 8 | n6]
+// [n3: (null, n1, n4) 3] [n4: (n3, n1, n5) 3] [n5: (n4, n2, n6) 7] [n6: (n5, n2, null) 10]
+
+	tree.build( """
+		(
+			([1] 2 [2] 3 [3 4]) 5 ([5 6] 7 [7]) 8 ([8] 9 [9 10])
+		)
+		""" ).prettyPrintKeysOnly
+	tree.delete( 6 )
+	tree.delete( 2 )
+	tree.delete( 5 )
+	tree.delete( 9 )
+//	tree.delete( 8 )
+//	tree.delete( 1 )
+	tree.prettyPrintKeysOnly
+	println( tree.wellConstructed )
+	
 // 	tree.build( """
 // 		(
 // 			([4] 5 [5] 6 [6]) 8 ([8] 9 [9])
