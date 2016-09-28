@@ -47,7 +47,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Provides an abstract class for building and using B+ Trees.</p><h4>Overview</h4><p>The class to extend is <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>.  It is designed to be both generic (type parameters for keys and values, and an abstract type for node references) and general (doesn't care how the tree is stored). An extending class needs to implement a number of simple methods and node type that 	provide storage abstraction.</p><p>There are two examples that extend <code>AbstractBPlusTree</code>: <code>MemoryBPlusTree</code> and <code>FileBPlusTree</code>. <a href="MemoryBPlusTree.html" class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree">MemoryBPlusTree</a> implements a B+ Tree in-memory and is essentially a map implementation.  <a href="FileBPlusTree.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> implements a B+ Tree on-disk and is sort-of a very simple database.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Provides an abstract class for building and using B+ Trees.</p><h4>Overview</h4><p>The class to extend is <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a>.  It is designed to be both generic (type parameters for keys and values, and an abstract type for node references) and general (doesn't care how the tree is stored). An extending class needs to implement a number of simple methods and node type that 	provide storage abstraction.</p><p>There are two examples that extend <code>AbstractBPlusTree</code>: <code>MemoryBPlusTree</code> and <code>FileBPlusTree</code>. <a href="MemoryBPlusTree.html" class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree">MemoryBPlusTree</a> implements a B+ Tree in-memory and is essentially a map implementation.  <a href="FileBPlusTree.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> implements a B+ Tree on-disk and is sort-of a very simple database.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -89,26 +89,26 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="xyz.hyperreal.btree.AbstractBPlusTree" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="AbstractBPlusTree[K,+V]extendsAnyRef"></a>
-      <a id="AbstractBPlusTree[K,+V]:AbstractBPlusTree[K,V]"></a>
+              <ol><li name="xyz.hyperreal.btree.BPlusTree" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="BPlusTree[K,+V]extendsAnyRef"></a>
+      <a id="BPlusTree[K,+V]:BPlusTree[K,V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="AbstractBPlusTree.html"><span class="name">AbstractBPlusTree</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">+V</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="BPlusTree.html"><span class="name">BPlusTree</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">+V</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.package@AbstractBPlusTree[K,+V]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.package@BPlusTree[K,+V]extendsAnyRef" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Provides for interaction (searching, insertion, update, deletion) with a B+ tree that can be stored any where (in memory, on disk).</p><div class="fullcomment"><div class="comment cmt"><p>Provides for interaction (searching, insertion, update, deletion) with a B+ tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ tree initially. An empty B+ tree consists of a single empty leaf node as the root. Also the <code>first</code> and <code>last</code> should refer to the root leaf node, and the <code>lastlen</code> variable should be 0. For on-disk implementations it should be possible to open an existing B+ tree or optionally create a new one.
 </p></div><dl class="paramcmts block"><dt class="tparam">K</dt><dd class="cmt"><p>the type of the keys contained in this map.</p></dd><dt class="tparam">V</dt><dd class="cmt"><p>the type of the values associated with the keys.</p></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="FileBPlusTree[K,V]extendsAbstractBPlusTree[K,V]"></a>
+      <a id="FileBPlusTree[K,V]extendsBPlusTree[K,V]"></a>
       <a id="FileBPlusTree[K,V]:FileBPlusTree[K,V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -116,17 +116,17 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="FileBPlusTree.html"><span class="name">FileBPlusTree</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>]</span>
+        <a href="FileBPlusTree.html"><span class="name">FileBPlusTree</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.package@FileBPlusTree[K,V]extendsAbstractBPlusTree[K,V]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.package@FileBPlusTree[K,V]extendsBPlusTree[K,V]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">An on-disk B+ Tree implementation.</p><div class="fullcomment"><div class="comment cmt"><p>An on-disk B+ Tree implementation.
 </p></div><dl class="paramcmts block"><dt class="tparam">K</dt><dd class="cmt"><p>the type of the keys contained in this map.</p></dd><dt class="tparam">V</dt><dd class="cmt"><p>the type of the values associated with the keys.</p></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.MemoryBPlusTree" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="MemoryBPlusTree[K,V]extendsAbstractBPlusTree[K,V]"></a>
+      <a id="MemoryBPlusTree[K,V]extendsBPlusTree[K,V]"></a>
       <a id="MemoryBPlusTree[K,V]:MemoryBPlusTree[K,V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -134,10 +134,10 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="MemoryBPlusTree.html"><span class="name">MemoryBPlusTree</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <a href="AbstractBPlusTree.html" class="extype" name="xyz.hyperreal.btree.AbstractBPlusTree">AbstractBPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree.V">V</span>]</span>
+        <a href="MemoryBPlusTree.html"><span class="name">MemoryBPlusTree</span></a><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree.V">V</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.package@MemoryBPlusTree[K,V]extendsAbstractBPlusTree[K,V]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.package@MemoryBPlusTree[K,V]extendsBPlusTree[K,V]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
