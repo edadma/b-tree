@@ -59,27 +59,27 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected def addKey( node: N, key: K )
 	
 	/**
-	 * Frees that storage previously allocated for `node`. For in-memory implementations, this method probably won't do anything.
+	 * Frees the storage previously allocated for `node`. For in-memory implementations, this method probably won't do anything.
 	 */
 	protected def freeNode( node: N )
 		
 	/**
-	 * Gets a branch pointer from an internal node at a given `index`.  There is always one more branch pointer than there are keys in an internal node so the highest index is equal to `nodeLength( node )`.
+	 * Returns a branch pointer from an internal node at a given `index`.  There is always one more branch pointer than there are keys in an internal node so the highest index is equal to `nodeLength( node )`.
 	 */
 	protected def getBranch( node: N, index: Int ): N
 	
 	/**
-	 * Gets the branches of `node` as a non-strict immutable sequence.
+	 * Returns the branches of `node` as a non-strict immutable sequence.
 	 */
 	protected def getBranches( node: N ): Seq[N]
 		
 	/**
-	 * Gets a key from a leaf `node` at a given `index`.
+	 * Returns a key from a leaf `node` at a given `index`.
 	 */
 	protected def getKey( node: N, index: Int ): K
 	
 	/**
-	 * Gets the keys of `node` as a non-strict immutable sequence.
+	 * Returns the keys of `node` as a non-strict immutable sequence.
 	 */	
 	protected def getKeys( node: N ): Seq[K]
 	
@@ -99,12 +99,12 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected def getPrev( node: N ): N
 		
 	/**
-	 * Gets a value from a leaf `node` at a given `index`.
+	 * Returns a value from a leaf `node` at a given `index`.
 	 */
 	protected def getValue( node: N, index: Int ): V
 	
 	/**
-	 * Gets the values of `node` as a non-strict immutable sequence.
+	 * Returns the values of `node` as a non-strict immutable sequence.
 	 */	
 	protected def getValues( node: N ): Seq[V]
 	

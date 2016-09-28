@@ -207,7 +207,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Frees that storage previously allocated for <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Frees that storage previously allocated for <code>node</code>. For in-memory implementations, this method probably won't do anything.
+      <p class="shortcomment cmt">Frees the storage previously allocated for <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Frees the storage previously allocated for <code>node</code>. For in-memory implementations, this method probably won't do anything.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#getBranch" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="getBranch(node:BPlusTree.this.N,index:Int):BPlusTree.this.N"></a>
@@ -225,7 +225,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Gets a branch pointer from an internal node at a given <code>index</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Gets a branch pointer from an internal node at a given <code>index</code>.  There is always one more branch pointer than there are keys in an internal node so the highest index is equal to <code>nodeLength( node )</code>.
+      <p class="shortcomment cmt">Returns a branch pointer from an internal node at a given <code>index</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a branch pointer from an internal node at a given <code>index</code>.  There is always one more branch pointer than there are keys in an internal node so the highest index is equal to <code>nodeLength( node )</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#getBranches" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="getBranches(node:BPlusTree.this.N):Seq[BPlusTree.this.N]"></a>
@@ -243,7 +243,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Gets the branches of <code>node</code> as a non-strict immutable sequence.</p><div class="fullcomment"><div class="comment cmt"><p>Gets the branches of <code>node</code> as a non-strict immutable sequence.
+      <p class="shortcomment cmt">Returns the branches of <code>node</code> as a non-strict immutable sequence.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the branches of <code>node</code> as a non-strict immutable sequence.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#getKey" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="getKey(node:BPlusTree.this.N,index:Int):K"></a>
@@ -261,7 +261,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Gets a key from a leaf <code>node</code> at a given <code>index</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Gets a key from a leaf <code>node</code> at a given <code>index</code>.
+      <p class="shortcomment cmt">Returns a key from a leaf <code>node</code> at a given <code>index</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a key from a leaf <code>node</code> at a given <code>index</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#getKeys" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="getKeys(node:BPlusTree.this.N):Seq[K]"></a>
@@ -279,7 +279,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Gets the keys of <code>node</code> as a non-strict immutable sequence.</p><div class="fullcomment"><div class="comment cmt"><p>Gets the keys of <code>node</code> as a non-strict immutable sequence.
+      <p class="shortcomment cmt">Returns the keys of <code>node</code> as a non-strict immutable sequence.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the keys of <code>node</code> as a non-strict immutable sequence.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#getNext" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="getNext(node:BPlusTree.this.N):BPlusTree.this.N"></a>
@@ -351,7 +351,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Gets a value from a leaf <code>node</code> at a given <code>index</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Gets a value from a leaf <code>node</code> at a given <code>index</code>.
+      <p class="shortcomment cmt">Returns a value from a leaf <code>node</code> at a given <code>index</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a value from a leaf <code>node</code> at a given <code>index</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#getValues" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="getValues(node:BPlusTree.this.N):Seq[V]"></a>
@@ -369,7 +369,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Gets the values of <code>node</code> as a non-strict immutable sequence.</p><div class="fullcomment"><div class="comment cmt"><p>Gets the values of <code>node</code> as a non-strict immutable sequence.
+      <p class="shortcomment cmt">Returns the values of <code>node</code> as a non-strict immutable sequence.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the values of <code>node</code> as a non-strict immutable sequence.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#insertInternal" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="insertInternal(node:BPlusTree.this.N,keyIndex:Int,key:K,branchIndex:Int,branch:BPlusTree.this.N):Unit"></a>
