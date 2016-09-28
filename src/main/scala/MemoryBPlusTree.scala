@@ -11,7 +11,7 @@ import collection.mutable.ArrayBuffer
  * @tparam K the type of the keys contained in this map.
  * @tparam V the type of the values associated with the keys.
  */
-class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends AbstractBPlusTree[K, V]( order ) {
+class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends BPlusTree[K, V]( order ) {
 	protected type N = Node[K, V]
 	
 	protected var first: Node[K, V] = new LeafNode[K, V]( null )

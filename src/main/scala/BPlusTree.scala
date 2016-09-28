@@ -17,7 +17,7 @@ import java.io.PrintWriter
  * @tparam K the type of the keys contained in this map.
  * @tparam V the type of the values associated with the keys.
  */
-abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
+abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	/**
 	 * Abstract node type. For in-memory implementations this would probably be the actual node class and for on-disk it would likely be the file pointer where the node is stored.
 	 */

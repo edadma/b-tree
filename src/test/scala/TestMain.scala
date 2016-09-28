@@ -4,14 +4,16 @@ import util.Random
 
 
 object TestMain extends App {
-	val t = new FileBPlusTree[Int, Any]( "btree", 3, true )
-//	val t = new MemoryBPlusTree[Int, Any]( 3 )
-// 	val m = new MutableSortedMap[String, Any]
+	def test( t: BPlusTree[Int, Any] ) = {
+		t.insertKeys( 1, 2, 3, 4 )
+		t.prettyPrintKeysOnly
+		println
+		t.insertKeys( 5 )
+		t.prettyPrintKeysOnly
+		println( t.wellConstructed )
+		println( "------" )
+	}
 	
-	t.insertKeys( 1, 2, 3, 4 )
-	t.prettyPrintKeysOnly
-	println( "------" )
-	t.insertKeys( 5 )
-	t.prettyPrintKeysOnly
-	println( t.wellConstructed )
+	test( new MemoryBPlusTree[Int, Any](3) )
+	test( new FileBPlusTree[Int, Any](newfile, 3, true) )
 }

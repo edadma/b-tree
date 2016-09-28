@@ -19,7 +19,7 @@ import java.io.{File, RandomAccessFile}
  * @tparam K the type of the keys contained in this map.
  * @tparam V the type of the values associated with the keys.
  */
-class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: Boolean = false ) extends AbstractBPlusTree[K, V]( order ) {
+class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: Boolean = false ) extends BPlusTree[K, V]( order ) {
 	protected type N = Long
 	
 	protected val NUL = 0
@@ -343,11 +343,12 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	}
 	
 	protected def nodeLength( node: Long ) =
-		if (savedNode == NUL) {
+		if (node == savedNode)
+			savedKeys.length
+		else {
 			file seek (node + NODE_LENGTH)
 			file.readShort
-		} else
-			savedKeys.length
+		}
 	
 	protected def nodeLength( node: Long, len: Int ) {
 		file seek (node + NODE_LENGTH)
