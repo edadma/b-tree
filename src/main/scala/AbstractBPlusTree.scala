@@ -633,8 +633,8 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							val middle = getKey( par, mid )
 							
 							addBranch( newinternal, getBranch(par, mid + 1) )
-							moveInternal( par, mid + 1, len, newinternal, 0 )
 							removeInternal( par, mid, mid + 1 )
+							moveInternal( par, mid, len - 1, newinternal, 0 )
 							
 							for (child <- getBranches( newinternal ))
 								setParent( child, newinternal )

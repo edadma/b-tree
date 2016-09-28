@@ -111,7 +111,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	protected def freeNode( node: Long ) = free( node, BLOCK_SIZE )
 	
 	protected def getBranch( node: Long, index: Int ) = {
-		if (savedNode == node)
+		if (node == savedNode)
 			savedBranches(index)
 		else {
 			file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
@@ -315,8 +315,8 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		
 		file write INTERNAL_NODE
 		file writeLong parent
-		file writeLong nul
-		file writeLong nul
+		file writeLong NUL
+		file writeLong NUL
 		file writeShort 0
 		node
 	}
@@ -326,8 +326,8 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		
 		file write LEAF_NODE
 		file writeLong parent
-		file writeLong nul
-		file writeLong nul
+		file writeLong NUL
+		file writeLong NUL
 		file writeShort 0
 		node
 	}
@@ -356,26 +356,31 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	
 	protected def nul = 0
 
-	protected def removeInternal( node: Long, keyIndex: Int, branchIndex: Int ) = {
-		val len = nodeLength( node )
-		val newlen = len - 1
-		
-		nodeLength( node, newlen )
-		
-		if (keyIndex < newlen)
-			copyKeys( node, keyIndex + 1, len, node, keyIndex )
+	protected def removeInternal( node: Long, keyIndex: Int, branchIndex: Int ) =
+		if (node == savedNode) {
+			savedKeys.remove( keyIndex, 1 )
+			savedBranches.remove( branchIndex, 1 )
+			savedKeys.length
+		} else {
+			val len = nodeLength( node )
+			val newlen = len - 1
 			
-		if (branchIndex < len) {
-			val data = new Array[Byte]( (len + 1 - (branchIndex + 1))*POINTER_SIZE )
+			nodeLength( node, newlen )
 			
-			file seek (node + INTERNAL_BRANCHES + (branchIndex + 1)*POINTER_SIZE)
-			file readFully data
-			file seek (node + INTERNAL_BRANCHES + branchIndex*POINTER_SIZE)
-			file write data
+			if (keyIndex < newlen)
+				copyKeys( node, keyIndex + 1, len, node, keyIndex )
+				
+			if (branchIndex < len) {
+				val data = new Array[Byte]( (len + 1 - (branchIndex + 1))*POINTER_SIZE )
+				
+				file seek (node + INTERNAL_BRANCHES + (branchIndex + 1)*POINTER_SIZE)
+				file readFully data
+				file seek (node + INTERNAL_BRANCHES + branchIndex*POINTER_SIZE)
+				file write data
+			}
+			
+			newlen
 		}
-		
-		newlen
-	}
 
 	protected def removeLeaf( node: Long, index: Int ) = {
 		val len = nodeLength( node )
@@ -580,6 +585,12 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		}
 	}
 	
+	override protected def str( n: Long ) =
+		if (n == savedNode)
+			savedKeys.mkString( if (isLeaf(n)) "leaf[" else "internal[", ", ", "]" )
+		else
+			super.str( n )
+			
 	private def hex( n: Long* ) = println( n map (a => "%h" format a) mkString ("(", ", ", ")") )
 
 }
