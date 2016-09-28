@@ -55,11 +55,11 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	protected val NODE_LENGTH = NODE_NEXT_PTR + POINTER_SIZE
 	protected val NODE_KEYS = NODE_LENGTH + 2
 	
-	protected val LEAF_VALUES = NODE_KEYS + DATA_ARRAY_SIZE																			+ DATUM_SIZE
+	protected val LEAF_VALUES = NODE_KEYS + DATA_ARRAY_SIZE
 	
-	protected val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE 																+ DATUM_SIZE
+	protected val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
 	
-	protected val BLOCK_SIZE = LEAF_VALUES + (((order - 1)*DATUM_SIZE) max (order*POINTER_SIZE)) 	+ POINTER_SIZE
+	protected val BLOCK_SIZE = LEAF_VALUES + (((order - 1)*DATUM_SIZE) max (order*POINTER_SIZE))
 	
 	private var savedNode: Long = NUL
 	private var savedKeys = new ArrayBuffer[K]

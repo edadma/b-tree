@@ -12,6 +12,16 @@ import java.io.PrintWriter
 /**
  * Provides for interaction (searching, insertion, update, deletion) with a B+ tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ tree initially. An empty B+ tree consists of a single empty leaf node as the root. Also the `first` and `last` should refer to the root leaf node, and the `lastlen` variable should be 0. For on-disk implementations it should be possible to open an existing B+ tree or optionally create a new one.
  * 
+ * A B+ tree is composed of nodes that are linked to one another using pointers. The exact way in which the nodes are layed out and stored is left to the implementation. Also, node pointers are left to the implementation through the abstract node type. There is a very important implementation requirement that comparing two nodes for equality return `true` when they point to the same node. All nodes have
+ *    - a parent pointer
+ *    - a next pointer to the right sibling
+ *    - a prev pointer to the left sibling
+ *    - an array of keys
+ * 
+ * There are two kinds nodes:
+ *    - leaf nodes, containing an array of values each corresponding to it's associated key in the keys array.
+ *    - internal nodes, containing an array of branch pointers. This array always has one element more than the number of keys.
+ * 
  * @constructor creates an object providing access to a B+ tree with a branching factor of `order` and possibly creating an empty tree.
  * @param order the branching factor (maximum number of branches in an internal node) of the tree
  * @tparam K the type of the keys contained in this map.
@@ -20,6 +30,8 @@ import java.io.PrintWriter
 abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	/**
 	 * Abstract node type. For in-memory implementations this would probably be the actual node class and for on-disk it would likely be the file pointer where the node is stored.
+	 * 
+	 * @note Comparing two nodes for equality is required to be `true` when they point to the same node.
 	 */
 	protected type N
 	
