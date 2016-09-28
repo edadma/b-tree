@@ -55,11 +55,11 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	protected val NODE_LENGTH = NODE_NEXT_PTR + POINTER_SIZE
 	protected val NODE_KEYS = NODE_LENGTH + 2
 	
-	protected val LEAF_VALUES = NODE_KEYS + DATA_ARRAY_SIZE
+	protected val LEAF_VALUES = NODE_KEYS + DATA_ARRAY_SIZE																			+ DATUM_SIZE
 	
-	protected val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
+	protected val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE 																+ DATUM_SIZE
 	
-	protected val BLOCK_SIZE = LEAF_VALUES + (((order - 1)*DATUM_SIZE) max (order*POINTER_SIZE)) + 100
+	protected val BLOCK_SIZE = LEAF_VALUES + (((order - 1)*DATUM_SIZE) max (order*POINTER_SIZE)) 	+ POINTER_SIZE
 	
 	private var savedNode: Long = NUL
 	private var savedKeys = new ArrayBuffer[K]
@@ -111,8 +111,12 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	protected def freeNode( node: Long ) = free( node, BLOCK_SIZE )
 	
 	protected def getBranch( node: Long, index: Int ) = {
-		file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
-		file readLong
+		if (savedNode == node)
+			savedBranches(index)
+		else {
+			file seek (node + INTERNAL_BRANCHES + index*POINTER_SIZE)
+			file readLong
+		}
 	}
 	
 	protected def getBranches( node: Long ): Seq[Long] =
@@ -162,7 +166,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	protected def insertInternal( node: Long, keyIndex: Int, key: K, branchIndex: Int, branch: Long ) {
 		val len = nodeLength( node )
 		
-//		if (len < order - 1) {
+	if (len < order - 1) {
 			nodeLength( node, len + 1 )
 			
 			if (keyIndex < len)
@@ -180,18 +184,18 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 			setKey( node, keyIndex, key )
 			file seek (node + INTERNAL_BRANCHES + branchIndex*POINTER_SIZE)
 			file writeLong branch
-// 		} else {
-// 			if (savedNode != NUL)
-// 				sys.error( "a node is already being saved" )
-// 				
-// 			savedKeys.clear
-// 			savedBranches.clear
-// 			savedKeys ++= getKeys( node )
-// 			savedBranches ++= getBranches( node )
-// 			savedKeys.insert( keyIndex, key )
-// 			savedBranches.insert( branchIndex, branch )
-// 			savedNode = node
-// 		}
+		} else {
+			if (savedNode != NUL)
+				sys.error( "a node is already being saved" )
+				
+			savedKeys.clear
+			savedBranches.clear
+			savedKeys ++= getKeys( node )
+			savedBranches ++= getBranches( node )
+			savedKeys.insert( keyIndex, key )
+			savedBranches.insert( branchIndex, branch )
+			savedNode = node
+		}
 	}
 	
 	protected def insertLeaf[V1 >: V]( node: Long, index: Int, key: K, value: V1 ) {

@@ -686,12 +686,7 @@ abstract class AbstractBPlusTree[K <% Ordered[K], +V]( order: Int ) {
 		else
 			rightmost( getBranch(node, nodeLength(node)) )
 	
-	protected def str( node: N ) = {
-		if (isLeaf( node ))
-			getKeys( node ).mkString( "leaf[", ", ", "]" )
-		else
-			getKeys( node ).mkString( "internal[", ", ", "]" )
-	}
+	protected def str( node: N ) = getKeys( node ).mkString( if (isLeaf(node)) "leaf[" else "internal[", ", ", "]" )
 	
 	/**
 	 * Performs the B+ tree deletion algorithm to remove `key` and it's associated value from the tree, rebalancing the tree if necessary.
