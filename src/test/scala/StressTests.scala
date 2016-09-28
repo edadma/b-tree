@@ -64,7 +64,7 @@ class StressTests extends FreeSpec with PropertyChecks with Matchers {
 	forAll (shorter) { (gen, storage, order, size) =>
 		val t = gen()
 		
-		("ascending insertion/deletionn: " + storage + ", " + order + ", " + size) in {
+		("ascending insertion/deletion: " + storage + ", " + order + ", " + size) in {
 			t.insertKeysAndCheck( (1 to size): _* ) shouldBe "true"
 		
 			for (k <- Random.shuffle( 1 to size )) {
@@ -74,6 +74,28 @@ class StressTests extends FreeSpec with PropertyChecks with Matchers {
 			
 			t.isEmpty shouldBe true
 			t.iterator.isEmpty shouldBe true
+		}
+	}
+	
+	forAll (shorter) { (gen, storage, order, size) =>
+		val t = gen()
+		
+		("random insertion/deletion twice: " + storage + ", " + order + ", " + size) in {
+			t.insertKeysAndCheck( Random.shuffle(1 to size): _* ) shouldBe "true"
+		
+			for (k <- 1 to size/2) {
+				t.delete( k ) shouldBe true
+				t.wellConstructed shouldBe "true"
+			}
+			
+			t.insertKeysAndCheck( Random.shuffle(size + 1 to 2*size): _* ) shouldBe "true"
+		
+			for (k <- size/2 + 1 to size) {
+				t.delete( k ) shouldBe true
+				t.wellConstructed shouldBe "true"
+			}
+		
+			t.keysIterator.toList == (size + 1 to 2*size) shouldBe true
 		}
 	}
 	
