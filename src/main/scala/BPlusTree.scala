@@ -124,7 +124,7 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected def isLeaf( node: N ): Boolean
 	
 	/**
-	 * Moves key/branch pairs as well as the left branch of the first key from node `src` to node `dst` beginning at index `begin` and ending at but not including index `end`, and also removes the key at index `begin - 1`.
+	 * Moves key/branch pairs from node `src` beginning at index `begin` up to but not including index `end` to node `dst` at `index`.
 	 */
 	protected def moveInternal( src: N, begin: Int, end: Int, dst: N, index: Int )
 	
@@ -673,19 +673,28 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 			}
 		}
 	}
-		
+	
+	/**
+	 * Returns the left most or least key within or under `node`.
+	 */
 	protected def leftmost( node: N ): K =
 		if (isLeaf( node ))
 			getKey( node, 0 )
 		else
 			leftmost( getBranch(node, 0) )
 	
+	/**
+	 * Returns the right most or greatest key within or under `node`.
+	 */
 	protected def rightmost( node: N ): K =
 		if (isLeaf( node ))
 			getKey( node, nodeLength(node) - 1 )
 		else
 			rightmost( getBranch(node, nodeLength(node)) )
 	
+	/**
+	 * Returns a string representation of the keys in `node`. This method was used in debugging [[FileBPlusTree]] since the node type is `Long`.
+	 */
 	protected def str( node: N ) = getKeys( node ).mkString( if (isLeaf(node)) "leaf[" else "internal[", ", ", "]" )
 	
 	/**
