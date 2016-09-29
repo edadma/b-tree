@@ -40,14 +40,6 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	protected val POINTER_SIZE = 8
 	protected val DATA_ARRAY_SIZE = (order - 1)*DATUM_SIZE
 	
-	protected val FILE_HEADER = 0
-	protected val FILE_ORDER = FILE_HEADER + 12
-	protected val FILE_FREE_PTR = FILE_ORDER + 2
-	protected val FILE_ROOT_PTR = FILE_FREE_PTR + POINTER_SIZE
-	protected val FILE_FIRST_PTR = FILE_ROOT_PTR + POINTER_SIZE
-	protected val FILE_LAST_PTR = FILE_FIRST_PTR + POINTER_SIZE
-	protected val FILE_BLOCKS = FILE_LAST_PTR + POINTER_SIZE
-	
 	protected val NODE_TYPE = 0
 	protected val NODE_PARENT_PTR = NODE_TYPE + 1
 	protected val NODE_PREV_PTR = NODE_PARENT_PTR + POINTER_SIZE
@@ -61,6 +53,18 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	
 	protected val BLOCK_SIZE = LEAF_VALUES + (((order - 1)*DATUM_SIZE) max (order*POINTER_SIZE))
 	
+	protected val TREE_ROOT_PTR = 0
+	protected val TREE_FIRST_PTR = TREE_ROOT_PTR + POINTER_SIZE
+	protected val TREE_LAST_PTR = TREE_FIRST_PTR + POINTER_SIZE
+	protected val TREE_RECORD_SIZE = TREE_LAST_PTR + POINTER_SIZE
+	
+	protected val FILE_HEADER = 0
+	protected val FILE_HEADER_SIZE = 12
+	protected val FILE_ORDER = FILE_HEADER + FILE_HEADER_SIZE
+	protected val FILE_FREE_PTR = FILE_ORDER + 2
+	protected val FILE_ROOT_RECORD = FILE_FREE_PTR + POINTER_SIZE
+	protected val FILE_BLOCKS = FILE_ROOT_RECORD + TREE_RECORD_SIZE
+	
 	private var savedNode: Long = NUL
 	private var savedKeys = new ArrayBuffer[K]
 	private var savedValues = new ArrayBuffer[V]
@@ -71,19 +75,21 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		new File( filename ).delete
 	
 // 	protected val file = new RamFile( filename )
- 	protected val file = new RandomAccessFile( filename, "rw" )		
+ 	protected val file = new RandomAccessFile( filename, "rw" )
 	protected var root: Long = _
 	protected var first: Long = _
 	protected var last: Long = _
 	protected var lastlen: Int = _
+	protected var tree: Long = _
 		
 	if (file.length == 0) {
-		file writeBytes "B+ Tree v0.1"
+		file writeBytes "B+ Tree v1.0"
 		file writeShort order
 		file writeLong nul
 		file writeLong FILE_BLOCKS
 		file writeLong FILE_BLOCKS
 		file writeLong FILE_BLOCKS
+		tree = FILE_ROOT_RECORD
 		root = newLeaf( nul )
 		first = FILE_BLOCKS
 		last = FILE_BLOCKS
@@ -94,7 +100,8 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		if (file.readShort != order)
 			sys.error( "order not the same as on disk" )
 			
-		file seek FILE_ROOT_PTR
+		file seek FILE_ROOT_RECORD
+		tree = FILE_ROOT_RECORD
 		root = file.readLong
 		first = file.readLong
 		last = file.readLong
@@ -337,7 +344,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		
 		file seek (node + INTERNAL_BRANCHES)
 		file writeLong branch
-		file seek FILE_ROOT_PTR
+		file seek (tree + TREE_ROOT_PTR)
 		file writeLong node
 		node
 	}
@@ -401,14 +408,14 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	}
 	
 	protected def setFirst( leaf: Long ) {
-		file seek FILE_FIRST_PTR
+		file seek (tree + TREE_FIRST_PTR)
 		file writeLong leaf
 	}
 
 	protected def setKey( node: Long, index: Int, key: K ) = writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
 
 	protected def setLast( leaf: Long ) {
-		file seek FILE_LAST_PTR
+		file seek (tree + TREE_LAST_PTR)
 		file writeLong leaf
 	}
 	
@@ -428,7 +435,7 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 	}
 	
 	protected def setRoot( node: Long ) {
-		file seek FILE_ROOT_PTR
+		file seek (tree + TREE_ROOT_PTR)
 		file writeLong node
 	}
 	
