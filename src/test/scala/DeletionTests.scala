@@ -12,7 +12,7 @@ class DeletionTests extends FreeSpec with PropertyChecks with Matchers {
 			("object generator", 													"storage"),
 			//----------------                               -------
 			(() => new MemoryBPlusTree[String, Any]( 3 ),    "in memory"),
-			(() => new FileBPlusTree[String, Any]( newfile, 3, true ),    "on disk")
+			(() => new FileBPlusTree[String, Any]( newfile, 3 ),    "on disk")
  			)
 	
 	val order3int =
@@ -20,7 +20,7 @@ class DeletionTests extends FreeSpec with PropertyChecks with Matchers {
 			("object generator", 													"storage"),
 			//----------------                               -------
 			(() => new MemoryBPlusTree[Int, Any]( 3 ),    "in memory"),
-			(() => new FileBPlusTree[Int, Any]( newfile, 3, true ),    "on disk")
+			(() => new FileBPlusTree[Int, Any]( newfile, 3 ),    "on disk")
  			)
 	
 	forAll (order3) { (gen, storage) =>

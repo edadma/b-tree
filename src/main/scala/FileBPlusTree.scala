@@ -9,6 +9,28 @@ import collection.AbstractSeq
 import java.io.{File, RandomAccessFile}
 
 
+trait FileBPlusTreeFormat {
+	
+	val POINTER_SIZE = 8
+	
+	val TREE_ROOT_PTR = 0
+	val TREE_FIRST_PTR = TREE_ROOT_PTR + POINTER_SIZE
+	val TREE_LAST_PTR = TREE_FIRST_PTR + POINTER_SIZE
+	val TREE_RECORD_SIZE = TREE_LAST_PTR + POINTER_SIZE
+	
+	val FILE_HEADER = 0
+	val FILE_HEADER_SIZE = 12
+	val FILE_ORDER = FILE_HEADER + FILE_HEADER_SIZE
+	val FILE_FREE_PTR = FILE_ORDER + 2
+	val FILE_ROOT_RECORD = FILE_FREE_PTR + POINTER_SIZE
+	val FILE_BLOCKS = FILE_ROOT_RECORD + TREE_RECORD_SIZE
+	
+}
+
+object FileBPlusTree extends FileBPlusTreeFormat {
+	
+}
+
 /**
  * An on-disk B+ Tree implementation.
  * 
@@ -19,68 +41,54 @@ import java.io.{File, RandomAccessFile}
  * @tparam K the type of the keys contained in this map.
  * @tparam V the type of the values associated with the keys.
  */
-class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: Boolean = false ) extends BPlusTree[K, V]( order ) {
+class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, protected val tree: Long, order: Int ) extends BPlusTree[K, V]( order )
+																																																											with FileBPlusTreeFormat {
+	
+	def this( filename: String, order: Int, synchronous: Boolean = false ) {
+		this( new RandomAccessFile(filename, if (synchronous) "rws" else "rw"), FileBPlusTree.FILE_ROOT_RECORD, order )
+	}
+	
+	val NUL = 0
+	
+	val LEAF_NODE = 0
+	val INTERNAL_NODE = 1
+	
+	val TYPE_BOOLEAN = 0x10
+		val TYPE_BOOLEAN_FALSE = 0x10
+		val TYPE_BOOLEAN_TRUE = 0x18
+	val TYPE_INT = 0x11
+	val TYPE_LONG = 0x12
+	val TYPE_DOUBLE = 0x13
+	val TYPE_STRING = 0x14
+	val TYPE_NULL = 0x15
+	
+	val DATUM_SIZE = 1 + 8		// type + contents
+	val DATA_ARRAY_SIZE = (order - 1)*DATUM_SIZE
+	
+	val NODE_TYPE = 0
+	val NODE_PARENT_PTR = NODE_TYPE + 1
+	val NODE_PREV_PTR = NODE_PARENT_PTR + POINTER_SIZE
+	val NODE_NEXT_PTR = NODE_PREV_PTR + POINTER_SIZE
+	val NODE_LENGTH = NODE_NEXT_PTR + POINTER_SIZE
+	val NODE_KEYS = NODE_LENGTH + 2
+	
+	val LEAF_VALUES = NODE_KEYS + DATA_ARRAY_SIZE
+	
+	val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
+	
+	val BLOCK_SIZE = LEAF_VALUES + (((order - 1)*DATUM_SIZE) max (order*POINTER_SIZE))
+	
 	protected type N = Long
-	
-	protected val NUL = 0
-	
-	protected val LEAF_NODE = 0
-	protected val INTERNAL_NODE = 1
-	
-	protected val TYPE_BOOLEAN = 0x10
-		protected val TYPE_BOOLEAN_FALSE = 0x10
-		protected val TYPE_BOOLEAN_TRUE = 0x18
-	protected val TYPE_INT = 0x11
-	protected val TYPE_LONG = 0x12
-	protected val TYPE_DOUBLE = 0x13
-	protected val TYPE_STRING = 0x14
-	protected val TYPE_NULL = 0x15
-	
-	protected val DATUM_SIZE = 1 + 8		// type + contents
-	protected val POINTER_SIZE = 8
-	protected val DATA_ARRAY_SIZE = (order - 1)*DATUM_SIZE
-	
-	protected val NODE_TYPE = 0
-	protected val NODE_PARENT_PTR = NODE_TYPE + 1
-	protected val NODE_PREV_PTR = NODE_PARENT_PTR + POINTER_SIZE
-	protected val NODE_NEXT_PTR = NODE_PREV_PTR + POINTER_SIZE
-	protected val NODE_LENGTH = NODE_NEXT_PTR + POINTER_SIZE
-	protected val NODE_KEYS = NODE_LENGTH + 2
-	
-	protected val LEAF_VALUES = NODE_KEYS + DATA_ARRAY_SIZE
-	
-	protected val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
-	
-	protected val BLOCK_SIZE = LEAF_VALUES + (((order - 1)*DATUM_SIZE) max (order*POINTER_SIZE))
-	
-	protected val TREE_ROOT_PTR = 0
-	protected val TREE_FIRST_PTR = TREE_ROOT_PTR + POINTER_SIZE
-	protected val TREE_LAST_PTR = TREE_FIRST_PTR + POINTER_SIZE
-	protected val TREE_RECORD_SIZE = TREE_LAST_PTR + POINTER_SIZE
-	
-	protected val FILE_HEADER = 0
-	protected val FILE_HEADER_SIZE = 12
-	protected val FILE_ORDER = FILE_HEADER + FILE_HEADER_SIZE
-	protected val FILE_FREE_PTR = FILE_ORDER + 2
-	protected val FILE_ROOT_RECORD = FILE_FREE_PTR + POINTER_SIZE
-	protected val FILE_BLOCKS = FILE_ROOT_RECORD + TREE_RECORD_SIZE
 	
 	private var savedNode: Long = NUL
 	private var savedKeys = new ArrayBuffer[K]
 	private var savedValues = new ArrayBuffer[V]
 	private var savedBranches = new ArrayBuffer[Long]
 	
- 	if (newfile)
-// 		RamFile.delete( filename )
-		new File( filename ).delete
-	
-// 	protected val file = new RamFile( filename )
- 	protected val file = new RandomAccessFile( filename, "rw" )
 	protected var root: Long = _
 	protected var first: Long = _
 	protected var last: Long = _
 	protected var lastlen: Int = _
-	protected var tree: Long = _
 		
 	if (file.length == 0) {
 		file writeBytes "B+ Tree v1.0"
@@ -89,7 +97,6 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 		file writeLong FILE_BLOCKS
 		file writeLong FILE_BLOCKS
 		file writeLong FILE_BLOCKS
-		tree = FILE_ROOT_RECORD
 		root = newLeaf( nul )
 		first = FILE_BLOCKS
 		last = FILE_BLOCKS
@@ -101,7 +108,6 @@ class FileBPlusTree[K <% Ordered[K], V]( filename: String, order: Int, newfile: 
 			sys.error( "order not the same as on disk" )
 			
 		file seek FILE_ROOT_RECORD
-		tree = FILE_ROOT_RECORD
 		root = file.readLong
 		first = file.readLong
 		last = file.readLong
