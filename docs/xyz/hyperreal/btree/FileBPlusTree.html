@@ -91,7 +91,7 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="xyz.hyperreal.btree.FileBPlusTree#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="xyz.hyperreal.btree.FileBPlusTree#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="&lt;init&gt;(filename:String,order:Int,synchronous:Boolean)(implicitevidence$2:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]"></a>
       <a id="&lt;init&gt;:FileBPlusTree[K,V]"></a>
       <h4 class="signature">
@@ -107,7 +107,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">creates an object to provide access to the root B+ Tree contained within the file at <code>filename</code> with a branching factor of <code>order</code>.</p><div class="fullcomment"><div class="comment cmt"><p>creates an object to provide access to the root B+ Tree contained within the file at <code>filename</code> with a branching factor of <code>order</code>. The on-disk tree's order must be equal to <code>order</code> or an exception will be thrown. This is the constructor that would normally be used to access a B+ tree file.
+</p></div><dl class="paramcmts block"><dt class="param">filename</dt><dd class="cmt"><p>path to the file to contain the tree. The file created is completely self contained: if the file alread exists (and <code>newfile</code> is <code>false</code>) then the object opens the file and provides continued access to the tree</p></dd><dt class="param">order</dt><dd class="cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></dd><dt class="param">synchronous</dt><dd class="cmt"><p><code>true</code> causes any changes to the file to be written to disk immediately, <code>false</code> is the default</p></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="&lt;init&gt;(file:java.io.RandomAccessFile,tree:Long,order:Int)(implicitevidence$1:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]"></a>
       <a id="&lt;init&gt;:FileBPlusTree[K,V]"></a>
@@ -124,7 +125,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">creates an object to provide access to an on-disk B+ Tree with a branching factor of <code>order</code>.</p><div class="fullcomment"><div class="comment cmt"><p>creates an object to provide access to an on-disk B+ Tree with a branching factor of <code>order</code>. The on-disk tree's order must be equal to <code>order</code> or an exception will be thrown.</p></div><dl class="paramcmts block"><dt class="param">order</dt><dd class="cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></dd></dl></div>
+      <p class="shortcomment cmt">creates an object to provide access to a B+ Tree contained within <code>file</code> with it's tree descriptor record at offset <code>tree</code> and with a branching factor of <code>order</code>.</p><div class="fullcomment"><div class="comment cmt"><p>creates an object to provide access to a B+ Tree contained within <code>file</code> with it's tree descriptor record at offset <code>tree</code> and with a branching factor of <code>order</code>. The on-disk tree's order must be equal to <code>order</code> or an exception will be thrown. This constructor is used internally to access a B+ tree that is a value in another B+ tree.</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>the <code>java.io.RandomAccessFile</code> to be used to access the B+ tree</p></dd><dt class="param">tree</dt><dd class="cmt"><p>the offset within <code>file</code> of the tree's descriptor record</p></dd><dt class="param">order</dt><dd class="cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -1195,7 +1196,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+      <p class="shortcomment cmt">the <code>java.io.RandomAccessFile</code> to be used to access the B+ tree</p><div class="fullcomment"><div class="comment cmt"><p>the <code>java.io.RandomAccessFile</code> to be used to access the B+ tree</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -2698,7 +2699,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+      <p class="shortcomment cmt">the offset within <code>file</code> of the tree's descriptor record</p><div class="fullcomment"><div class="comment cmt"><p>the offset within <code>file</code> of the tree's descriptor record</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

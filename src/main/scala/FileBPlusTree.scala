@@ -34,16 +34,23 @@ object FileBPlusTree extends FileBPlusTreeFormat {
 /**
  * An on-disk B+ Tree implementation.
  * 
- * @constructor creates an object to provide access to an on-disk B+ Tree with a branching factor of `order`. The on-disk tree's order must be equal to `order` or an exception will be thrown.
- * @param filename path to the file to contain the tree. The file created is completely self contained: if the file alread exists (and `newfile` is `false`) then the object opens the file and provides continued access to the tree
+ * @constructor creates an object to provide access to a B+ Tree contained within `file` with it's tree descriptor record at offset `tree` and with a branching factor of `order`. The on-disk tree's order must be equal to `order` or an exception will be thrown. This constructor is used internally to access a B+ tree that is a value in another B+ tree.
+ * @param file the `java.io.RandomAccessFile` to be used to access the B+ tree
+ * @param tree the offset within `file` of the tree's descriptor record
  * @param order the branching factor (maximum number of branches in an internal node) of the tree
- * @param synchronous `true` causes any changes to the file to be written to disk immediately, `false` is the default
  * @tparam K the type of the keys contained in this map.
  * @tparam V the type of the values associated with the keys.
  */
 class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, protected val tree: Long, order: Int ) extends BPlusTree[K, V]( order )
 																																																											with FileBPlusTreeFormat {
 	
+	/**
+	 * creates an object to provide access to the root B+ Tree contained within the file at `filename` with a branching factor of `order`. The on-disk tree's order must be equal to `order` or an exception will be thrown. This is the constructor that would normally be used to access a B+ tree file.
+	 * 
+	 * @param filename path to the file to contain the tree. The file created is completely self contained: if the file alread exists (and `newfile` is `false`) then the object opens the file and provides continued access to the tree
+	 * @param order the branching factor (maximum number of branches in an internal node) of the tree
+	 * @param synchronous `true` causes any changes to the file to be written to disk immediately, `false` is the default
+	 */
 	def this( filename: String, order: Int, synchronous: Boolean = false ) {
 		this( new RandomAccessFile(filename, if (synchronous) "rws" else "rw"), FileBPlusTree.FILE_ROOT_RECORD, order )
 	}
