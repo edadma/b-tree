@@ -37,7 +37,7 @@ object FileBPlusTree extends FileBPlusTreeFormat {
  * @constructor creates an object to provide access to an on-disk B+ Tree with a branching factor of `order`. The on-disk tree's order must be equal to `order` or an exception will be thrown.
  * @param filename path to the file to contain the tree. The file created is completely self contained: if the file alread exists (and `newfile` is `false`) then the object opens the file and provides continued access to the tree
  * @param order the branching factor (maximum number of branches in an internal node) of the tree
- * @param newfile `true` causes any existing file at `filename` to be deleted and a new empty tree created, `false` (the default) causes an empty tree to be created only if there is no file at `filename`
+ * @param synchronous `true` causes any changes to the file to be written to disk immediately, `false` is the default
  * @tparam K the type of the keys contained in this map.
  * @tparam V the type of the values associated with the keys.
  */

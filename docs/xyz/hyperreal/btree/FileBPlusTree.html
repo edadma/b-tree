@@ -28,10 +28,12 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img alt="Class" src="../../../lib/class_big.png" />
+        <a href="FileBPlusTree$.html" title="See companion object"><img alt="Class/Object" src="../../../lib/class_to_object_big.png" /></a>
         <p id="owner"><a href="../../package.html" class="extype" name="xyz">xyz</a>.<a href="../package.html" class="extype" name="xyz.hyperreal">hyperreal</a>.<a href="package.html" class="extype" name="xyz.hyperreal.btree">btree</a></p>
-        <h1>FileBPlusTree</h1><h3><span class="morelinks"><div>Related Doc:
-            <a href="package.html" class="extype" name="xyz.hyperreal.btree">package btree</a>
+        <h1><a href="FileBPlusTree$.html" title="See companion object">FileBPlusTree</a></h1><h3><span class="morelinks"><div>
+            Related Docs:
+            <a href="FileBPlusTree$.html" title="See companion object">object FileBPlusTree</a>
+            | <a href="package.html" class="extype" name="xyz.hyperreal.btree">package btree</a>
           </div></span></h3><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
@@ -45,14 +47,14 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">FileBPlusTree</span><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>]</span>
+        <span class="name">FileBPlusTree</span><span class="tparams">[<span name="K">K</span>, <span name="V">V</span>]</span><span class="result"> extends <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>] with <a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>An on-disk B+ Tree implementation.
 </p></div><dl class="paramcmts block"><dt class="tparam">K</dt><dd class="cmt"><p>the type of the keys contained in this map.</p></dd><dt class="tparam">V</dt><dd class="cmt"><p>the type of the values associated with the keys.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a>, <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -70,7 +72,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="xyz.hyperreal.btree.FileBPlusTree"><span>FileBPlusTree</span></li><li class="in" name="xyz.hyperreal.btree.BPlusTree"><span>BPlusTree</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="xyz.hyperreal.btree.FileBPlusTree"><span>FileBPlusTree</span></li><li class="in" name="xyz.hyperreal.btree.FileBPlusTreeFormat"><span>FileBPlusTreeFormat</span></li><li class="in" name="xyz.hyperreal.btree.BPlusTree"><span>BPlusTree</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -89,8 +91,8 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="xyz.hyperreal.btree.FileBPlusTree#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(filename:String,order:Int,newfile:Boolean)(implicitevidence$1:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]"></a>
+              <ol><li name="xyz.hyperreal.btree.FileBPlusTree#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(filename:String,order:Int,synchronous:Boolean)(implicitevidence$2:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]"></a>
       <a id="&lt;init&gt;:FileBPlusTree[K,V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -98,14 +100,31 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">FileBPlusTree</span><span class="params">(<span name="filename">filename: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="order">order: <span class="extype" name="scala.Int">Int</span></span>, <span name="newfile">newfile: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: (<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>) ⇒ <span class="extype" name="scala.Ordered">Ordered</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>]</span>)</span>
+        <span class="name">FileBPlusTree</span><span class="params">(<span name="filename">filename: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="order">order: <span class="extype" name="scala.Int">Int</span></span>, <span name="synchronous">synchronous: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: (<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>) ⇒ <span class="extype" name="scala.Ordered">Ordered</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>]</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@&lt;init&gt;(filename:String,order:Int,newfile:Boolean)(implicitevidence$1:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@&lt;init&gt;(filename:String,order:Int,synchronous:Boolean)(implicitevidence$2:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">creates an object to provide access to an on-disk B+ Tree with a branching factor of <code>order</code>.</p><div class="fullcomment"><div class="comment cmt"><p>creates an object to provide access to an on-disk B+ Tree with a branching factor of <code>order</code>. The on-disk tree's order must be equal to <code>order</code> or an exception will be thrown.</p></div><dl class="paramcmts block"><dt class="param">filename</dt><dd class="cmt"><p>path to the file to contain the tree. The file created is completely self contained: if the file alread exists (and <code>newfile</code> is <code>false</code>) then the object opens the file and provides continued access to the tree</p></dd><dt class="param">order</dt><dd class="cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></dd><dt class="param">newfile</dt><dd class="cmt"><p><code>true</code> causes any existing file at <code>filename</code> to be deleted and a new empty tree created, <code>false</code> (the default) causes an empty tree to be created only if there is no file at <code>filename</code></p></dd></dl></div>
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(file:java.io.RandomAccessFile,tree:Long,order:Int)(implicitevidence$1:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]"></a>
+      <a id="&lt;init&gt;:FileBPlusTree[K,V]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">FileBPlusTree</span><span class="params">(<span name="file">file: <span class="extype" name="java.io.RandomAccessFile">RandomAccessFile</span></span>, <span name="tree">tree: <span class="extype" name="scala.Long">Long</span></span>, <span name="order">order: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: (<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>) ⇒ <span class="extype" name="scala.Ordered">Ordered</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>]</span>)</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@&lt;init&gt;(file:java.io.RandomAccessFile,tree:Long,order:Int)(implicitevidence$1:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">creates an object to provide access to an on-disk B+ Tree with a branching factor of <code>order</code>.</p><div class="fullcomment"><div class="comment cmt"><p>creates an object to provide access to an on-disk B+ Tree with a branching factor of <code>order</code>. The on-disk tree's order must be equal to <code>order</code> or an exception will be thrown.</p></div><dl class="paramcmts block"><dt class="param">order</dt><dd class="cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -187,7 +206,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#BLOCK_SIZE" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#BLOCK_SIZE" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="BLOCK_SIZE:Int"></a>
       <a id="BLOCK_SIZE:Int"></a>
       <h4 class="signature">
@@ -203,8 +222,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#DATA_ARRAY_SIZE" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#DATA_ARRAY_SIZE" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DATA_ARRAY_SIZE:Int"></a>
       <a id="DATA_ARRAY_SIZE:Int"></a>
       <h4 class="signature">
@@ -220,8 +239,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#DATUM_SIZE" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#DATUM_SIZE" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DATUM_SIZE:Int"></a>
       <a id="DATUM_SIZE:Int"></a>
       <h4 class="signature">
@@ -237,8 +256,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#FILE_BLOCKS" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTreeFormat#FILE_BLOCKS" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="FILE_BLOCKS:Int"></a>
       <a id="FILE_BLOCKS:Int"></a>
       <h4 class="signature">
@@ -254,25 +273,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#FILE_FIRST_PTR" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="FILE_FIRST_PTR:Int"></a>
-      <a id="FILE_FIRST_PTR:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">FILE_FIRST_PTR</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@FILE_FIRST_PTR:Int" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#FILE_FREE_PTR" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTreeFormat#FILE_FREE_PTR" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="FILE_FREE_PTR:Int"></a>
       <a id="FILE_FREE_PTR:Int"></a>
       <h4 class="signature">
@@ -288,8 +290,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#FILE_HEADER" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTreeFormat#FILE_HEADER" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="FILE_HEADER:Int"></a>
       <a id="FILE_HEADER:Int"></a>
       <h4 class="signature">
@@ -305,25 +307,25 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#FILE_LAST_PTR" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="FILE_LAST_PTR:Int"></a>
-      <a id="FILE_LAST_PTR:Int"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTreeFormat#FILE_HEADER_SIZE" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="FILE_HEADER_SIZE:Int"></a>
+      <a id="FILE_HEADER_SIZE:Int"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">FILE_LAST_PTR</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span class="name">FILE_HEADER_SIZE</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@FILE_LAST_PTR:Int" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@FILE_HEADER_SIZE:Int" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#FILE_ORDER" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTreeFormat#FILE_ORDER" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="FILE_ORDER:Int"></a>
       <a id="FILE_ORDER:Int"></a>
       <h4 class="signature">
@@ -339,25 +341,25 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#FILE_ROOT_PTR" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="FILE_ROOT_PTR:Int"></a>
-      <a id="FILE_ROOT_PTR:Int"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTreeFormat#FILE_ROOT_RECORD" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="FILE_ROOT_RECORD:Int"></a>
+      <a id="FILE_ROOT_RECORD:Int"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">FILE_ROOT_PTR</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span class="name">FILE_ROOT_RECORD</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@FILE_ROOT_PTR:Int" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@FILE_ROOT_RECORD:Int" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#INTERNAL_BRANCHES" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#INTERNAL_BRANCHES" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="INTERNAL_BRANCHES:Int"></a>
       <a id="INTERNAL_BRANCHES:Int"></a>
       <h4 class="signature">
@@ -373,8 +375,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#INTERNAL_NODE" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#INTERNAL_NODE" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="INTERNAL_NODE:Int"></a>
       <a id="INTERNAL_NODE:Int"></a>
       <h4 class="signature">
@@ -390,8 +392,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#LEAF_NODE" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#LEAF_NODE" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="LEAF_NODE:Int"></a>
       <a id="LEAF_NODE:Int"></a>
       <h4 class="signature">
@@ -407,8 +409,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#LEAF_VALUES" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#LEAF_VALUES" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="LEAF_VALUES:Int"></a>
       <a id="LEAF_VALUES:Int"></a>
       <h4 class="signature">
@@ -424,8 +426,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NODE_KEYS" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NODE_KEYS" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="NODE_KEYS:Int"></a>
       <a id="NODE_KEYS:Int"></a>
       <h4 class="signature">
@@ -441,8 +443,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NODE_LENGTH" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NODE_LENGTH" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="NODE_LENGTH:Int"></a>
       <a id="NODE_LENGTH:Int"></a>
       <h4 class="signature">
@@ -458,8 +460,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NODE_NEXT_PTR" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NODE_NEXT_PTR" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="NODE_NEXT_PTR:Int"></a>
       <a id="NODE_NEXT_PTR:Int"></a>
       <h4 class="signature">
@@ -475,8 +477,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NODE_PARENT_PTR" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NODE_PARENT_PTR" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="NODE_PARENT_PTR:Int"></a>
       <a id="NODE_PARENT_PTR:Int"></a>
       <h4 class="signature">
@@ -492,8 +494,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NODE_PREV_PTR" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NODE_PREV_PTR" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="NODE_PREV_PTR:Int"></a>
       <a id="NODE_PREV_PTR:Int"></a>
       <h4 class="signature">
@@ -509,8 +511,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NODE_TYPE" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NODE_TYPE" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="NODE_TYPE:Int"></a>
       <a id="NODE_TYPE:Int"></a>
       <h4 class="signature">
@@ -526,8 +528,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NUL" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#NUL" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="NUL:Int"></a>
       <a id="NUL:Int"></a>
       <h4 class="signature">
@@ -543,8 +545,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#POINTER_SIZE" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTreeFormat#POINTER_SIZE" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="POINTER_SIZE:Int"></a>
       <a id="POINTER_SIZE:Int"></a>
       <h4 class="signature">
@@ -560,8 +562,93 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_BOOLEAN" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTreeFormat#TREE_FIRST_PTR" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TREE_FIRST_PTR:Int"></a>
+      <a id="TREE_FIRST_PTR:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TREE_FIRST_PTR</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@TREE_FIRST_PTR:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTreeFormat#TREE_LAST_PTR" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TREE_LAST_PTR:Int"></a>
+      <a id="TREE_LAST_PTR:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TREE_LAST_PTR</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@TREE_LAST_PTR:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTreeFormat#TREE_RECORD_SIZE" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TREE_RECORD_SIZE:Int"></a>
+      <a id="TREE_RECORD_SIZE:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TREE_RECORD_SIZE</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@TREE_RECORD_SIZE:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTreeFormat#TREE_ROOT_PTR" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TREE_ROOT_PTR:Int"></a>
+      <a id="TREE_ROOT_PTR:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TREE_ROOT_PTR</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@TREE_ROOT_PTR:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_ARRAY" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TYPE_ARRAY:Int"></a>
+      <a id="TYPE_ARRAY:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TYPE_ARRAY</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@TYPE_ARRAY:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_BOOLEAN" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TYPE_BOOLEAN:Int"></a>
       <a id="TYPE_BOOLEAN:Int"></a>
       <h4 class="signature">
@@ -577,8 +664,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_BOOLEAN_FALSE" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_BOOLEAN_FALSE" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TYPE_BOOLEAN_FALSE:Int"></a>
       <a id="TYPE_BOOLEAN_FALSE:Int"></a>
       <h4 class="signature">
@@ -594,8 +681,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_BOOLEAN_TRUE" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_BOOLEAN_TRUE" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TYPE_BOOLEAN_TRUE:Int"></a>
       <a id="TYPE_BOOLEAN_TRUE:Int"></a>
       <h4 class="signature">
@@ -611,8 +698,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_DOUBLE" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_DOUBLE" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TYPE_DOUBLE:Int"></a>
       <a id="TYPE_DOUBLE:Int"></a>
       <h4 class="signature">
@@ -628,8 +715,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_INT" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_INT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TYPE_INT:Int"></a>
       <a id="TYPE_INT:Int"></a>
       <h4 class="signature">
@@ -645,8 +732,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_LONG" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_LONG" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TYPE_LONG:Int"></a>
       <a id="TYPE_LONG:Int"></a>
       <h4 class="signature">
@@ -662,8 +749,25 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_NULL" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_MAP" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TYPE_MAP:Int"></a>
+      <a id="TYPE_MAP:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TYPE_MAP</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@TYPE_MAP:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_NULL" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TYPE_NULL:Int"></a>
       <a id="TYPE_NULL:Int"></a>
       <h4 class="signature">
@@ -679,8 +783,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_STRING" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#TYPE_STRING" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TYPE_STRING:Int"></a>
       <a id="TYPE_STRING:Int"></a>
       <h4 class="signature">
@@ -696,7 +800,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+      
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#addBranch" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="addBranch(node:Long,branch:Long):Unit"></a>
       <a id="addBranch(Long,Long):Unit"></a>
@@ -1007,6 +1111,40 @@
     </span>
       <p class="shortcomment cmt">Creates a PNG image file called <code>name</code> (with <code>.png</code> added) which visually represents the structure and contents of the tree, only showing the keys.</p><div class="fullcomment"><div class="comment cmt"><p>Creates a PNG image file called <code>name</code> (with <code>.png</code> added) which visually represents the structure and contents of the tree, only showing the keys. This method uses GraphViz (specifically the <code>dot</code> command) to produce the diagram, and ImageMagik (specifically the <code>convert</code> command) to convert it from SVG to PNG. <code>dot</code> can product PNG files directly but I got better results producing SVG and converting to PNG.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#dispose" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="dispose(node:Long,index:Int):Unit"></a>
+      <a id="dispose(Long,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dispose</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@dispose(node:Long,index:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#dump" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="dump:Unit"></a>
+      <a id="dump:Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dump</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@dump:Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -2544,6 +2682,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#tree" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="tree:Long"></a>
+      <a id="tree:Long"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">tree</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@tree:Long" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -2648,6 +2803,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#writeEmptyRecord" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="writeEmptyRecord(node:Long):Unit"></a>
+      <a id="writeEmptyRecord(Long):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writeEmptyRecord</span><span class="params">(<span name="node">node: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@writeEmptyRecord(node:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li></ol>
             </div>
 
@@ -2657,7 +2829,9 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="xyz.hyperreal.btree.BPlusTree">
+        <div class="parent" name="xyz.hyperreal.btree.FileBPlusTreeFormat">
+              <h3>Inherited from <a href="FileBPlusTreeFormat.html" class="extype" name="xyz.hyperreal.btree.FileBPlusTreeFormat">FileBPlusTreeFormat</a></h3>
+            </div><div class="parent" name="xyz.hyperreal.btree.BPlusTree">
               <h3>Inherited from <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>, <span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>]</h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
