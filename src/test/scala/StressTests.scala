@@ -5,21 +5,22 @@ import util.Random
 import org.scalatest._
 import prop.PropertyChecks
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.tagobjects.Slow
 
 
 class StressTests extends FreeSpec with PropertyChecks with Matchers {
 
 	val shorter =
 		Table(
-			("object generator", 													"storage",		"order",   "size"),
+			("object generator", 													"storage",		"order",   "size", "tag"),
 			//----------------                               -------     -----      ----
-			(() => new MemoryBPlusTree[Int, Any]( 3 ),    "in memory", 3, 1000),
-			(() => new FileBPlusTree[Int, Any]( newfile, 3 ),    "on disk", 3, 50),
-			(() => new MemoryBPlusTree[Int, Any]( 4 ),    "in memory", 4, 1000),
+			(() => new MemoryBPlusTree[Int, Any]( 3 ),    "in memory", 3, 1000, BasicTest),
+			(() => new FileBPlusTree[Int, Any]( newfile, 3 ),    "on disk", 3, 50, BasicTest),
+			(() => new MemoryBPlusTree[Int, Any]( 4 ),    "in memory", 4, 1000, Slow),
 //			(() => new FileBPlusTree[Int, Any]( newfile, 4 ),    "on disk", 4, 1000),
- 			(() => new MemoryBPlusTree[Int, Any]( 5 ),    "in memory", 5, 2000),
+ 			(() => new MemoryBPlusTree[Int, Any]( 5 ),    "in memory", 5, 2000, Slow),
 //			(() => new FileBPlusTree[Int, Any]( newfile, 5 ),    "on disk", 5, 2000),
-			(() => new MemoryBPlusTree[Int, Any]( 6 ),    "in memory", 6, 2000)
+			(() => new MemoryBPlusTree[Int, Any]( 6 ),    "in memory", 6, 2000, Slow)
 //			(() => new FileBPlusTree[Int, Any]( newfile, 6 ),    "on disk", 6, 2000)
 			)
 
@@ -45,10 +46,10 @@ class StressTests extends FreeSpec with PropertyChecks with Matchers {
 			(() => new FileBPlusTree[Int, Any]( newfile, 100 ),    "on disk", 100, 20000)
  			)
 	
-	forAll (shorter) { (gen, storage, order, size) =>
+	forAll (shorter) { (gen, storage, order, size, tag) =>
 		val t = gen()
 		
-		("random insertion/deletion: " + storage + ", " + order + ", " + size) in {
+		("random insertion/deletion: " + storage + ", " + order + ", " + size) taggedAs(tag) in {
 			t.insertKeysAndCheck( Random.shuffle(1 to size): _* ) shouldBe "true"
 		
 			for (k <- Random.shuffle( 1 to size )) {
@@ -61,7 +62,7 @@ class StressTests extends FreeSpec with PropertyChecks with Matchers {
 		}
 	}
 		
-	forAll (shorter) { (gen, storage, order, size) =>
+	forAll (shorter) { (gen, storage, order, size, tag) =>
 		val t = gen()
 		
 		("ascending insertion/deletion: " + storage + ", " + order + ", " + size) in {
@@ -77,7 +78,7 @@ class StressTests extends FreeSpec with PropertyChecks with Matchers {
 		}
 	}
 	
-	forAll (shorter) { (gen, storage, order, size) =>
+	forAll (shorter) { (gen, storage, order, size, tag) =>
 		val t = gen()
 		
 		("random insertion/deletion twice: " + storage + ", " + order + ", " + size) in {
