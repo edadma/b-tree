@@ -9,20 +9,6 @@ import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class StressTests extends FreeSpec with PropertyChecks with Matchers {
 
-/*	val shorter =
-		Table(
-			("object generator", 													"storage",		"order",   "size", "tag"),
-			//----------------                               -------     -----      ----
-			(() => new MemoryBPlusTree[Int, Any]( 3 ),    "in memory", 3, 1000, BasicTest),
-			(() => new FileBPlusTree[Int, Any]( newfile, 3 ),    "on disk", 3, 50, BasicTest),
-			(() => new MemoryBPlusTree[Int, Any]( 4 ),    "in memory", 4, 1000, SlowTest),
-//			(() => new FileBPlusTree[Int, Any]( newfile, 4 ),    "on disk", 4, 1000),
- 			(() => new MemoryBPlusTree[Int, Any]( 5 ),    "in memory", 5, 2000, SlowTest),
-//			(() => new FileBPlusTree[Int, Any]( newfile, 5 ),    "on disk", 5, 2000),
-			(() => new MemoryBPlusTree[Int, Any]( 6 ),    "in memory", 6, 2000, SlowTest)
-//			(() => new FileBPlusTree[Int, Any]( newfile, 6 ),    "on disk", 6, 2000)
-			)*/
-
 	val tests =
 		Table(
 			("object generator", 													"storage",		"order",   "size", "tag"),
@@ -32,18 +18,18 @@ class StressTests extends FreeSpec with PropertyChecks with Matchers {
 			(() => new FileBPlusTree[Int, Any]( newfile, 3 ),    "on disk", 3, 1000, SlowTest),
 			(() => new MemoryBPlusTree[Int, Any]( 4 ),    "in memory", 4, 1000, SlowTest),
 			(() => new FileBPlusTree[Int, Any]( newfile, 4 ),    "on disk", 4, 1000, SlowTest),
-			(() => new MemoryBPlusTree[Int, Any]( 5 ),    "in memory", 5, 2000, SlowTest),
-			(() => new FileBPlusTree[Int, Any]( newfile, 5 ),    "on disk", 5, 2000, SlowTest),
-			(() => new MemoryBPlusTree[Int, Any]( 6 ),    "in memory", 6, 2000, SlowTest),
-			(() => new FileBPlusTree[Int, Any]( newfile, 6 ),    "on disk", 6, 2000, SlowTest),
-			(() => new MemoryBPlusTree[Int, Any]( 49 ),    "in memory", 49, 10000, SlowTest),
-			(() => new FileBPlusTree[Int, Any]( newfile, 49 ),    "on disk", 49, 10000, SlowTest),
-			(() => new MemoryBPlusTree[Int, Any]( 50 ),    "in memory", 50, 10000, SlowTest),
-			(() => new FileBPlusTree[Int, Any]( newfile, 50 ),    "on disk", 50, 10000, SlowTest),
-			(() => new MemoryBPlusTree[Int, Any]( 99 ),    "in memory", 99, 20000, SlowTest),
-			(() => new FileBPlusTree[Int, Any]( newfile, 99 ),    "on disk", 99, 20000, SlowTest),
-			(() => new MemoryBPlusTree[Int, Any]( 100 ),    "in memory", 100, 20000, SlowTest),
-			(() => new FileBPlusTree[Int, Any]( newfile, 100 ),    "on disk", 100, 20000, SlowTest)
+			(() => new MemoryBPlusTree[Int, Any]( 5 ),    "in memory", 5, 1000, SlowTest),
+			(() => new FileBPlusTree[Int, Any]( newfile, 5 ),    "on disk", 5, 1000, SlowTest),
+			(() => new MemoryBPlusTree[Int, Any]( 6 ),    "in memory", 6, 1000, SlowTest),
+			(() => new FileBPlusTree[Int, Any]( newfile, 6 ),    "on disk", 6, 1000, SlowTest)
+// 			(() => new MemoryBPlusTree[Int, Any]( 49 ),    "in memory", 49, 10000, SlowTest),
+// 			(() => new FileBPlusTree[Int, Any]( newfile, 49 ),    "on disk", 49, 10000, SlowTest),
+// 			(() => new MemoryBPlusTree[Int, Any]( 50 ),    "in memory", 50, 10000, SlowTest),
+// 			(() => new FileBPlusTree[Int, Any]( newfile, 50 ),    "on disk", 50, 10000, SlowTest),
+// 			(() => new MemoryBPlusTree[Int, Any]( 99 ),    "in memory", 99, 20000, SlowTest),
+// 			(() => new FileBPlusTree[Int, Any]( newfile, 99 ),    "on disk", 99, 20000, SlowTest),
+// 			(() => new MemoryBPlusTree[Int, Any]( 100 ),    "in memory", 100, 20000, SlowTest),
+// 			(() => new FileBPlusTree[Int, Any]( newfile, 100 ),    "on disk", 100, 20000, SlowTest)
  			)
 	
 	forAll (tests) { (gen, storage, order, size, tag) =>
