@@ -61,6 +61,8 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	val TYPE_DOUBLE = 0x13
 	val TYPE_STRING = 0x14
 	val TYPE_NULL = 0x15
+	val TYPE_ARRAY = 0x16
+	val TYPE_MAP = 0x17
 	
 	val DATUM_SIZE = 1 + 8		// type + contents
 	val DATA_ARRAY_SIZE = (order - 1)*DATUM_SIZE
@@ -93,11 +95,9 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	if (file.length == 0) {
 		file writeBytes "B+ Tree v1.0"
 		file writeShort order
-		file writeLong nul
-		file writeLong FILE_BLOCKS
-		file writeLong FILE_BLOCKS
-		file writeLong FILE_BLOCKS
-		root = newLeaf( nul )
+		file writeLong NUL
+		writeEmptyRecord( FILE_BLOCKS )
+		root = newLeaf( NUL )
 		first = FILE_BLOCKS
 		last = FILE_BLOCKS
 		lastlen = 0
@@ -107,11 +107,17 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		if (file.readShort != order)
 			sys.error( "order not the same as on disk" )
 			
-		file seek FILE_ROOT_RECORD
+		file seek tree
 		root = file.readLong
 		first = file.readLong
 		last = file.readLong
 		lastlen = nodeLength( last )
+	}
+
+	protected def writeEmptyRecord( node: Long ) {
+		file writeLong node
+		file writeLong node
+		file writeLong node
 	}
 	
   protected def addBranch( node: Long, branch: Long ) = setBranch( node, nodeLength(node), branch )
@@ -346,7 +352,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	}
 	
 	protected def newRoot( branch: Long ): Long = {
-		val node = newInternal( nul )
+		val node = newInternal( NUL )
 		
 		file seek (node + INTERNAL_BRANCHES)
 		file writeLong branch
@@ -396,7 +402,19 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			newlen
 		}
 
+	protected def dispose( node: Long, index: Int ) {
+		file seek node
+		file.readByte match {
+			case TYPE_STRING =>
+			case TYPE_ARRAY =>
+			case TYPE_MAP =>
+			case _ =>
+		}
+	}
+	
 	protected def removeLeaf( node: Long, index: Int ) = {
+		dispose( node, index )
+		
 		val len = nodeLength( node )
 		val newlen = len - 1
 		
@@ -517,6 +535,8 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 				file seek file.readLong
 				readUTF8( file readInt )
 			case TYPE_NULL => null
+			case TYPE_MAP =>
+				new MutableSortedMap[K, V]( new FileBPlusTree[K, V](file, file.readLong, order) )
 		}
 	}
 	
@@ -553,7 +573,20 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 					file write utf.length
 				
 				file write utf
+			case m: collection.Map[K, V] =>
+				file write TYPE_MAP
 				
+			val here = file.getFilePointer
+			val newroot = newLeaf( NUL )
+			val record = alloc( TREE_RECORD_SIZE )
+				
+				writeEmptyRecord( newroot )
+				file seek here
+				file writeLong record
+
+			val newtree = new FileBPlusTree[K, V]( file, record, order )
+			
+				newtree load (m.toSeq: _*)
 			case _ => sys.error( "type not supported: " + datum )
 		}
 	}
@@ -606,6 +639,43 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			super.str( n )
 			
 	private def hex( n: Long* ) = println( n map (a => "%h" format a) mkString ("(", ", ", ")") )
+	
+	def dump {
+		val cur = file.getFilePointer
+		val width = 16
+		
+		file.seek( 0 )
+		
+		def printByte( b: Int ) = print( "%02x ".format(b&0xFF).toUpperCase )
+		
+		def printChar( c: Int ) = print( if (' ' <= c && c <= '~') c.asInstanceOf[Char] else '.' )
+		
+		for (line <- 0L until file.length by width) {
+			print( "%10x  ".format(line).toUpperCase )
+			
+			val mark = file.getFilePointer
+			
+			for (i <- line until ((line + width) min file.length)) {
+				if (i%16 == 8)
+					print( ' ' )
+					
+				printByte( file.readByte )
+			}
+			
+			val bytes = (file.getFilePointer - mark).asInstanceOf[Int]
+			
+			print( " "*((width - bytes)*3 + 1 + (if (bytes < 9) 1 else 0)) )
+			
+			file.seek( mark )
+			
+			for (i <- line until ((line + width) min file.length))
+				printChar( file.readByte.asInstanceOf[Int] )
+				
+			println
+		}
+		
+		file.seek( cur )
+	}
 
 }
 

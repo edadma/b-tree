@@ -14,6 +14,7 @@ class InsertionTests extends FreeSpec with PropertyChecks with Matchers {
 			(() => new MemoryBPlusTree[String, Any]( 3 ),    "in memory"),
 			(() => new FileBPlusTree[String, Any]( newfile, 3 ),    "on disk")
 	 		)
+		
 	val order4 =
 		Table(
 			("object generator", 													"storage"),

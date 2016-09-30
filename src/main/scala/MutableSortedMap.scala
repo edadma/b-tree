@@ -5,11 +5,11 @@ import collection.mutable.{Map, MapLike, AbstractMap}
 
 
 object MutableSortedMap {
-	private val ORDER = 10
+	private val DEFAULT_ORDER = 10
 }
 
-class MutableSortedMap[K <% Ordered[K], V]( btree: MemoryBPlusTree[K, V] ) extends SortedMap[K, V] {
-	def this() = this( new MemoryBPlusTree[K, V]( MutableSortedMap.ORDER ) )
+class MutableSortedMap[K <% Ordered[K], V]( btree: BPlusTree[K, V] ) extends SortedMap[K, V] {
+	def this() = this( new MemoryBPlusTree[K, V](MutableSortedMap.DEFAULT_ORDER) )
 
 	implicit def ordering = implicitly[Ordering[K]]
 	
@@ -24,7 +24,7 @@ class MutableSortedMap[K <% Ordered[K], V]( btree: MemoryBPlusTree[K, V] ) exten
 	}
 	
 	override def +[V1 >: V]( kv: (K, V1) ) = {
-		val newtree = new MemoryBPlusTree[K, V1]( MutableSortedMap.ORDER )
+		val newtree = new MemoryBPlusTree[K, V]( MutableSortedMap.DEFAULT_ORDER )
 		
 		newtree.load( btree.boundedIterator( ('<, kv._1) ).toList: _* )
 		newtree.insert( kv._1, kv._2 )
@@ -33,7 +33,7 @@ class MutableSortedMap[K <% Ordered[K], V]( btree: MemoryBPlusTree[K, V] ) exten
 	}
 	
 	override def -( key: K ) = {
-		val newtree = new MemoryBPlusTree[K, V]( MutableSortedMap.ORDER )
+		val newtree = new MemoryBPlusTree[K, V]( MutableSortedMap.DEFAULT_ORDER )
 		
 		newtree.load( btree.boundedIterator( ('<, key) ).toList: _* )
 		newtree.load( btree.boundedIterator( ('>, key) ).toList: _* )
