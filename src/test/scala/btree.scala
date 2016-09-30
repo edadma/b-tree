@@ -14,6 +14,7 @@ package object btree {
 		f.getPath
 	}
 	
-	object BasicTest extends Tag("basic test")
+	object BasicTest extends Tag("basic")
+	object SlowTest extends Tag("slow")
 	
 }
