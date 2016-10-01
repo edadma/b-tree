@@ -134,6 +134,10 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		nodeLength( node, nodeLength(node) + 1 )
 	}
 	
+	protected def disposeKey( node: N, index: Int ) = dispose( node + NODE_KEYS + index*DATUM_SIZE )
+	
+	protected def disposeValue( node: N, index: Int ) = dispose( node + LEAF_VALUES + index*DATUM_SIZE )
+	
 	protected def freeNode( node: Long ) = free( node, BLOCK_SIZE )
 	
 	protected def getBranch( node: Long, index: Int ) = {
@@ -409,8 +413,8 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			newlen
 		}
 
-	protected def dispose( node: Long, index: Int ) {
-		file seek node
+	protected def dispose( addr: Long ) {
+		file seek addr
 		file.readByte match {
 			case TYPE_STRING =>
 			case TYPE_ARRAY =>
@@ -420,8 +424,6 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	}
 	
 	protected def removeLeaf( node: Long, index: Int ) = {
-		dispose( node, index )
-		
 		val len = nodeLength( node )
 		val newlen = len - 1
 		

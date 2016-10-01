@@ -41,7 +41,7 @@ since these are the ones that are strictly between `c` and `l`. The call to `rev
 Adding *b-tree* to a project
 ----------------------------
 
-*b-tree* has one abstract class called `BPlusTree` which provides for interaction with a B+ tree. The concrete methods operate through a storage abstraction layer composed of 1 abstract type (the node type), 4 variables, and 32 methods. To use *b-tree* in a project, it is necessary to extend `BPlusTree` and provide implementations for all the abstract members. 32 methods sounds like a lot but they are all easy to implement. A lot of effort was put into coding `BPlusTree` so that it's abstraction layer would be dead simple to implement.
+*b-tree* has one abstract class called `BPlusTree` which provides for interaction with a B+ tree. The concrete methods operate through a storage abstraction layer composed of 1 abstract type (the node type), 4 variables, and 34 methods. To use *b-tree* in a project, it is necessary to extend `BPlusTree` and provide implementations for all the abstract members. 34 methods sounds like a lot but they are all easy to implement. A lot of effort was put into coding `BPlusTree` so that it's abstraction layer would be dead simple to implement.
 
 There are two example implementations provided: `MemoryBPlusTree` and `FileBPlusTree`. `MemoryBPlusTree` is just a normal in-memory data structure where the node type is a simple class. `FileBPlusTree` provides for persistant storage of key/value pairs in disk files. To see how easy it can be to implement the abstraction layer just look at the sources for `MemoryBPlusTree`.
 

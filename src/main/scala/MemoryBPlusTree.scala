@@ -23,6 +23,10 @@ class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends BPlusTree[K, V](
 		
 	protected def addKey( node: Node[K, V], key: K ) = node.keys += key
 
+	protected def disposeKey( node: N, index: Int ) {}
+	
+	protected def disposeValue( node: N, index: Int ) {}
+
 	protected def freeNode( node: Node[K, V] ) {}
 
 	protected def getBranch( n: Node[K, V], index: Int ) = n.asInternal.branches( index )

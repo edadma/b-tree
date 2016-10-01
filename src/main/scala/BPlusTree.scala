@@ -71,7 +71,17 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	protected def addKey( node: N, key: K )
 	
 	/**
-	 * Frees the storage previously allocated for `node`. For in-memory implementations, this method probably won't do anything.
+	 * Free the storage previously allocated for the key at `index` in `node`. For in-memory implementations, this method probably won't do anything.
+	 */
+	protected def disposeKey( node: N, index: Int )
+	
+	/**
+	 * Free the storage previously allocated for the value at `index` in `node`. For in-memory implementations, this method probably won't do anything.
+	 */
+	protected def disposeValue( node: N, index: Int )
+	
+	/**
+	 * Free the storage previously allocated for `node`. For in-memory implementations, this method probably won't do anything.
 	 */
 	protected def freeNode( node: N )
 		
@@ -645,6 +655,7 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							val middle = getKey( par, mid )
 							
 							addBranch( newinternal, getBranch(par, mid + 1) )
+							disposeKey( par, mid )
 							removeInternal( par, mid, mid + 1 )
 							moveInternal( par, mid, len - 1, newinternal, 0 )
 							
@@ -717,6 +728,9 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	def delete( key: K ) = {
 		lookup( key ) match {
 			case (true, leaf, index) =>
+				disposeKey( leaf, index )
+				disposeValue( leaf, index )
+				
 				val len = removeLeaf( leaf, index )
 				
 				if (leaf != root && len < minlen) {
@@ -770,6 +784,8 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						freeNode( right )
 						
 //						println("remove (leaf) " + par + " " + index)
+						disposeKey( par, index )
+						
 						var len = removeInternal( par, index, index + 1 )
 							
 						if (par == root && len == 0) {
@@ -816,6 +832,7 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 // 						println("insertKey " + internal + " " + keytoadd)
 									insertInternal( internal, internalsidekey, keytoadd, internalsidebranch, branch )
 									setParent( branch, internal )
+									disposeKey( sibling, siblingsidekey )
 									removeInternal( sibling, siblingsidekey, siblingsidebranch )
 									setKey( par, index, keytoset )
 									
@@ -856,9 +873,9 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 											setPrev( r, l )
 										}
 									
-									setNext( left, nul )
-									
+									setNext( left, nul )		
 //						println("remove (internal) " + par + " " + index)
+									disposeKey( par, index )
 									len = removeInternal( par, index, index + 1 )
 										
 									if (par == root) {
