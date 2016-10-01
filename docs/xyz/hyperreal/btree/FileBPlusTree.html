@@ -1129,42 +1129,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#disposeKey" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="disposeKey(node:FileBPlusTree.this.N,index:Int):Unit"></a>
-      <a id="disposeKey(N,Int):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">disposeKey</span><span class="params">(<span name="node">node: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@disposeKey(node:FileBPlusTree.this.N,index:Int):Unit" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Free the storage previously allocated for the key at <code>index</code> in <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Free the storage previously allocated for the key at <code>index</code> in <code>node</code>. For in-memory implementations, this method probably won't do anything.
-</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#disposeValue" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="disposeValue(node:FileBPlusTree.this.N,index:Int):Unit"></a>
-      <a id="disposeValue(N,Int):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">disposeValue</span><span class="params">(<span name="node">node: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@disposeValue(node:FileBPlusTree.this.N,index:Int):Unit" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Free the storage previously allocated for the value at <code>index</code> in <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Free the storage previously allocated for the value at <code>index</code> in <code>node</code>. For in-memory implementations, this method probably won't do anything.
-</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#dump" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="dump:Unit"></a>
       <a id="dump:Unit"></a>
@@ -1291,6 +1255,24 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#freeKey" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="freeKey(node:FileBPlusTree.this.N,index:Int):Unit"></a>
+      <a id="freeKey(N,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">freeKey</span><span class="params">(<span name="node">node: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@freeKey(node:FileBPlusTree.this.N,index:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Free the storage previously allocated for the key at <code>index</code> in <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Free the storage previously allocated for the key at <code>index</code> in <code>node</code>. For in-memory implementations, this method probably won't do anything.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#freeNode" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="freeNode(node:Long):Unit"></a>
       <a id="freeNode(Long):Unit"></a>
@@ -1308,6 +1290,24 @@
       </a>
     </span>
       <p class="shortcomment cmt">Free the storage previously allocated for <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Free the storage previously allocated for <code>node</code>. For in-memory implementations, this method probably won't do anything.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#freeValue" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="freeValue(node:FileBPlusTree.this.N,index:Int):Unit"></a>
+      <a id="freeValue(N,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">freeValue</span><span class="params">(<span name="node">node: <a href="#N=Long" class="extmbr" name="xyz.hyperreal.btree.FileBPlusTree.N">N</a></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@freeValue(node:FileBPlusTree.this.N,index:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Free the storage previously allocated for the value at <code>index</code> in <code>node</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Free the storage previously allocated for the value at <code>index</code> in <code>node</code>. For in-memory implementations, this method probably won't do anything.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#getBranch" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getBranch(node:Long,index:Int):FileBPlusTree.this.N"></a>
@@ -2718,7 +2718,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Performs a breadth first traversal of the tree, applying <code>level</code> to each level of the tree beginning at the root.</p><div class="fullcomment"><div class="comment cmt"><p>Performs a breadth first traversal of the tree, applying <code>level</code> to each level of the tree beginning at the root.
+      <p class="shortcomment cmt">Performs a breadth first traversal of the tree (tail recursively), applying <code>level</code> to each level of the tree beginning at the root.</p><div class="fullcomment"><div class="comment cmt"><p>Performs a breadth first traversal of the tree (tail recursively), applying <code>level</code> to each level of the tree beginning at the root.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#tree" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="tree:Long"></a>
@@ -2737,6 +2737,24 @@
       </a>
     </span>
       <p class="shortcomment cmt">the offset within <code>file</code> of the tree's descriptor record</p><div class="fullcomment"><div class="comment cmt"><p>the offset within <code>file</code> of the tree's descriptor record</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.BPlusTree#valuesIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="valuesIterator:Iterator[V]"></a>
+      <a id="valuesIterator:Iterator[V]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">valuesIterator</span><span class="result">: <span class="extype" name="scala.collection.Iterator">Iterator</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.V">V</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@valuesIterator:Iterator[V]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Returns an iterator over all values in the tree in the order corresponding to ascending keys.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all values in the tree in the order corresponding to ascending keys.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

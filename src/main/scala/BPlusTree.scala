@@ -73,17 +73,17 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	/**
 	 * Free the storage previously allocated for the key at `index` in `node`. For in-memory implementations, this method probably won't do anything.
 	 */
-	protected def disposeKey( node: N, index: Int )
-	
-	/**
-	 * Free the storage previously allocated for the value at `index` in `node`. For in-memory implementations, this method probably won't do anything.
-	 */
-	protected def disposeValue( node: N, index: Int )
+	protected def freeKey( node: N, index: Int )
 	
 	/**
 	 * Free the storage previously allocated for `node`. For in-memory implementations, this method probably won't do anything.
 	 */
 	protected def freeNode( node: N )
+	
+	/**
+	 * Free the storage previously allocated for the value at `index` in `node`. For in-memory implementations, this method probably won't do anything.
+	 */
+	protected def freeValue( node: N, index: Int )
 		
 	/**
 	 * Returns a branch pointer from an internal node at a given `index`.  There is always one more branch pointer than there are keys in an internal node so the highest index is equal to `nodeLength( node )`.
@@ -381,6 +381,11 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	def keysIterator = positionIterator map {case (n, i) => getKey( n, i )}
 
   /**
+   * Returns an iterator over all values in the tree in the order corresponding to ascending keys.
+   */
+	def valuesIterator = positionIterator map {case (n, i) => getValue( n, i )}
+
+  /**
    * Returns a reverse iterator over all keys in the tree in descending sorted order.
    */
 	def reverseKeysIterator = reversePositionIterator map {case (n, i) => getKey( n, i )}
@@ -655,7 +660,7 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 							val middle = getKey( par, mid )
 							
 							addBranch( newinternal, getBranch(par, mid + 1) )
-							disposeKey( par, mid )
+							freeKey( par, mid )
 							removeInternal( par, mid, mid + 1 )
 							moveInternal( par, mid, len - 1, newinternal, 0 )
 							
@@ -728,8 +733,8 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	def delete( key: K ) = {
 		lookup( key ) match {
 			case (true, leaf, index) =>
-				disposeKey( leaf, index )
-				disposeValue( leaf, index )
+				freeKey( leaf, index )
+				freeValue( leaf, index )
 				
 				val len = removeLeaf( leaf, index )
 				
@@ -784,7 +789,7 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 						freeNode( right )
 						
 //						println("remove (leaf) " + par + " " + index)
-						disposeKey( par, index )
+						freeKey( par, index )
 						
 						var len = removeInternal( par, index, index + 1 )
 							
@@ -832,7 +837,7 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 // 						println("insertKey " + internal + " " + keytoadd)
 									insertInternal( internal, internalsidekey, keytoadd, internalsidebranch, branch )
 									setParent( branch, internal )
-									disposeKey( sibling, siblingsidekey )
+									freeKey( sibling, siblingsidekey )
 									removeInternal( sibling, siblingsidekey, siblingsidebranch )
 									setKey( par, index, keytoset )
 									
@@ -875,7 +880,7 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 									
 									setNext( left, nul )		
 //						println("remove (internal) " + par + " " + index)
-									disposeKey( par, index )
+									freeKey( par, index )
 									len = removeInternal( par, index, index + 1 )
 										
 									if (par == root) {
@@ -1018,7 +1023,7 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	}
 	
 	/**
-	 * Performs a breadth first traversal of the tree, applying `level` to each level of the tree beginning at the root.
+	 * Performs a breadth first traversal of the tree (tail recursively), applying `level` to each level of the tree beginning at the root.
 	 */
 	protected def traverseBreadthFirst( level: List[N] => Unit ) {
 		def traverse( nodes: List[N] ) {

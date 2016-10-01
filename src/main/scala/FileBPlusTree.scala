@@ -134,11 +134,11 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		nodeLength( node, nodeLength(node) + 1 )
 	}
 	
-	protected def disposeKey( node: N, index: Int ) = dispose( node + NODE_KEYS + index*DATUM_SIZE )
-	
-	protected def disposeValue( node: N, index: Int ) = dispose( node + LEAF_VALUES + index*DATUM_SIZE )
+	protected def freeKey( node: N, index: Int ) = dispose( node + NODE_KEYS + index*DATUM_SIZE )
 	
 	protected def freeNode( node: Long ) = free( node, BLOCK_SIZE )
+	
+	protected def freeValue( node: N, index: Int ) = dispose( node + LEAF_VALUES + index*DATUM_SIZE )
 	
 	protected def getBranch( node: Long, index: Int ) = {
 		if (node == savedNode)
@@ -424,18 +424,26 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 				free( addr, file.readInt + 4)
 			case TYPE_ARRAY =>
 			case TYPE_MAP =>
-				traverseBreadthFirst(
+				val rec = file.readLong
+				
+				new FileBPlusTree[K, V]( file, rec, order ).traverseBreadthFirst(
 					nodes => {
 						val isleaf = isLeaf( nodes.head )
 						
-						for (n <- nodes; i <- 0 until nodeLength( n )) {
-							disposeKey( n, i )
+						for (n <- nodes) {
+							for (i <- 0 until nodeLength( n )) {
+								freeKey( n, i )
+								
+								if (isleaf)
+									freeValue( n, i )
+							}
 							
-							if (isleaf)
-								disposeValue( n, i )
+							freeNode( n )
 						}
 					}
 				)
+				
+				free( rec, TREE_RECORD_SIZE )
 			case _ =>
 		}
 	}
@@ -575,8 +583,10 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 				if (utf.length > 8) {
 					file write TYPE_STRING
 					
+					val here = file.getFilePointer
 					val addr = alloc( utf.length + 4 )
 					
+					file seek here
 					file writeLong addr
 					file seek addr
 					file writeInt utf.length
