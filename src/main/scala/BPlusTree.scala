@@ -1018,23 +1018,33 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 	}
 	
 	/**
-	 * Returns a string representing a search result for `key` that will be consistant with `prettyPrint`. This method is used mainly for unit testing.
+	 * Performs a breadth first traversal of the tree, applying `level` to each level of the tree beginning at the root.
 	 */
-	def prettySearch( key: K ) = {
-		val map = new HashMap[N, String]
-		var count = 0
-		
+	protected def traverseBreadthFirst( level: List[N] => Unit ) {
 		def traverse( nodes: List[N] ) {
-			for (n <- nodes) {
-				map(n) = "n" + count
-				count += 1
-			}
+			level( nodes )
 			
 			if (!isLeaf( nodes.head ))
 				traverse( nodes flatMap getBranches )
 		}
 		
 		traverse( List(root) )
+	}
+	
+	/**
+	 * Returns a string representing a search result for `key` that will be consistant with `prettyPrint`. This method is used mainly for unit testing.
+	 */
+	def prettySearch( key: K ) = {
+		val map = new HashMap[N, String]
+		var count = 0
+		
+		traverseBreadthFirst(
+			nodes =>
+				for (n <- nodes) {
+					map(n) = "n" + count
+					count += 1
+				}
+		)
 		
 		lookup( key ) match {
 			case (true, leaf, index) => map(leaf) + " " + getValue( leaf, index ) + " " + index
@@ -1084,11 +1094,10 @@ abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
 				buf ++= prefix
 				buf ++= nodes map (n => internalnode(n, id, emit)) mkString " "
 				buf += '\n'
-				printNodes( nodes flatMap getBranches )
 			}
 		}
 
-		printNodes( List(root) )
+		traverseBreadthFirst( printNodes )
 		
 		if (!afterbuf.isEmpty || after != "")
 			buf += '\n'

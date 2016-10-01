@@ -415,10 +415,27 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 
 	protected def dispose( addr: Long ) {
 		file seek addr
+		
 		file.readByte match {
 			case TYPE_STRING =>
+				val addr = file readLong
+				
+				file seek addr
+				free( addr, file.readInt + 4)
 			case TYPE_ARRAY =>
 			case TYPE_MAP =>
+				traverseBreadthFirst(
+					nodes => {
+						val isleaf = isLeaf( nodes.head )
+						
+						for (n <- nodes; i <- 0 until nodeLength( n )) {
+							disposeKey( n, i )
+							
+							if (isleaf)
+								disposeValue( n, i )
+						}
+					}
+				)
 			case _ =>
 		}
 	}
@@ -506,21 +523,6 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		file readFully data
 		file seek (dst + INTERNAL_BRANCHES + (index + 1)*POINTER_SIZE)
 		file write data
-	}
-	
-	protected def freeDatum( addr: Long ) = {
-		file seek addr
-		
-		file read match {
-			case TYPE_STRING => 
-				file seek file.readLong
-				
-				val start = file.getFilePointer
-				val len = file.readUnsignedShort + 2
-				
-				free( start, len )
-			case _ =>
-		}
 	}
 	
 	protected def readDatum( addr: Long ) = {
