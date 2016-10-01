@@ -46,3 +46,55 @@ Adding *b-tree* to a project
 There are two example implementations provided: `MemoryBPlusTree` and `FileBPlusTree`. `MemoryBPlusTree` is just a normal in-memory data structure where the node type is a simple class. `FileBPlusTree` provides for persistant storage of key/value pairs in disk files. To see how easy it can be to implement the abstraction layer just look at the sources for `MemoryBPlusTree`.
 
 To begin working on adding *b-tree* to a project, visit the [scaladoc library documentation](http://edadma.github.io/b-tree). Next, click on `BPlusTree` and then select visibility "All" to see all the protected members. Everything under "Type Members" and "Abstract Value Members" must be implemented. All the information needed is in the member descriptions and in the class description at the top.
+	
+License
+-------
+
+*b-tree* is distributed under the MIT License, meaning that you are free to use it in your free or proprietary software.
+
+
+Usage
+-----
+
+Use the following elements to use *b-tree* in your Maven project:
+
+	<repository>
+		<id>hyperreal</id>
+		<url>https://dl.bintray.com/edadma/maven</url>
+	</repository>
+
+	<dependency>
+		<groupId>xyz.hyperreal</groupId>
+		<artifactId>b-tree</artifactId>
+		<version>0.1</version>
+	</dependency>
+
+Add the following to your `build.sbt` file to use *b-tree* in your SBT project:
+
+	resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
+
+	libraryDependencies += "xyz.hyperreal" %% "b-tree" % "0.1"
+	
+
+## Building
+
+### Requirements
+
+- SBT 0.13.12+
+- Java 7+
+- Scala 2.11.8+
+- graphviz, imageMagick (optionally, for tree diagrams)
+
+### Clone
+
+	git clone git://github.com/edadma/b-tree.git
+	
+### Compile and Test
+
+For compiling and testing, it's best to use the following command:
+
+	test-only -- -l slow
+	
+to exclude the "stress tests" that are tagged as "slow". Some stress testing is still done with this command. If you just type `test`, you may have to wait many minutes for all the tests to complete. The example above can then be executed with
+
+	test:runMain Example1
