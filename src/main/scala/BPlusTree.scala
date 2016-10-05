@@ -241,14 +241,14 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 	
 	
 	/**
-	 * Returns a bounded iterator over a range of key/value pairs in the tree in sorted order. The range of key/value pairs in the iterator is specified by `bounds`.  `bounds` must contain one or two pairs where the first element in the pair is a symbol corresponding to the type of bound (i.e. '<, '<=, '>, '>=) and the second element is a key value.
+	 * Returns a bounded iterator over a range of key/value pairs in the tree in ascending sorted key order. The range of key/value pairs in the iterator is specified by `bounds`.  `bounds` must contain one or two pairs where the first element in the pair is a symbol corresponding to the type of bound (i.e. '<, '<=, '>, '>=) and the second element is a key value.
 	 * 
 	 * An example of a bounded iterator over all elements in a tree (with `String` keys) that will include all keys that sort greater than or equal to "a" and up to but not including "e" is `boundedIterator( ('>=, "a"), ('<, "e") )`.
 	 */
 	def boundedIterator( bounds: (Symbol, K)* ): Iterator[(K, V)] = boundedPositionIterator( bounds: _* ) map {case (n, i) => getKeyValue( n, i )}
 
 	/**
-	 * Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in sorted order. The `bounds` parameter is the same as for [[boundedIterator]].
+	 * Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in ascending sorted key order. The `bounds` parameter is the same as for [[boundedIterator]].
 	 */
 	protected def boundedPositionIterator( bounds: (Symbol, K)* ): Iterator[(N, Int)] = {
 		def gte( key: K ) =
@@ -312,12 +312,12 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 	}
 
 	/**
-	 * Returns a bounded iterator over a range of keys in the tree in sorted order. The `bounds` parameter is the same as for [[boundedIterator]].
+	 * Returns a bounded iterator over a range of keys in the tree in ascending sorted key order. The `bounds` parameter is the same as for [[boundedIterator]].
 	 */
 	def boundedKeysIterator( bounds: (Symbol, K)* ) = boundedPositionIterator( bounds: _* ) map {case (n, i) => getKey( n, i )}
 
 	/**
-	 * Returns a bounded iterator over a range of values in the tree in sorted order. The `bounds` parameter is the same as for [[boundedIterator]].
+	 * Returns a bounded iterator over a range of values in the tree in ascending sorted key order. The `bounds` parameter is the same as for [[boundedIterator]].
 	 */
 	def boundedValuesIterator( bounds: (Symbol, K)* ) = boundedPositionIterator( bounds: _* ) map {case (n, i) => getValue( n, i )}
 	
@@ -327,17 +327,17 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 	def isEmpty = lastlen == 0
 	
 	/**
-   * Returns an iterator over all key/value pairs in the tree in sorted order.
+   * Returns an iterator over all key/value pairs in the tree in ascending sorted key order.
    */
 	def iterator = positionIterator map {case (n, i) => getKeyValue( n, i )}
 	
 	/**
-   * Returns an iterator over all key/value pairs in the tree in sorted order.
+   * Returns an iterator over all key/value pairs in the tree in descending sorted key order.
    */
 	def reverseIterator = reversePositionIterator map {case (n, i) => getKeyValue( n, i )}
 
 	/**
-   * Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted order.
+   * Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted key order.
    */
 	protected def positionIterator: Iterator[(N, Int)] =
 		new AbstractIterator[(N, Int)] {
@@ -359,7 +359,7 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 		}
 
 	/**
-   * Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted order.
+   * Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted key order.
    */
 	protected def reversePositionIterator: Iterator[(N, Int)] =
 		new AbstractIterator[(N, Int)] {

@@ -1,12 +1,10 @@
 package xyz.hyperreal.btree
 
-//import xyz.hyperreal.ramfile.RamFile
-
 import io.Codec
 import collection.mutable.ArrayBuffer
 import collection.AbstractSeq
 
-import java.io.{File, RandomAccessFile}
+import java.io.{File, RandomAccessFile, ByteArrayInputStream, DataInputStream, DataInput}
 
 
 trait FileBPlusTreeFormat {
@@ -113,7 +111,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	file seek 0
 		
 	if (file.length == 0) {
-		file writeBytes "B+ Tree v1.0"
+		file writeBytes "B+ Tree v1  "
 		file writeShort order
 		file writeLong NUL
 		writeEmptyRecord( FILE_BLOCKS )
@@ -122,11 +120,11 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		last = FILE_BLOCKS
 		lastlen = 0
 	} else {
-		val header = new Array[Byte]( 12 )
+		val header = new Array[Byte]( FILE_HEADER_SIZE )
 		
 		file readFully header
 		
-		if (header.toList != "B+ Tree v1.0".getBytes.toList)
+		if (header.toList != "B+ Tree v1  ".getBytes.toList)
 			sys.error( "bad file header" )
 			
 		if (file.readShort != order)
@@ -178,7 +176,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		if (savedNode == node)
 			savedKeys(index)
 		else
-			readDatum( node + NODE_KEYS + index*DATUM_SIZE ).asInstanceOf[K]
+			readDatumFile( node + NODE_KEYS + index*DATUM_SIZE ).asInstanceOf[K]
 	
 	protected def getKeys( node: Long ): Seq[K] =
 		new AbstractSeq[K] with IndexedSeq[K] {
@@ -202,7 +200,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		file readLong
 	}
 	
-	protected def getValue( node: Long, index: Int ) = readDatum( node + LEAF_VALUES + index*DATUM_SIZE ).asInstanceOf[V]
+	protected def getValue( node: Long, index: Int ) = readDatumFile( node + LEAF_VALUES + index*DATUM_SIZE ).asInstanceOf[V]
 	
 	protected def getValues( node: Long ) =
 		new AbstractSeq[V] with IndexedSeq[V] {
@@ -561,29 +559,27 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		file write data
 	}
 	
-	protected def readDatum( addr: Long ): Any = {
-		def readUTF8( len: Int ) = {
+	protected def decode( in: DataInput ) = {
+		def readUTF8( s: DataInput, len: Int ) = {
 			val a = new Array[Byte]( len )
 			
-			file readFully a
+			s readFully a
 			new String( Codec fromUTF8 a )
 		}
 		
-		file seek addr
-		
-		file read match {
-			case len if len <= 0x08 => readUTF8( len )
+		in readByte match {
+			case len if len <= 0x08 => readUTF8( in, len )
 			case TYPE_BOOLEAN_FALSE => false
 			case TYPE_BOOLEAN_TRUE => true
-			case TYPE_INT => file readInt
-			case TYPE_LONG => file readLong
-			case TYPE_DOUBLE => file readDouble
+			case TYPE_INT => in readInt
+			case TYPE_LONG => in readLong
+			case TYPE_DOUBLE => in readDouble
 			case TYPE_STRING => 
 				file seek file.readLong
-				readUTF8( file readInt )
+				readUTF8( file, file readInt )
 			case TYPE_NULL => null
 			case TYPE_ARRAY =>
-				val array = file.readLong
+				val array = in.readLong
 				
 				file seek array
 				
@@ -592,7 +588,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 				new collection.immutable.IndexedSeq[Any] {
 					def apply( idx: Int ) = {
 						require( idx >= 0 && idx < len, "index out of range" )
-						readDatum( idx*DATUM_SIZE + array + 4 )
+						readDatumFile( idx*DATUM_SIZE + array + 4 )
 					}
 					
 					def length = len
@@ -600,11 +596,21 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 					override def toString = mkString( "Array(", ", ", ")" )
 				}
 			case TYPE_MAP =>
-				new MutableSortedMap[K, V]( new FileBPlusTree[K, V](file, file.readLong, order) )
+				new MutableSortedMap[K, V]( new FileBPlusTree[K, V](file, in.readLong, order) )
 		}
 	}
+		
+	protected def readDatumFile( addr: Long ): Any = {
+		file seek addr
+		decode( file )
+	}
 	
-	protected def readString( addr: Long ) = readDatum( addr ).asInstanceOf[String]
+	protected def readDatumArray( array: Array[Byte], index: Int ) = {
+		val datum = new Array[Byte]( DATUM_SIZE )
+		
+		compat.Platform.arraycopy( array, index, datum, 0, DATUM_SIZE )
+		decode( new DataInputStream(new ByteArrayInputStream(array)) )
+	}
 	
 	protected def writeDatum( addr: Long, datum: Any ) {
 		file seek addr
@@ -761,7 +767,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 /* Example B+ Tree File Format
  * ***************************
 
-fixed length ASCII text			"B+ Tree v0.1" (12)
+fixed length ASCII text			"B+ Tree v1  " (12)
 branching factor						short (2)
 free block pointer					long (8)
 root node pointer						long (8)

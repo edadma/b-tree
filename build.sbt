@@ -10,8 +10,6 @@ incOptions := incOptions.value.withNameHashing( true )
 
 organization := "xyz.hyperreal"
 
-//resolvers += Resolver.sonatypeRepo( "snapshots" )
-
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
 resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
@@ -20,8 +18,6 @@ libraryDependencies ++= Seq(
 	"org.scalatest" %% "scalatest" % "3.0.0" % "test",
 	"org.scalacheck" %% "scalacheck" % "1.13.2" % "test"
 )
-
-//libraryDependencies += "xyz.hyperreal" %% "ramfile" % "0.3"
 
 mainClass in (Compile, run) := Some( "xyz.hyperreal." + "btree" + ".TestMain" )
 
