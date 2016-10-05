@@ -27,13 +27,18 @@ import java.io.PrintWriter
  * @tparam K the type of the keys contained in this map.
  * @tparam V the type of the values associated with the keys.
  */
-abstract class BPlusTree[K <% Ordered[K], +V]( order: Int ) {
+abstract class BPlusTree[K <% Ordered[K], +V] {
 	/**
 	 * Abstract node type. For in-memory implementations this would probably be the actual node class and for on-disk it would likely be the file pointer where the node is stored.
 	 * 
 	 * @note Comparing two nodes for equality is required to be `true` when they point to the same node.
 	 */
 	protected type N
+	
+	/**
+	 * Order or branching factor of the tree. The order is the maximum number of branches that an internal node can have. The maximum number of elements in a leaf node is `order - 1`.
+	 */
+	val order: Int
 	
 	/**
 	 * Root node. Implementations are required to set this as well as to create/update the in-storage copy of this if needed (only really applies to on-disk implementations). The methods in this class will take care of updating this variable, implementations only need to worry about the in-storage copy.

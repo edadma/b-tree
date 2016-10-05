@@ -11,8 +11,13 @@ object TestMain extends App {
 // 	println( m(1) )
 	
 //	val t = new MemoryBPlusTree[Int, Any]( 3 )
-	val t = new FileBPlusTree[Int, Any]( newfile, 3, true )
+	val f = newfile
+	val t = new FileBPlusTree[Int, Any]( f, 3 )
 	
 	t.insert( 1, Seq(3, 4, 5) )
-	println( t.search(1) )
+	t.close
+	
+	val t1 = FileBPlusTree[Int, Any]( f )
+	
+	println( t1.search(1) )
 }

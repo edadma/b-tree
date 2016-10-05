@@ -29,6 +29,18 @@ trait FileBPlusTreeFormat {
 
 object FileBPlusTree extends FileBPlusTreeFormat {
 	
+	/**
+	 * Re-open a previously created (and closed) file created by the class constructor. This method basically reads the order from the file so that it does not need to be known to re-open the file.
+	 * 
+	 * @return a [[FileBPlusTree]] instance for accessing the B+ tree
+	 */
+	def apply[K <% Ordered[K], V]( filename: String, synchronous: Boolean = false ) = {
+		val file = new RandomAccessFile( filename, if (synchronous) "rws" else "rw" )
+		
+		file seek FILE_ORDER
+		new FileBPlusTree[K, V]( file, FILE_ROOT_RECORD, file.readShort )
+	}
+	
 }
 
 /**
@@ -41,8 +53,7 @@ object FileBPlusTree extends FileBPlusTreeFormat {
  * @tparam K the type of the keys contained in this map.
  * @tparam V the type of the values associated with the keys.
  */
-class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, protected val tree: Long, order: Int ) extends BPlusTree[K, V]( order )
-																																																											with FileBPlusTreeFormat {
+class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, protected val tree: Long, val order: Int ) extends BPlusTree[K, V] with FileBPlusTreeFormat {
 	
 	/**
 	 * creates an object to provide access to the root B+ Tree contained within the file at `filename` with a branching factor of `order`. The on-disk tree's order must be equal to `order` or an exception will be thrown. This is the constructor that would normally be used to access a B+ tree file.
@@ -99,6 +110,8 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	protected var last: Long = _
 	protected var lastlen: Int = _
 		
+	file seek 0
+		
 	if (file.length == 0) {
 		file writeBytes "B+ Tree v1.0"
 		file writeShort order
@@ -109,8 +122,13 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		last = FILE_BLOCKS
 		lastlen = 0
 	} else {
-		file seek FILE_ORDER
+		val header = new Array[Byte]( 12 )
 		
+		file readFully header
+		
+		if (header.toList != "B+ Tree v1.0".getBytes.toList)
+			sys.error( "bad file header" )
+			
 		if (file.readShort != order)
 			sys.error( "order not the same as on disk" )
 			

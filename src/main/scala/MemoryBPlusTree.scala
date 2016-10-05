@@ -11,7 +11,9 @@ import collection.mutable.ArrayBuffer
  * @tparam K the type of the keys contained in this map.
  * @tparam V the type of the values associated with the keys.
  */
-class MemoryBPlusTree[K <% Ordered[K], V]( order: Int ) extends BPlusTree[K, V]( order ) {
+class MemoryBPlusTree[K <% Ordered[K], V]( val order: Int ) extends BPlusTree[K, V] {
+	require( order >= 3, "order must be at least 3" )
+	
 	protected type N = Node[K, V]
 	
 	protected var first: Node[K, V] = new LeafNode[K, V]( null )
