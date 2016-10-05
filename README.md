@@ -70,14 +70,14 @@ Use the following elements to use *b-tree* in your Maven project:
 	<dependency>
 		<groupId>xyz.hyperreal</groupId>
 		<artifactId>b-tree</artifactId>
-		<version>0.1</version>
+		<version>0.2</version>
 	</dependency>
 
 Add the following to your `build.sbt` file to use *b-tree* in your SBT project:
 
 	resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
 
-	libraryDependencies += "xyz.hyperreal" %% "b-tree" % "0.1"
+	libraryDependencies += "xyz.hyperreal" %% "b-tree" % "0.2"
 	
 
 ## Building

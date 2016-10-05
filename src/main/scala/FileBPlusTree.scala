@@ -418,11 +418,21 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		
 		file.readByte match {
 			case TYPE_STRING =>
-				val addr = file readLong
+				val s = file readLong
 				
-				file seek addr
-				free( addr, file.readInt + 4)
+				file seek s
+				free( s, file.readInt + 4)
 			case TYPE_ARRAY =>
+				val array = file readLong
+				
+				file seek array
+				
+				val len = file.readInt
+				
+				for (i <- 0 until len)
+					dispose( i*DATUM_SIZE + array + 4 )
+					
+				free( array, len*DATUM_SIZE + 4 )
 			case TYPE_MAP =>
 				val rec = file.readLong
 				
@@ -533,7 +543,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		file write data
 	}
 	
-	protected def readDatum( addr: Long ) = {
+	protected def readDatum( addr: Long ): Any = {
 		def readUTF8( len: Int ) = {
 			val a = new Array[Byte]( len )
 			
@@ -554,6 +564,21 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 				file seek file.readLong
 				readUTF8( file readInt )
 			case TYPE_NULL => null
+			case TYPE_ARRAY =>
+				val array = file.readLong
+				
+				file seek array
+				
+				val len = file readInt
+				
+				new collection.AbstractSeq[Any] with collection.immutable.IndexedSeq[Any] {
+					def apply( idx: Int ) = {
+						require( idx >= 0 && idx < len, "index out of range" )
+						readDatum( idx*DATUM_SIZE + array + 4 )
+					}
+					
+					def length = len
+				}
 			case TYPE_MAP =>
 				new MutableSortedMap[K, V]( new FileBPlusTree[K, V](file, file.readLong, order) )
 		}
@@ -561,7 +586,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	
 	protected def readString( addr: Long ) = readDatum( addr ).asInstanceOf[String]
 	
-	protected def writeDatum( addr: Long, datum: Any ) = {
+	protected def writeDatum( addr: Long, datum: Any ) {
 		file seek addr
 		
 		datum match {
@@ -597,17 +622,30 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			case m: collection.Map[K, V] =>
 				file write TYPE_MAP
 				
-			val here = file.getFilePointer
-			val newroot = newLeaf( NUL )
-			val record = alloc( TREE_RECORD_SIZE )
+				val here = file.getFilePointer
+				val newroot = newLeaf( NUL )
+				val record = alloc( TREE_RECORD_SIZE )
 				
 				writeEmptyRecord( newroot )
 				file seek here
 				file writeLong record
 
-			val newtree = new FileBPlusTree[K, V]( file, record, order )
+				val newtree = new FileBPlusTree[K, V]( file, record, order )
 			
 				newtree load (m.toSeq: _*)
+			case a: Seq[Any] =>
+				file write TYPE_ARRAY
+				
+				val here = file.getFilePointer
+				val array = alloc( a.length*DATUM_SIZE + 4 )
+				
+				file writeInt a.length
+				
+				for ((e, i) <- a zipWithIndex)
+					writeDatum( array + 4 + i*DATUM_SIZE, e )
+					
+				file seek here
+				file writeLong array
 			case _ => sys.error( "type not supported: " + datum )
 		}
 	}
