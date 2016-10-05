@@ -571,13 +571,15 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 				
 				val len = file readInt
 				
-				new collection.AbstractSeq[Any] with collection.immutable.IndexedSeq[Any] {
+				new collection.immutable.IndexedSeq[Any] {
 					def apply( idx: Int ) = {
 						require( idx >= 0 && idx < len, "index out of range" )
 						readDatum( idx*DATUM_SIZE + array + 4 )
 					}
 					
 					def length = len
+					
+					override def toString = mkString( "Array(", ", ", ")" )
 				}
 			case TYPE_MAP =>
 				new MutableSortedMap[K, V]( new FileBPlusTree[K, V](file, file.readLong, order) )
