@@ -4,7 +4,7 @@ import io.Codec
 import collection.mutable.ArrayBuffer
 import collection.AbstractSeq
 
-import java.io.{File, RandomAccessFile, ByteArrayInputStream, DataInputStream, DataInput}
+import java.io.{File, RandomAccessFile, ByteArrayInputStream, ByteArrayOutputStream, DataInputStream, DataInput, DataOutputStream, DataOutput}
 
 
 trait FileBPlusTreeFormat {
@@ -94,14 +94,15 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	
 	val INTERNAL_BRANCHES = NODE_KEYS + DATA_ARRAY_SIZE
 	
-	val BLOCK_SIZE = LEAF_VALUES + (((order - 1)*DATUM_SIZE) max (order*POINTER_SIZE))
+	val BLOCK_SIZE = LEAF_VALUES + (DATA_ARRAY_SIZE max (order*POINTER_SIZE))
 	
 	protected type N = Long
 	
 	private var savedNode: Long = NUL
-	private var savedKeys = new ArrayBuffer[K]
-	private var savedValues = new ArrayBuffer[V]
-	private var savedBranches = new ArrayBuffer[Long]
+	private var savedLength: Int = _
+	private val savedKeys = new Array[Byte]( DATA_ARRAY_SIZE + 1 )
+	private val savedValues = new Array[Byte]( DATA_ARRAY_SIZE + 1 )
+	private val savedBranches = new Array[Long]( order + 1 )
 	
 	protected var root: Long = _
 	protected var first: Long = _
@@ -173,10 +174,10 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		}
 	
 	protected def getKey( node: Long, index: Int ) =
-		if (savedNode == node)
-			savedKeys(index)
+		(if (savedNode == node)
+			readDatumArray( savedKeys, index*DATUM_SIZE )
 		else
-			readDatumFile( node + NODE_KEYS + index*DATUM_SIZE ).asInstanceOf[K]
+			readDatumFile( node + NODE_KEYS + index*DATUM_SIZE )).asInstanceOf[K]
 	
 	protected def getKeys( node: Long ): Seq[K] =
 		new AbstractSeq[K] with IndexedSeq[K] {
@@ -212,7 +213,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	protected def insertInternal( node: Long, keyIndex: Int, key: K, branchIndex: Int, branch: Long ) {
 		val len = nodeLength( node )
 		
-	if (len < order - 1) {
+		if (len < order - 1) {
 			nodeLength( node, len + 1 )
 			
 			if (keyIndex < len)
@@ -234,12 +235,11 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			if (savedNode != NUL)
 				sys.error( "a node is already being saved" )
 				
-			savedKeys.clear
-			savedBranches.clear
 			savedKeys ++= getKeys( node )
 			savedBranches ++= getBranches( node )
 			savedKeys.insert( keyIndex, key )
 			savedBranches.insert( branchIndex, branch )
+			savedLength = len + 1
 			savedNode = node
 		}
 	}
@@ -259,8 +259,6 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			if (savedNode != NUL)
 				sys.error( "a node is already being saved" )
 				
-			savedKeys.clear
-			savedValues.clear
 			savedKeys ++= getKeys( node )
 			savedValues ++= getValues( node )
 			savedKeys.insert( index, key )
@@ -612,33 +610,43 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		decode( new DataInputStream(new ByteArrayInputStream(array)) )
 	}
 	
-	protected def writeDatum( addr: Long, datum: Any ) {
+	protected def writeDatumArray( array: Array[Byte], index: Int, datum: Any ) {
+		val os = new ByteArrayOutputStream
+
+		encode( new DataOutputStream(os), datum )
+		os.write( array, index*DATUM_SIZE, DATUM_SIZE )
+	}
+	
+	protected def writeDatumFile( addr: Long, datum: Any ) {
 		file seek addr
-		
+		encode( file, datum )
+	}
+	
+	protected def encode( out: DataOutput, datum: Any ) {	
 		datum match {
-			case null => file write TYPE_NULL
-			case false => file write TYPE_BOOLEAN_FALSE
-			case true => file write TYPE_BOOLEAN_TRUE
+			case null => out write TYPE_NULL
+			case false => out write TYPE_BOOLEAN_FALSE
+			case true => out write TYPE_BOOLEAN_TRUE
 			case d: Long =>
-				file write TYPE_LONG
-				file writeLong d
+				out write TYPE_LONG
+				out writeLong d
 			case d: Int =>
-				file write TYPE_INT
-				file writeInt d
+				out write TYPE_INT
+				out writeInt d
 			case d: Double =>
-				file write TYPE_DOUBLE
-				file writeDouble d
+				out write TYPE_DOUBLE
+				out writeDouble d
 			case d: String =>
 				val utf = Codec.toUTF8( d )
 				
 				if (utf.length > 8) {
-					file write TYPE_STRING
+					out write TYPE_STRING
 					
 					val here = file.getFilePointer
 					val addr = alloc( utf.length + 4 )
 					
 					file seek here
-					file writeLong addr
+					out writeLong addr
 					file seek addr
 					file writeInt utf.length
 				} else
@@ -646,7 +654,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 				
 				file write utf
 			case m: collection.Map[K, V] =>
-				file write TYPE_MAP
+				out write TYPE_MAP
 				
 				val here = file.getFilePointer
 				val newroot = newLeaf( NUL )
@@ -654,13 +662,13 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 				
 				writeEmptyRecord( newroot )
 				file seek here
-				file writeLong record
+				out writeLong record
 
 				val newtree = new FileBPlusTree[K, V]( file, record, order )
 			
 				newtree load (m.toSeq: _*)
 			case a: Seq[Any] =>
-				file write TYPE_ARRAY
+				out write TYPE_ARRAY
 				
 				val here = file.getFilePointer
 				val array = alloc( a.length*DATUM_SIZE + 4 )
@@ -668,10 +676,10 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 				file writeInt a.length
 				
 				for ((e, i) <- a zipWithIndex)
-					writeDatum( array + 4 + i*DATUM_SIZE, e )
+					writeDatumFile( array + 4 + i*DATUM_SIZE, e )
 					
 				file seek here
-				file writeLong array
+				out writeLong array
 			case _ => sys.error( "type not supported: " + datum )
 		}
 	}
