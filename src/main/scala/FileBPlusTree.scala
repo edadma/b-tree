@@ -235,9 +235,12 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			if (savedNode != NUL)
 				sys.error( "a node is already being saved" )
 				
-			savedKeys ++= getKeys( node )
+			file seek (src + NODE_KEYS)
+			file readFully (savedKeys, 0, keyIndex*DATUM_SIZE)
+			file seek (src + NODE_KEYS + keyIndex*DATUM_SIZE)
+			file readFully (savedKeys, (keyIndex + 1)*DATUM_SIZE, (len - keyIndex)*DATUM_SIZE)
+			writeDatumArray( savedKeys, keyIndex, key )
 			savedBranches ++= getBranches( node )
-			savedKeys.insert( keyIndex, key )
 			savedBranches.insert( branchIndex, branch )
 			savedLength = len + 1
 			savedNode = node
@@ -271,15 +274,6 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		file seek node
 		file.read == LEAF_NODE
 	}
-	
-// 	protected def moveInternalDelete( src: N, begin: Int, end: Int, dst: N, index: Int ) {
-// 		val dstlen = nodeLength( dst )
-// 		
-// 		copyInternal( dst, index, dstlen, dst, index + end - begin )
-// 		copyInternal( src, begin, end, dst, index )
-// 		nodeLength( src, nodeLength(src) - (end - begin) )
-// 		nodeLength( dst, dstlen + end - begin )
-// 	}
 	
 	protected def moveInternal( src: Long, begin: Int, end: Int, dst: Long, index: Int ) {
 		if (savedNode == NUL) {
@@ -494,7 +488,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		file writeLong leaf
 	}
 
-	protected def setKey( node: Long, index: Int, key: K ) = writeDatum( node + NODE_KEYS + index*DATUM_SIZE, key )
+	protected def setKey( node: Long, index: Int, key: K ) = writeDatumFile( node + NODE_KEYS + index*DATUM_SIZE, key )
 
 	protected def setLast( leaf: Long ) {
 		file seek (tree + TREE_LAST_PTR)
@@ -521,7 +515,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		file writeLong node
 	}
 	
-	protected def setValue[V1 >: V]( node: Long, index: Int, v: V1 ) = writeDatum( node + LEAF_VALUES + index*DATUM_SIZE, v )
+	protected def setValue[V1 >: V]( node: Long, index: Int, v: V1 ) = writeDatumFile( node + LEAF_VALUES + index*DATUM_SIZE, v )
 	
 		
 	def close = file.close
