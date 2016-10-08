@@ -418,7 +418,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	protected def removeInternal( node: Long, keyIndex: Int, branchIndex: Int ) =
 		if (node == savedNode) {
 			Array.copy( savedKeys, (keyIndex + 1)*DATUM_SIZE, savedKeys, keyIndex*DATUM_SIZE, (savedLength - keyIndex - 1)*DATUM_SIZE )
-			Array.copy( savedBranches, branchIndex + 1, savedBranches, branchIndex, savedLength - keyIndex )
+			Array.copy( savedBranches, branchIndex + 1, savedBranches, branchIndex, savedLength - branchIndex )
 // 			savedKeys.remove( keyIndex, 1 )
 // 			savedBranches.remove( branchIndex, 1 )
 			savedLength -= 1
@@ -624,14 +624,14 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		val datum = new Array[Byte]( DATUM_SIZE )
 		
 		Array.copy( array, index, datum, 0, DATUM_SIZE )
-		decode( new DataInputStream(new ByteArrayInputStream(array)) )
+		decode( new DataInputStream(new ByteArrayInputStream(datum)) )
 	}
 	
 	protected def writeDatumArray( array: Array[Byte], index: Int, datum: Any ) {
 		val os = new ByteArrayOutputStream
 
 		encode( new DataOutputStream(os), datum )
-		os.write( array, index*DATUM_SIZE, os.size )
+		os.toByteArray.copyToArray( array, index*DATUM_SIZE )
 	}
 	
 	protected def writeDatumFile( addr: Long, datum: Any ) {

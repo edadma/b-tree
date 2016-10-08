@@ -20,7 +20,7 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 		
 		val t1 = FileBPlusTree[Int, Any]( f )
 		
-		t1.search(1) shouldBe Seq(3, 4, 5)
+		t1.search(1).get shouldBe Seq(3, 4, 5)
 	}
 	
 	"inserting/deleting/retrieving long strings" in {
