@@ -100,8 +100,8 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	
 	private var savedNode: Long = NUL
 	private var savedLength: Int = _
-	private val savedKeys = new Array[Byte]( DATA_ARRAY_SIZE + 1 )
-	private val savedValues = new Array[Byte]( DATA_ARRAY_SIZE + 1 )
+	private val savedKeys = new Array[Byte]( order*DATUM_SIZE )
+	private val savedValues = new Array[Byte]( order*DATUM_SIZE )
 	private val savedBranches = new Array[Long]( order + 1 )
 	
 	protected var root: Long = _
@@ -235,13 +235,14 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			if (savedNode != NUL)
 				sys.error( "a node is already being saved" )
 				
-			file seek (src + NODE_KEYS)
+			file seek (node + NODE_KEYS)
 			file readFully (savedKeys, 0, keyIndex*DATUM_SIZE)
-			file seek (src + NODE_KEYS + keyIndex*DATUM_SIZE)
+			file seek (node + NODE_KEYS + keyIndex*DATUM_SIZE)
 			file readFully (savedKeys, (keyIndex + 1)*DATUM_SIZE, (len - keyIndex)*DATUM_SIZE)
 			writeDatumArray( savedKeys, keyIndex, key )
-			savedBranches ++= getBranches( node )
-			savedBranches.insert( branchIndex, branch )
+			getBranches( node ).copyToArray( savedBranches, 0, branchIndex )
+			getBranches( node ).copyToArray( savedBranches, branchIndex + 1, len - branchIndex + 1 )
+			savedBranches( branchIndex ) = branch
 			savedLength = len + 1
 			savedNode = node
 		}
@@ -262,10 +263,17 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			if (savedNode != NUL)
 				sys.error( "a node is already being saved" )
 				
-			savedKeys ++= getKeys( node )
-			savedValues ++= getValues( node )
-			savedKeys.insert( index, key )
-			savedValues.asInstanceOf[ArrayBuffer[V1]].insert( index, value )
+			file seek (node + NODE_KEYS)
+			file readFully (savedKeys, 0, index*DATUM_SIZE)
+			file seek (node + NODE_KEYS + index*DATUM_SIZE)
+			file readFully (savedKeys, (index + 1)*DATUM_SIZE, (len - index)*DATUM_SIZE)
+			writeDatumArray( savedKeys, index, key )
+			file seek (node + LEAF_VALUES)
+			file readFully (savedValues, 0, index*DATUM_SIZE)
+			file seek (node + LEAF_VALUES + index*DATUM_SIZE)
+			file readFully (savedValues, (index + 1)*DATUM_SIZE, (len - index)*DATUM_SIZE)
+			writeDatumArray( savedValues, index, value )
+			savedLength = len + 1
 			savedNode = node
 		}
 	}
@@ -286,19 +294,25 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			nodeLength( src, srclen - (end - begin) )
 			nodeLength( dst, dstlen + end - begin )
 		} else {
-			val dstKeys = new ArrayBuffer[K]
-			val dstBranches = new ArrayBuffer[Long]
+			val dstKeys = savedKeys.view( begin, end ).toArray
+			val dstBranches = savedBranches.view( begin + 1, end + 1 ).toArray
+			val len = savedLength - (end - begin)
 			
-			dstKeys.insertAll( 0, savedKeys.view(begin, end) )
-			savedKeys.remove( begin, end - begin )
-			dstBranches.insertAll( 0, savedBranches.view(begin + 1, end + 1) )
-			savedBranches.remove( begin + 1, end - begin )
+// 			dstKeys.insertAll( 0, savedKeys.view(begin, end) )
+// 			savedKeys.remove( begin, end - begin )
+// 			dstBranches.insertAll( 0, savedBranches.view(begin + 1, end + 1) )
+// 			savedBranches.remove( begin + 1, end - begin )
 			
-			for ((k, i) <- savedKeys zipWithIndex)
-				setKey( src, i, k )
-				
-			for ((k, i) <- dstKeys zipWithIndex)
-				setKey( dst, i, k )
+			file seek (src + NODE_KEYS)
+			file write (savedKeys, 0, len*DATUM_SIZE)
+			file seek (dst + NODE_KEYS)
+			file write dstKeys
+			
+// 			for ((k, i) <- savedKeys zipWithIndex)
+// 				setKey( src, i, k )
+// 				
+// 			for ((k, i) <- dstKeys zipWithIndex)
+// 				setKey( dst, i, k )
 
 			for ((b, i) <- savedBranches zipWithIndex)
 				setBranch( src, i, b )
@@ -306,7 +320,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			for ((b, i) <- dstBranches zipWithIndex)
 				setBranch( dst, i + 1, b )
 				
-			nodeLength( src, savedKeys.length )
+			nodeLength( src, len )
 			nodeLength( dst, end - begin )
 			savedNode = NUL
 		}
@@ -323,27 +337,33 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			nodeLength( src, srclen - (end - begin) )
 			nodeLength( dst, dstlen + end - begin )
 		} else {
-			val dstKeys = new ArrayBuffer[K]
-			val dstValues = new ArrayBuffer[V]
-			val len = end - begin
+			val dstKeys = savedKeys.view( begin, end ).toArray
+			val dstValues = savedValues.view( begin, end ).toArray
+			val dstlen = end - begin
+			val len = savedLength - dstlen
 			
-			savedKeys.view( begin, end ) copyToBuffer dstKeys
-			savedKeys.remove( begin, len )
-			savedValues.view( begin, end ) copyToBuffer dstValues
-			savedValues.remove( begin, len )
+			file seek (src + NODE_KEYS)
+			file write (savedKeys, 0, len*DATUM_SIZE)
+			file seek (src + LEAF_VALUES)
+			file write (savedValues, 0, len*DATUM_SIZE)
 			
-			for (((k, v), i) <- savedKeys zip savedValues zipWithIndex) {
-				setKey( src, i, k )
-				setValue( src, i, v )
-			}
+// 			for (((k, v), i) <- savedKeys zip savedValues zipWithIndex) {
+// 				setKey( src, i, k )
+// 				setValue( src, i, v )
+// 			}
 			
-			for (((k, v), i) <- dstKeys zip dstValues zipWithIndex) {
-				setKey( dst, i, k )
-				setValue( dst, i, v )
-			}
+			file seek (dst + NODE_KEYS)
+			file write dstKeys
+			file seek (dst + LEAF_VALUES)
+			file write dstValues
 			
-			nodeLength( src, savedKeys.length )
-			nodeLength( dst, len )
+// 			for (((k, v), i) <- dstKeys zip dstValues zipWithIndex) {
+// 				setKey( dst, i, k )
+// 				setValue( dst, i, v )
+// 			}
+			
+			nodeLength( src, len )
+			nodeLength( dst, dstlen )
 			savedNode = NUL
 		}
 	}
@@ -382,7 +402,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	
 	protected def nodeLength( node: Long ) =
 		if (node == savedNode)
-			savedKeys.length
+			savedLength
 		else {
 			file seek (node + NODE_LENGTH)
 			file.readShort
@@ -397,9 +417,12 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 
 	protected def removeInternal( node: Long, keyIndex: Int, branchIndex: Int ) =
 		if (node == savedNode) {
-			savedKeys.remove( keyIndex, 1 )
-			savedBranches.remove( branchIndex, 1 )
-			savedKeys.length
+			Array.copy( savedKeys, keyIndex + 1, savedKeys, keyIndex, savedLength - keyIndex - 1 )
+			Array.copy( savedBranches, branchIndex + 1, savedBranches, branchIndex, savedLength - keyIndex )
+// 			savedKeys.remove( keyIndex, 1 )
+// 			savedBranches.remove( branchIndex, 1 )
+			savedLength -= 1
+			savedLength
 		} else {
 			val len = nodeLength( node )
 			val newlen = len - 1
@@ -600,7 +623,7 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 	protected def readDatumArray( array: Array[Byte], index: Int ) = {
 		val datum = new Array[Byte]( DATUM_SIZE )
 		
-		compat.Platform.arraycopy( array, index, datum, 0, DATUM_SIZE )
+		Array.copy( array, index, datum, 0, DATUM_SIZE )
 		decode( new DataInputStream(new ByteArrayInputStream(array)) )
 	}
 	
@@ -643,10 +666,11 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 					out writeLong addr
 					file seek addr
 					file writeInt utf.length
-				} else
-					file write utf.length
-				
-				file write utf
+					file write utf
+				} else {
+					out write utf.length
+					out write utf
+				}
 			case m: collection.Map[K, V] =>
 				out write TYPE_MAP
 				
@@ -725,9 +749,9 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		else
 			super.str( n )
 			
-	private def hex( n: Long* ) = println( n map (a => "%h" format a) mkString ("(", ", ", ")") )
+	private [btree] def hex( n: Long* ) = println( n map (a => "%h" format a) mkString ("(", ", ", ")") )
 	
-	def dump {
+	private [btree] def dump {
 		val cur = file.getFilePointer
 		val width = 16
 		

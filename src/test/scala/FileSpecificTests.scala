@@ -11,6 +11,18 @@ import collection.mutable.HashSet
 
 class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 
+	"persistence" in {
+		val f = newfile
+		val t = new FileBPlusTree[Int, Any]( f, 3 )
+		
+		t.insert( 1, Seq(3, 4, 5) )
+		t.close
+		
+		val t1 = FileBPlusTree[Int, Any]( f )
+		
+		t1.search(1) shouldBe Seq(3, 4, 5)
+	}
+	
 	"inserting/deleting/retrieving long strings" in {
 		val t = new FileBPlusTree[Int, String]( newfile, 3 )
 		val set = new HashSet[String]
