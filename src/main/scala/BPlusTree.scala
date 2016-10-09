@@ -1,6 +1,7 @@
 package xyz.hyperreal.btree
 
 import scala.sys.process._
+import collection.AbstractIterable
 import collection.mutable.{HashMap, ArrayBuffer}
 import collection.immutable.ListMap
 import collection.AbstractIterator
@@ -305,40 +306,13 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 	 * Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in ascending sorted key order. The `bounds` parameter is the same as for [[boundedIterator]].
 	 */
 	protected def boundedPositionIterator( bounds: (Symbol, K)* ): Iterator[(N, Int)] = {
-		require( bounds.length == 1 || bounds.length == 2, "boundedIterator: one or two bounds" )
-			
-		val symbols = ListMap[Symbol, K => (N, Int)]( '> -> leastGT, '>= -> leastGTE, '< -> leastGTE, '<= -> leastGT )
-		
-		require( bounds forall {case (s, _) => symbols contains s}, "boundedIterator: expected one of '<, '<=, '>, '>=" )
-		
-		def translate( bound: Int ) = symbols(bounds(bound)._1)(bounds(bound)._2)
-		
-		def order( s: Symbol ) = symbols.keys.toList indexOf s
-		
-		val ((loleaf, loindex), (upleaf, upindex)) =
-			if (bounds.length == 2) {
-				require( bounds(0)._1 != bounds(1)._1, "boundedIterator: expected bounds symbols to be different" )
-
-				val (lo, hi, (slo, klo), (shi, khi)) =
-					if (order( bounds(0)._1 ) > order( bounds(1)._1 ))
-						(translate( 1 ), translate( 0 ), bounds(1), bounds(0))
-					else
-						(translate( 0 ), translate( 1 ), bounds(0), bounds(1))
-						
-				if (klo > khi || klo == khi && ((slo != '>=) || (shi != '<=)))
-					(lo, lo)
-				else
-					(lo, hi)
-			} else if (order( bounds(0)._1 ) < 2)
-				(translate( 0 ), (nul, 0))
-			else
-				((first, 0), translate( 0 ))
+		val ((loleaf, loindex), (hileaf, hiindex)) = boundsPreprocess( bounds, leastGT, leastGTE )
 			
 		new AbstractIterator[(N, Int)] {
 			var leaf: N = loleaf
 			var index: Int = loindex
 
-			def hasNext = leaf != nul && index < nodeLength( leaf ) && (leaf != upleaf || index < upindex)
+			def hasNext = leaf != nul && index < nodeLength( leaf ) && (leaf != hileaf || index < hiindex)
 
 			def next =
 				if (hasNext) {
@@ -353,6 +327,77 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 					throw new NoSuchElementException( "no more keys" )
 		}
 	}
+	
+	/**
+	 * Returns a bounded iterator over a range of key/value pairs in the tree in descending sorted key order. The range of key/value pairs in the iterator is specified by `bounds`.  `bounds` must contain one or two pairs where the first element in the pair is a symbol corresponding to the type of bound (i.e. '<, '<=, '>, '>=) and the second element is a key value.
+	 * 
+	 * An example of a reverse bounded iterator over all elements in a tree (with `String` keys) that will include all keys that sort greater than or equal to "a" and up to but not including "e", iterated over in reverse order, is `reverseBoundedIterator( ('>=, "a"), ('<, "e") )`.
+	 */
+	def reverseBoundedIterator( bounds: (Symbol, K)* ): Iterator[(K, V)] = reverseBoundedPositionIterator( bounds: _* ) map {case (n, i) => getKeyValue( n, i )}
+
+	/**
+	 * Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in descending sorted key order. The `bounds` parameter is the same as for [[boundedIterator]].
+	 */
+	protected def reverseBoundedPositionIterator( bounds: (Symbol, K)* ): Iterator[(N, Int)] = {
+		val ((loleaf, loindex), (hileaf, hiindex)) = boundsPreprocess( bounds, greatestLTE, greatestLT )
+		
+		new AbstractIterator[(N, Int)] {
+			var leaf: N = hileaf
+			var index: Int = hiindex
+
+			def hasNext = leaf != nul && index < nodeLength( leaf ) && (leaf != loleaf || index < loindex)
+
+			def next =
+				if (hasNext) {
+					val (n, i) = prevPosition( leaf, index )
+					val cur = (leaf, index)
+					
+					leaf = n
+					index = i
+					cur
+				}
+				else
+					throw new NoSuchElementException( "no more keys" )
+		}
+	}
+
+	private def boundsPreprocess( bounds: Seq[(Symbol, K)], strictinf: K => (N, Int), inf: K => (N, Int) ) = {
+		require( bounds.length == 1 || bounds.length == 2, "boundedIterator: one or two bounds" )
+			
+		val symbols = ListMap[Symbol, K => (N, Int)]( '> -> strictinf, '>= -> inf, '< -> inf, '<= -> strictinf )
+		
+		require( bounds forall {case (s, _) => symbols contains s}, "boundedIterator: expected one of '<, '<=, '>, '>=" )
+		
+		def translate( bound: Int ) = symbols(bounds(bound)._1)(bounds(bound)._2)
+		
+		def order( s: Symbol ) = symbols.keys.toList indexOf s
+		
+		if (bounds.length == 2) {
+			require( bounds(0)._1 != bounds(1)._1, "boundedIterator: expected bounds symbols to be different" )
+
+			val (lo, hi, (slo, klo), (shi, khi)) =
+				if (order( bounds(0)._1 ) > order( bounds(1)._1 ))
+					(translate( 1 ), translate( 0 ), bounds(1), bounds(0))
+				else
+					(translate( 0 ), translate( 1 ), bounds(0), bounds(1))
+					
+			if (klo > khi || klo == khi && ((slo != '>=) || (shi != '<=)))
+				(lo, lo)
+			else
+				(lo, hi)
+		} else if (order( bounds(0)._1 ) < 2)
+			(translate( 0 ), (nul, 0))
+		else
+			((first, 0), translate( 0 ))
+	}
+	
+	/**
+	 * Returns a non-strict `Iterable` containing the keys in the tree.
+	 */
+	def keys =
+		new AbstractIterable[K] {
+			def iterator = keysIterator
+		}
 
 	/**
 	 * Returns a bounded iterator over a range of keys in the tree in ascending sorted key order. The `bounds` parameter is the same as for [[boundedIterator]].
@@ -363,6 +408,16 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 	 * Returns a bounded iterator over a range of values in the tree in ascending sorted key order. The `bounds` parameter is the same as for [[boundedIterator]].
 	 */
 	def boundedValuesIterator( bounds: (Symbol, K)* ) = boundedPositionIterator( bounds: _* ) map {case (n, i) => getValue( n, i )}
+
+	/**
+	 * Returns a bounded iterator over a range of keys in the tree in descending sorted key order. The `bounds` parameter is the same as for [[boundedIterator]].
+	 */
+	def reverseBoundedKeysIterator( bounds: (Symbol, K)* ) = reverseBoundedPositionIterator( bounds: _* ) map {case (n, i) => getKey( n, i )}
+
+	/**
+	 * Returns a bounded iterator over a range of values in the tree in descending sorted key order. The `bounds` parameter is the same as for [[boundedIterator]].
+	 */
+	def reverseBoundedValuesIterator( bounds: (Symbol, K)* ) = reverseBoundedPositionIterator( bounds: _* ) map {case (n, i) => getValue( n, i )}
 	
 	/**
    * Returns `true` is the tree is empty.
