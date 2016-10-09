@@ -394,7 +394,7 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 	/**
 	 * Returns a non-strict `Iterable` containing the keys in the tree.
 	 */
-	def keys =
+	def keys: Iterable[K] =
 		new AbstractIterable[K] {
 			def iterator = keysIterator
 		}
