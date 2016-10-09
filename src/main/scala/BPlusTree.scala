@@ -413,6 +413,7 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 	
 	protected def optionalKeyValue( pos: (N, Int) ) =
 		pos match {
+			case (null, _) => None
 			case (leaf, index) =>
 				if (index < nodeLength( leaf ))
 					Some( getKeyValue(leaf, index ))
@@ -422,6 +423,7 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 	
 	protected def optionalKey( pos: (N, Int) ) =
 		pos match {
+			case (null, _) => None
 			case (leaf, index) =>
 				if (index < nodeLength( leaf ))
 					Some( getKey(leaf, index ))
@@ -610,6 +612,20 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 			(getNext( leaf ), 0)
 		else
 			(leaf, index + 1)
+	
+	/**
+	 * Searches for `key` returning a point in a leaf node that is the greatest less than (if not found) or equal to (if found) `key`. The leaf node and index returned in case `key` does not exist is not necessarily the correct insertion point. This method is used by `reverseBoundedIterator`.
+	 * 
+	 * @return a triple where the first element is `true` if `key` exists and `false` otherwise, and the second element is the leaf node containing the greatest less than or equal key, and the third is the index of that key.
+	 */
+	protected def lookupLTE( key: K ) =
+		lookup( key ) match {
+			case t@(true, _, _) => t
+			case f@(false, leaf, index) =>
+				val (l, i) = prevPosition( leaf, index )
+				
+				(false, l, i)
+		}
 	
 	/**
 	 * Searches for `key` returning a point in a leaf node that is the least greater than (if not found) or equal to (if found) `key`. The leaf node and index returned in case `key` does not exist is not necessarily the correct insertion point. This method is used by `boundedIterator`.
