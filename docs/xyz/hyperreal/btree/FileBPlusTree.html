@@ -92,7 +92,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="xyz.hyperreal.btree.FileBPlusTree#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(filename:String,order:Int,synchronous:Boolean)(implicitevidence$2:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]"></a>
+      <a id="&lt;init&gt;(filename:String,order:Int,synchronous:Boolean)(implicitevidence$3:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]"></a>
       <a id="&lt;init&gt;:FileBPlusTree[K,V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -103,14 +103,14 @@
         <span class="name">FileBPlusTree</span><span class="params">(<span name="filename">filename: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="order">order: <span class="extype" name="scala.Int">Int</span></span>, <span name="synchronous">synchronous: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: (<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>) ⇒ <span class="extype" name="scala.Ordered">Ordered</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>]</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@&lt;init&gt;(filename:String,order:Int,synchronous:Boolean)(implicitevidence$2:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@&lt;init&gt;(filename:String,order:Int,synchronous:Boolean)(implicitevidence$3:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">creates an object to provide access to the root B+ Tree contained within the file at <code>filename</code> with a branching factor of <code>order</code>.</p><div class="fullcomment"><div class="comment cmt"><p>creates an object to provide access to the root B+ Tree contained within the file at <code>filename</code> with a branching factor of <code>order</code>. The on-disk tree's order must be equal to <code>order</code> or an exception will be thrown. This is the constructor that would normally be used to access a B+ tree file.
 </p></div><dl class="paramcmts block"><dt class="param">filename</dt><dd class="cmt"><p>path to the file to contain the tree. The file created is completely self contained: if the file alread exists (and <code>newfile</code> is <code>false</code>) then the object opens the file and provides continued access to the tree</p></dd><dt class="param">order</dt><dd class="cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></dd><dt class="param">synchronous</dt><dd class="cmt"><p><code>true</code> causes any changes to the file to be written to disk immediately, <code>false</code> is the default</p></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.FileBPlusTree#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(file:java.io.RandomAccessFile,tree:Long,order:Int)(implicitevidence$1:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]"></a>
+      <a id="&lt;init&gt;(file:java.io.RandomAccessFile,tree:Long,order:Int)(implicitevidence$2:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]"></a>
       <a id="&lt;init&gt;:FileBPlusTree[K,V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -121,7 +121,7 @@
         <span class="name">FileBPlusTree</span><span class="params">(<span name="file">file: <span class="extype" name="java.io.RandomAccessFile">RandomAccessFile</span></span>, <span name="tree">tree: <span class="extype" name="scala.Long">Long</span></span>, <span name="order">order: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: (<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>) ⇒ <span class="extype" name="scala.Ordered">Ordered</span>[<span class="extype" name="xyz.hyperreal.btree.FileBPlusTree.K">K</span>]</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@&lt;init&gt;(file:java.io.RandomAccessFile,tree:Long,order:Int)(implicitevidence$1:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@&lt;init&gt;(file:java.io.RandomAccessFile,tree:Long,order:Int)(implicitevidence$2:K=&gt;Ordered[K]):xyz.hyperreal.btree.FileBPlusTree[K,V]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -906,7 +906,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a bounded iterator over a range of key/value pairs in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of key/value pairs in the tree in sorted order. The range of key/value pairs in the iterator is specified by <code>bounds</code>.  <code>bounds</code> must contain one or two pairs where the first element in the pair is a symbol corresponding to the type of bound (i.e. '&lt;, '&lt;=, '&gt;, '&gt;=) and the second element is a key value.</p><p>An example of a bounded iterator over all elements in a tree (with <code>String</code> keys) that will include all keys that sort greater than or equal to &quot;a&quot; and up to but not including &quot;e&quot; is <code>boundedIterator( ('&gt;=, &quot;a&quot;), ('&lt;, &quot;e&quot;) )</code>.
+      <p class="shortcomment cmt">Returns a bounded iterator over a range of key/value pairs in the tree in ascending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of key/value pairs in the tree in ascending sorted key order. The range of key/value pairs in the iterator is specified by <code>bounds</code>.  <code>bounds</code> must contain one or two pairs where the first element in the pair is a symbol corresponding to the type of bound (i.e. '&lt;, '&lt;=, '&gt;, '&gt;=) and the second element is a key value.</p><p>An example of a bounded iterator over all elements in a tree (with <code>String</code> keys) that will include all keys that sort greater than or equal to &quot;a&quot; and up to but not including &quot;e&quot; is <code>boundedIterator( ('&gt;=, &quot;a&quot;), ('&lt;, &quot;e&quot;) )</code>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#boundedKeysIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="boundedKeysIterator(bounds:(Symbol,K)*):Iterator[K]"></a>
@@ -924,7 +924,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a bounded iterator over a range of keys in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of keys in the tree in sorted order. The <code>bounds</code> parameter is the same as for <a href="BPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.BPlusTree#boundedIterator">boundedIterator</a>.
+      <p class="shortcomment cmt">Returns a bounded iterator over a range of keys in the tree in ascending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of keys in the tree in ascending sorted key order. The <code>bounds</code> parameter is the same as for <a href="BPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.BPlusTree#boundedIterator">boundedIterator</a>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#boundedPositionIterator" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="boundedPositionIterator(bounds:(Symbol,K)*):Iterator[(BPlusTree.this.N,Int)]"></a>
@@ -942,7 +942,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in sorted order. The <code>bounds</code> parameter is the same as for <a href="BPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.BPlusTree#boundedIterator">boundedIterator</a>.
+      <p class="shortcomment cmt">Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in ascending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in ascending sorted key order. The <code>bounds</code> parameter is the same as for <a href="BPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.BPlusTree#boundedIterator">boundedIterator</a>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#boundedValuesIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="boundedValuesIterator(bounds:(Symbol,K)*):Iterator[V]"></a>
@@ -960,7 +960,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a bounded iterator over a range of values in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of values in the tree in sorted order. The <code>bounds</code> parameter is the same as for <a href="BPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.BPlusTree#boundedIterator">boundedIterator</a>.
+      <p class="shortcomment cmt">Returns a bounded iterator over a range of values in the tree in ascending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of values in the tree in ascending sorted key order. The <code>bounds</code> parameter is the same as for <a href="BPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.BPlusTree#boundedIterator">boundedIterator</a>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#build" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="build(s:String):xyz.hyperreal.btree.BPlusTree[K,V]"></a>
@@ -1076,6 +1076,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#decode" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="decode(in:java.io.DataInput):Any"></a>
+      <a id="decode(DataInput):Any"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">decode</span><span class="params">(<span name="in">in: <span class="extype" name="java.io.DataInput">DataInput</span></span>)</span><span class="result">: <span class="extype" name="scala.Any">Any</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@decode(in:java.io.DataInput):Any" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#delete" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="delete(key:K):Boolean"></a>
       <a id="delete(K):Boolean"></a>
@@ -1129,23 +1146,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#dump" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="dump:Unit"></a>
-      <a id="dump:Unit"></a>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#encode" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="encode(out:java.io.DataOutput,datum:Any):Unit"></a>
+      <a id="encode(DataOutput,Any):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">dump</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">encode</span><span class="params">(<span name="out">out: <span class="extype" name="java.io.DataOutput">DataOutput</span></span>, <span name="datum">datum: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@dump:Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@encode(out:java.io.DataOutput,datum:Any):Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -1719,7 +1736,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns an iterator over all key/value pairs in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key/value pairs in the tree in sorted order.
+      <p class="shortcomment cmt">Returns an iterator over all key/value pairs in the tree in ascending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key/value pairs in the tree in ascending sorted key order.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#keysIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="keysIterator:Iterator[K]"></a>
@@ -2167,6 +2184,23 @@
     </span>
       <p class="shortcomment cmt">Returns the <i>null</i> node pointer.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the <i>null</i> node pointer. For in-memory implementations this will usually be a Scala <code>null</code> value. For on-disk it would make sense for this to be <code>0L</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#order" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="order:Int"></a>
+      <a id="order:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">order</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@order:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">the branching factor (maximum number of branches in an internal node) of the tree</p><div class="fullcomment"><div class="comment cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.FileBPlusTree">FileBPlusTree</a> → <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#positionIterator" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="positionIterator:Iterator[(BPlusTree.this.N,Int)]"></a>
       <a id="positionIterator:Iterator[(N,Int)]"></a>
@@ -2183,7 +2217,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted order.
+      <p class="shortcomment cmt">Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted key order.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#prettyPrint" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="prettyPrint:Unit"></a>
@@ -2293,36 +2327,36 @@
     </span>
       <p class="shortcomment cmt">Returns the node/index pair pointing to the location of the leaf node key preceding the one at <code>index</code> in <code>leaf</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the node/index pair pointing to the location of the leaf node key preceding the one at <code>index</code> in <code>leaf</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#readDatum" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="readDatum(addr:Long):Any"></a>
-      <a id="readDatum(Long):Any"></a>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#readDatumArray" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="readDatumArray(array:Array[Byte],index:Int):Any"></a>
+      <a id="readDatumArray(Array[Byte],Int):Any"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">readDatum</span><span class="params">(<span name="addr">addr: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Any">Any</span></span>
+        <span class="name">readDatumArray</span><span class="params">(<span name="array">array: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Any">Any</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@readDatum(addr:Long):Any" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@readDatumArray(array:Array[Byte],index:Int):Any" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#readString" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="readString(addr:Long):String"></a>
-      <a id="readString(Long):String"></a>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#readDatumFile" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="readDatumFile(addr:Long):Any"></a>
+      <a id="readDatumFile(Long):Any"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">readString</span><span class="params">(<span name="addr">addr: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">readDatumFile</span><span class="params">(<span name="addr">addr: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Any">Any</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@readString(addr:Long):String" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@readDatumFile(addr:Long):Any" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -2379,7 +2413,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns an iterator over all key/value pairs in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key/value pairs in the tree in sorted order.
+      <p class="shortcomment cmt">Returns an iterator over all key/value pairs in the tree in descending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key/value pairs in the tree in descending sorted key order.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#reverseKeysIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="reverseKeysIterator:Iterator[K]"></a>
@@ -2415,7 +2449,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted order.
+      <p class="shortcomment cmt">Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted key order.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#rightmost" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="rightmost(node:BPlusTree.this.N):K"></a>
@@ -2842,19 +2876,36 @@
     </span>
       <p class="shortcomment cmt">Analyzes the tree to determine if it is well constructed.</p><div class="fullcomment"><div class="comment cmt"><p>Analyzes the tree to determine if it is well constructed.
 </p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p><code>&quot;true&quot;</code> (as a string) if the tree is a well constructed B+ tree, a string description of the flaw otherwise.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
-    </li><li name="xyz.hyperreal.btree.FileBPlusTree#writeDatum" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="writeDatum(addr:Long,datum:Any):Unit"></a>
-      <a id="writeDatum(Long,Any):Unit"></a>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#writeDatumArray" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="writeDatumArray(array:Array[Byte],index:Int,datum:Any):Unit"></a>
+      <a id="writeDatumArray(Array[Byte],Int,Any):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">writeDatum</span><span class="params">(<span name="addr">addr: <span class="extype" name="scala.Long">Long</span></span>, <span name="datum">datum: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">writeDatumArray</span><span class="params">(<span name="array">array: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>, <span name="datum">datum: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@writeDatum(addr:Long,datum:Any):Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@writeDatumArray(array:Array[Byte],index:Int,datum:Any):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.FileBPlusTree#writeDatumFile" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="writeDatumFile(addr:Long,datum:Any):Unit"></a>
+      <a id="writeDatumFile(Long,Any):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writeDatumFile</span><span class="params">(<span name="addr">addr: <span class="extype" name="scala.Long">Long</span></span>, <span name="datum">datum: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.FileBPlusTree@writeDatumFile(addr:Long,datum:Any):Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

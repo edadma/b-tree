@@ -325,7 +325,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a bounded iterator over a range of key/value pairs in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of key/value pairs in the tree in sorted order. The range of key/value pairs in the iterator is specified by <code>bounds</code>.  <code>bounds</code> must contain one or two pairs where the first element in the pair is a symbol corresponding to the type of bound (i.e. '&lt;, '&lt;=, '&gt;, '&gt;=) and the second element is a key value.</p><p>An example of a bounded iterator over all elements in a tree (with <code>String</code> keys) that will include all keys that sort greater than or equal to &quot;a&quot; and up to but not including &quot;e&quot; is <code>boundedIterator( ('&gt;=, &quot;a&quot;), ('&lt;, &quot;e&quot;) )</code>.
+      <p class="shortcomment cmt">Returns a bounded iterator over a range of key/value pairs in the tree in ascending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of key/value pairs in the tree in ascending sorted key order. The range of key/value pairs in the iterator is specified by <code>bounds</code>.  <code>bounds</code> must contain one or two pairs where the first element in the pair is a symbol corresponding to the type of bound (i.e. '&lt;, '&lt;=, '&gt;, '&gt;=) and the second element is a key value.</p><p>An example of a bounded iterator over all elements in a tree (with <code>String</code> keys) that will include all keys that sort greater than or equal to &quot;a&quot; and up to but not including &quot;e&quot; is <code>boundedIterator( ('&gt;=, &quot;a&quot;), ('&lt;, &quot;e&quot;) )</code>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#boundedKeysIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="boundedKeysIterator(bounds:(Symbol,K)*):Iterator[K]"></a>
@@ -343,7 +343,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a bounded iterator over a range of keys in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of keys in the tree in sorted order. The <code>bounds</code> parameter is the same as for <a href="BPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.BPlusTree#boundedIterator">boundedIterator</a>.
+      <p class="shortcomment cmt">Returns a bounded iterator over a range of keys in the tree in ascending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of keys in the tree in ascending sorted key order. The <code>bounds</code> parameter is the same as for <a href="BPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.BPlusTree#boundedIterator">boundedIterator</a>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#boundedPositionIterator" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="boundedPositionIterator(bounds:(Symbol,K)*):Iterator[(BPlusTree.this.N,Int)]"></a>
@@ -361,7 +361,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in sorted order. The <code>bounds</code> parameter is the same as for <a href="BPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.BPlusTree#boundedIterator">boundedIterator</a>.
+      <p class="shortcomment cmt">Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in ascending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of key positions (node/index pairs) in the tree in ascending sorted key order. The <code>bounds</code> parameter is the same as for <a href="BPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.BPlusTree#boundedIterator">boundedIterator</a>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#boundedValuesIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="boundedValuesIterator(bounds:(Symbol,K)*):Iterator[V]"></a>
@@ -379,7 +379,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a bounded iterator over a range of values in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of values in the tree in sorted order. The <code>bounds</code> parameter is the same as for <a href="BPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.BPlusTree#boundedIterator">boundedIterator</a>.
+      <p class="shortcomment cmt">Returns a bounded iterator over a range of values in the tree in ascending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a bounded iterator over a range of values in the tree in ascending sorted key order. The <code>bounds</code> parameter is the same as for <a href="BPlusTree.html#boundedIterator(bounds:(Symbol,K)*):Iterator[(K,V)]" class="extmbr" name="xyz.hyperreal.btree.BPlusTree#boundedIterator">boundedIterator</a>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#build" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="build(s:String):xyz.hyperreal.btree.BPlusTree[K,V]"></a>
@@ -1002,7 +1002,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns an iterator over all key/value pairs in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key/value pairs in the tree in sorted order.
+      <p class="shortcomment cmt">Returns an iterator over all key/value pairs in the tree in ascending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key/value pairs in the tree in ascending sorted key order.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#keysIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="keysIterator:Iterator[K]"></a>
@@ -1433,6 +1433,23 @@
     </span>
       <p class="shortcomment cmt">Returns the <i>null</i> node pointer.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the <i>null</i> node pointer. For in-memory implementations this will usually be a Scala <code>null</code> value. For on-disk it would make sense for this to be <code>0L</code>.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree">MemoryBPlusTree</a> → <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.btree.MemoryBPlusTree#order" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="order:Int"></a>
+      <a id="order:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">order</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.btree.MemoryBPlusTree@order:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">the branching factor (maximum number of branches in an internal node) of the tree</p><div class="fullcomment"><div class="comment cmt"><p>the branching factor (maximum number of branches in an internal node) of the tree</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.btree.MemoryBPlusTree">MemoryBPlusTree</a> → <a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#positionIterator" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="positionIterator:Iterator[(BPlusTree.this.N,Int)]"></a>
       <a id="positionIterator:Iterator[(N,Int)]"></a>
@@ -1449,7 +1466,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted order.
+      <p class="shortcomment cmt">Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key positions (node/index pairs) in the tree in ascending sorted key order.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#prettyPrint" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="prettyPrint:Unit"></a>
@@ -1611,7 +1628,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns an iterator over all key/value pairs in the tree in sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key/value pairs in the tree in sorted order.
+      <p class="shortcomment cmt">Returns an iterator over all key/value pairs in the tree in descending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns an iterator over all key/value pairs in the tree in descending sorted key order.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#reverseKeysIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="reverseKeysIterator:Iterator[K]"></a>
@@ -1647,7 +1664,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted order.
+      <p class="shortcomment cmt">Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted key order.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a reverse iterator over all key positions (node/index pairs) in the tree in descending sorted key order.
 </p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="BPlusTree.html" class="extype" name="xyz.hyperreal.btree.BPlusTree">BPlusTree</a></dd></dl></div>
     </li><li name="xyz.hyperreal.btree.BPlusTree#rightmost" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="rightmost(node:BPlusTree.this.N):K"></a>
