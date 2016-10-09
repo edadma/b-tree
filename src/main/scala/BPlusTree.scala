@@ -256,6 +256,23 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 			case (true, leaf, index) => nextPosition( leaf, index )
 			case (false, leaf, index) => (leaf, index)
 		}
+	
+	/**
+	 * Returns the leaf position of the key that is greatest less than or equal to `key`.
+	 **/
+	protected def greatestLTE( key: K ) =
+		lookupLTE( key ) match {
+			case (_, leaf, index) => (leaf, index)
+		}
+
+	/**
+	 * Returns the leaf position of the key that is greatest less than `key`.
+	 **/
+	protected def greatestLT( key: K ) =
+		lookupLTE( key ) match {
+			case (true, leaf, index) => prevPosition( leaf, index )
+			case (false, leaf, index) => (leaf, index)
+		}
 
 	/**
 	 * Returns the key/value pair whose key is least greater than or equal to `key`.
@@ -266,6 +283,16 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 	 * Returns the key/value pair whose key is least greater than `key`.
 	 */
 	def leastGreaterThan( key: K ) = optionalKeyValue( leastGT(key) )
+
+	/**
+	 * Returns the key/value pair whose key is greatest less than or equal to `key`.
+	 */
+	def greatestLessThanOrEqual( key: K ) = optionalKeyValue( greatestLTE(key) )
+
+	/**
+	 * Returns the key/value pair whose key is greatest less than `key`.
+	 */
+	def greatestLessThan( key: K ) = optionalKeyValue( greatestLT(key) )
 	
 	/**
 	 * Returns a bounded iterator over a range of key/value pairs in the tree in ascending sorted key order. The range of key/value pairs in the iterator is specified by `bounds`.  `bounds` must contain one or two pairs where the first element in the pair is a symbol corresponding to the type of bound (i.e. '<, '<=, '>, '>=) and the second element is a key value.

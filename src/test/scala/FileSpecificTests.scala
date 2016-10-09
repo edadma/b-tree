@@ -11,6 +11,8 @@ import collection.mutable.HashSet
 
 class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 
+	val insertions = 30
+	
 	"persistence" in {
 		val f = newfile
 		val t = new FileBPlusTree[Int, Any]( f, 3 )
@@ -26,7 +28,6 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 	"inserting/deleting/retrieving long strings" in {
 		val t = new FileBPlusTree[Int, String]( newfile, 3 )
 		val set = new HashSet[String]
-		val size = 50
 		val len = 500
 		
 		def string: String = {
@@ -40,12 +41,12 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 			}
 		}
 			
-		for (k <- 1 to size) {
+		for (k <- 1 to insertions) {
 			t.insert( k, string ) shouldBe false
 			t.wellConstructed shouldBe "true"
 		}
 		
-		for (k <- 1 to size/2) {
+		for (k <- 1 to insertions/2) {
 			t.search( k ) match {
 				case None => fail
 				case Some( v ) => set -= v
@@ -55,12 +56,12 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 			t.wellConstructed shouldBe "true"
 		}
 			
-		for (k <- size + 1 to 2*size) {
+		for (k <- insertions + 1 to 2*insertions) {
 			t.insert( k, string ) shouldBe false
 			t.wellConstructed shouldBe "true"
 		}
 		
-		for (k <- size/2 + 1 to size) {
+		for (k <- insertions/2 + 1 to insertions) {
 			t.search( k ) match {
 				case None => fail
 				case Some( v ) => set -= v
@@ -70,7 +71,7 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 			t.wellConstructed shouldBe "true"
 		}
 		
-		assert( t.keysIterator.toList == (size + 1 to 2*size) )
+		assert( t.keysIterator.toList == (insertions + 1 to 2*insertions) )
 		assert( t.valuesIterator.toSet == set )
 	}
 
@@ -78,7 +79,6 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 		val t = new FileBPlusTree[Int, collection.Map[Int, String]]( newfile, 3 )
 		val sset = new HashSet[String]
 		val mset = new HashSet[collection.Map[Int, String]]
-		val size = 50
 		val len = 500
 		
 		def map: collection.Map[Int, String] = {
@@ -94,12 +94,12 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 			}
 		}
 			
-		for (k <- 1 to size) {
+		for (k <- 1 to insertions) {
 			t.insert( k, map ) shouldBe false
 			t.wellConstructed shouldBe "true"
 		}
 		
-		for (k <- 1 to size/2) {
+		for (k <- 1 to insertions/2) {
 			t.search( k ) match {
 				case None => fail
 				case Some( v ) =>
@@ -113,12 +113,12 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 			t.wellConstructed shouldBe "true"
 		}
 			
-		for (k <- size + 1 to 2*size) {
+		for (k <- insertions + 1 to 2*insertions) {
 			t.insert( k, map ) shouldBe false
 			t.wellConstructed shouldBe "true"
 		}
 		
-		for (k <- size/2 + 1 to size) {
+		for (k <- insertions/2 + 1 to insertions) {
 			t.search( k ) match {
 				case None => fail
 				case Some( v ) =>
@@ -132,7 +132,7 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 			t.wellConstructed shouldBe "true"
 		}
 		
-		assert( t.keysIterator.toList == (size + 1 to 2*size) )
+		assert( t.keysIterator.toList == (insertions + 1 to 2*insertions) )
 		assert( t.valuesIterator.toSet == mset )
 	}
 
@@ -140,7 +140,6 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 		val t = new FileBPlusTree[Int, collection.Seq[String]]( newfile, 3 )
 		val sset = new HashSet[String]
 		val lset = new HashSet[collection.Seq[String]]
-		val size = 50
 		val len = 500
 		
 		def seq: collection.Seq[String] = {
@@ -156,12 +155,12 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 			}
 		}
 		
-		for (k <- 1 to size) {
+		for (k <- 1 to insertions) {
 			t.insert( k, seq ) shouldBe false
 			t.wellConstructed shouldBe "true"
 		}
 		
-		for (k <- 1 to size/2) {
+		for (k <- 1 to insertions/2) {
 			t.search( k ) match {
 				case None => fail
 				case Some( v ) =>
@@ -173,12 +172,12 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 			t.wellConstructed shouldBe "true"
 		}
 			
-		for (k <- size + 1 to 2*size) {
+		for (k <- insertions + 1 to 2*insertions) {
 			t.insert( k, seq ) shouldBe false
 			t.wellConstructed shouldBe "true"
 		}
 		
-		for (k <- size/2 + 1 to size) {
+		for (k <- insertions/2 + 1 to insertions) {
 			t.search( k ) match {
 				case None => fail
 				case Some( v ) =>
@@ -192,7 +191,7 @@ class FileSpecificTests extends FreeSpec with PropertyChecks with Matchers {
 			t.wellConstructed shouldBe "true"
 		}
 		
-		assert( t.keysIterator.toList == (size + 1 to 2*size) )
+		assert( t.keysIterator.toList == (insertions + 1 to 2*insertions) )
 		assert( t.valuesIterator.toSet == lset )
 	}
 
