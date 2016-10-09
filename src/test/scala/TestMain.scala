@@ -13,5 +13,6 @@ object TestMain extends App {
 	t.insert( 4, "d"*500 )
 	t.insert( 5, "e"*500 )
 	println( t.wellConstructed )
-	println( t.search(3))
+	println( t.iterator.toList )
+	println( t.search(3) )
 }

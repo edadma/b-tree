@@ -314,8 +314,8 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 // 			for ((k, i) <- dstKeys zipWithIndex)
 // 				setKey( dst, i, k )
 
-			for ((b, i) <- savedBranches zipWithIndex)
-				setBranch( src, i, b )
+			for (i <- 0 to begin)
+				setBranch( src, i, savedBranches(i) )
 
 			for ((b, i) <- dstBranches zipWithIndex)
 				setBranch( dst, i + 1, b )
