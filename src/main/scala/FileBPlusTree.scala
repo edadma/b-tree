@@ -297,22 +297,10 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			val dstKeys = savedKeys.view( begin*DATUM_SIZE, end*DATUM_SIZE ).toArray
 			val dstBranches = savedBranches.view( begin + 1, end + 1 ).toArray
 			val len = savedLength - (end - begin)
-			
-// 			dstKeys.insertAll( 0, savedKeys.view(begin, end) )
-// 			savedKeys.remove( begin, end - begin )
-// 			dstBranches.insertAll( 0, savedBranches.view(begin + 1, end + 1) )
-// 			savedBranches.remove( begin + 1, end - begin )
-			
 			file seek (src + NODE_KEYS)
 			file write (savedKeys, 0, len*DATUM_SIZE)
 			file seek (dst + NODE_KEYS)
 			file write dstKeys
-			
-// 			for ((k, i) <- savedKeys zipWithIndex)
-// 				setKey( src, i, k )
-// 				
-// 			for ((k, i) <- dstKeys zipWithIndex)
-// 				setKey( dst, i, k )
 
 			for (i <- 0 to begin)
 				setBranch( src, i, savedBranches(i) )
@@ -346,22 +334,10 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 			file write (savedKeys, 0, len*DATUM_SIZE)
 			file seek (src + LEAF_VALUES)
 			file write (savedValues, 0, len*DATUM_SIZE)
-			
-// 			for (((k, v), i) <- savedKeys zip savedValues zipWithIndex) {
-// 				setKey( src, i, k )
-// 				setValue( src, i, v )
-// 			}
-			
 			file seek (dst + NODE_KEYS)
 			file write dstKeys
 			file seek (dst + LEAF_VALUES)
 			file write dstValues
-			
-// 			for (((k, v), i) <- dstKeys zip dstValues zipWithIndex) {
-// 				setKey( dst, i, k )
-// 				setValue( dst, i, v )
-// 			}
-			
 			nodeLength( src, len )
 			nodeLength( dst, dstlen )
 			savedNode = NUL
@@ -419,8 +395,6 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		if (node == savedNode) {
 			Array.copy( savedKeys, (keyIndex + 1)*DATUM_SIZE, savedKeys, keyIndex*DATUM_SIZE, (savedLength - keyIndex - 1)*DATUM_SIZE )
 			Array.copy( savedBranches, branchIndex + 1, savedBranches, branchIndex, savedLength - branchIndex )
-// 			savedKeys.remove( keyIndex, 1 )
-// 			savedBranches.remove( branchIndex, 1 )
 			savedLength -= 1
 			savedLength
 		} else {
