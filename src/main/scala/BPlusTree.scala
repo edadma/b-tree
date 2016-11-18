@@ -11,7 +11,7 @@ import java.io.PrintWriter
 
 
 /**
- * Provides for interaction (searching, insertion, update, deletion) with a B+ tree that can be stored any where (in memory, on disk).  It is the implementation's responsability to create the empty B+ tree initially. An empty B+ tree consists of a single empty leaf node as the root. Also the `first` and `last` should refer to the root leaf node, and the `lastlen` variable should be 0. For on-disk implementations it should be possible to open an existing B+ tree or optionally create a new one.
+ * Provides for interaction (searching, insertion, update, deletion) with a B+ tree that can be stored anywhere (in memory, on disk).  It is the implementation's responsability to create the empty B+ tree initially. An empty B+ tree consists of a single empty leaf node as the root. Also the `first` and `last` should refer to the root leaf node, and the `lastlen` variable should be 0. For on-disk implementations it should be possible to open an existing B+ tree or optionally create a new one.
  * 
  * A B+ tree is composed of nodes that are linked to one another using pointers. The exact way in which the nodes are layed out and stored is left to the implementation. Also, node pointers are left to the implementation through the abstract node type. There is a very important implementation requirement that comparing two nodes for equality return `true` when they point to the same node. All nodes have
  *    - a parent pointer
