@@ -2,9 +2,9 @@ name := "b-tree"
 
 version := "0.4"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.12.3"
 
-crossScalaVersions := Seq( "2.11.8" )
+crossScalaVersions := Seq( "2.11.11" )
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
 
@@ -33,11 +33,11 @@ publishArtifact in Test := false
 
 pomIncludeRepository := { _ => false }
 
-licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
+licenses := Seq("ISC" -> url("https://opensource.org/licenses/ISC"))
 
 homepage := Some(url("https://github.com/edadma/b-tree"))
 
-pomExtra := (
+pomExtra :=
   <scm>
     <url>git@github.com:edadma/b-tree.git</url>
     <connection>scm:git:git@github.com:edadma/b-tree.git</connection>
@@ -48,4 +48,4 @@ pomExtra := (
       <name>Edward A. Maxedon, Sr.</name>
       <url>https://github.com/edadma</url>
     </developer>
-  </developers>)
+  </developers>
