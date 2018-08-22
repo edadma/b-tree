@@ -8,8 +8,6 @@ crossScalaVersions := Seq( "2.11.11" )
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
 
-incOptions := incOptions.value.withNameHashing( true )
-
 organization := "xyz.hyperreal"
 
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
@@ -22,10 +20,6 @@ libraryDependencies ++= Seq(
 )
 
 mainClass in (Compile, run) := Some( "xyz.hyperreal." + "btree" + ".TestMain" )
-
-mainClass in assembly := Some( "xyz.hyperreal." + "btree" + ".Main" )
-
-assemblyJarName in assembly := "btree" + "-" + version.value + ".jar"
 
 publishMavenStyle := true
 

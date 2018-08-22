@@ -70,23 +70,23 @@ Use the following elements to use *b-tree* in your Maven project:
 	<dependency>
 		<groupId>xyz.hyperreal</groupId>
 		<artifactId>b-tree</artifactId>
-		<version>0.3</version>
+		<version>0.5</version>
 	</dependency>
 
 Add the following to your `build.sbt` file to use *b-tree* in your SBT project:
 
 	resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
 
-	libraryDependencies += "xyz.hyperreal" %% "b-tree" % "0.3"
+	libraryDependencies += "xyz.hyperreal" %% "b-tree" % "0.5"
 	
 
 ## Building
 
 ### Requirements
 
-- SBT 0.13.13+
+- SBT 1.2+
 - Java 8+
-- Scala 2.12.0+
+- Scala 2.12+
 - graphviz, imageMagick (optionally, for tree diagrams)
 
 ### Clone
@@ -97,7 +97,7 @@ Add the following to your `build.sbt` file to use *b-tree* in your SBT project:
 
 For compiling and testing, it's best to use the following command:
 
-	test-only -- -l slow
+	testOnly -- -l slow
 	
 to exclude the "stress tests" that are tagged as "slow". Some stress testing is still done with this command. If you just type `test`, you may have to wait many minutes for all the tests to complete. The example above can then be executed with
 
