@@ -44,7 +44,7 @@ val commonSettings = Seq(
 )
 
 val btree = crossProject(JSPlatform, JVMPlatform)
-  .crossType(CrossType.Pure)
+  .crossType(CrossType.Full)
   .in(file("."))
   .settings(commonSettings: _*)
   .settings(
