@@ -1,13 +1,10 @@
 package xyz.hyperreal.btree
 
-import scala.sys.process._
 import collection.AbstractIterable
 import collection.mutable.{HashMap, ArrayBuffer}
 import collection.immutable.ListMap
 import collection.AbstractIterator
 import util.matching.Regex.Match
-
-import java.io.PrintWriter
 
 
 /**
@@ -1255,43 +1252,7 @@ abstract class BPlusTree[K <% Ordered[K], +V] {
 	 */
 	def prettyStringWithValues = serialize( "", "", (n, id, _) => "[" + id(n) + ": (" + id(getPrev(n)) + ", " + id(getParent(n)) + ", " + id(getNext(n)) + ") " + id(getBranch(n, 0)) + " " + getKeys(n).zipWithIndex.map({case (k, j) => "| " + k + " | " + id(getBranch(n, j + 1))}).mkString(" ") + "]", (n, id) => "[" + id(n) + ": (" + id(getPrev(n)) + ", " + id(getParent(n)) + ", " + id(getNext(n)) + ")" + (if (nodeLength(n) == 0) "" else " ") + (getKeys(n) zip getValues(n) map (p => "<" + p._1 + ", " + p._2 + ">") mkString " ") + "]", "" )
 	
-	/**
-	 * Creates a PNG image file called `name` (with `.png` added) which visually represents the structure and contents of the tree, only showing the keys. This method uses GraphViz (specifically the `dot` command) to produce the diagram, and ImageMagik (specifically the `convert` command) to convert it from SVG to PNG. `dot` can product PNG files directly but I got better results producing SVG and converting to PNG.
-	 */
-	def diagram( name: String ) {
-		val before =
-			"""	|digraph {
-					|    graph [splines=line];
-					|    edge [penwidth=2];
-					|    node [shape = record, height=.1, width=.1, penwidth=2, style=filled, fillcolor=white];
-					|
-					|""".stripMargin
 
-		def internalnode( n: N, id: N => String, emit: String => Unit ) = {
-			val buf = new StringBuilder( id(n) + """[label = "<b0> &bull;""" )
-			
-			emit( id(n) + ":b0" + " -> " + id(getBranch(n, 0)) + ";" )
-			
-			for ((k, i) <- getKeys(n) zipWithIndex) {
-				buf ++= " | " + k + " | <b" + (i + 1) + "> &bull;"
-				emit( id(n) + ":b" + (i + 1) + " -> " + id(getBranch(n, i + 1)) + ";" )
-			}
-			
-			buf ++= """"];"""
-			buf toString
-		}
-		
-// 		def leafnode( n: N, id: N => String ) = id(n) + """[label = "<prev> &bull; | """ + (getKeys(n) mkString " | ") + """ | <next> &bull;"];"""
-		def leafnode( n: N, id: N => String ) = id(n) + """[label = """" + (getKeys(n) mkString " | ") + """"];"""
-		
-		val file = new PrintWriter( name + ".dot" )
-		
-		file.println( serialize(before, "    ", internalnode, leafnode, "}") )
-		file.close
-		s"dot -Tsvg $name.dot -o $name.svg".!
-		s"convert $name.svg $name.png".!
-	}
-	
 	/**
 	 * Returns a B+ tree build from a string representation of the tree. The syntax of the input string is simple: internal nodes are coded as lists of nodes alternating with keys (alpha strings with no quotation marks) using parentheses with elements separated by space, leaf nodes are coded as lists of alpha strings (no quotation marks) using brackets with elements separated by space.
 	 * 

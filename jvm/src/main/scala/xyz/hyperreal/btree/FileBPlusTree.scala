@@ -3,9 +3,8 @@ package xyz.hyperreal.btree
 import io.Codec
 import collection.mutable.ArrayBuffer
 import collection.AbstractSeq
-
-import java.io.{File, RandomAccessFile, ByteArrayInputStream, ByteArrayOutputStream, DataInputStream, DataInput, DataOutputStream, DataOutput}
-
+import java.io._
+import scala.sys.process._
 
 trait FileBPlusTreeFormat {
 	
@@ -760,6 +759,43 @@ class FileBPlusTree[K <% Ordered[K], V]( protected val file: RandomAccessFile, p
 		}
 		
 		file.seek( cur )
+	}
+
+	/**
+		* Creates a PNG image file called `name` (with `.png` added) which visually represents the structure and contents of the tree, only showing the keys. This method uses GraphViz (specifically the `dot` command) to produce the diagram, and ImageMagik (specifically the `convert` command) to convert it from SVG to PNG. `dot` can product PNG files directly but I got better results producing SVG and converting to PNG.
+		*/
+	def diagram( name: String ) {
+		val before =
+			"""	|digraph {
+									|    graph [splines=line];
+									|    edge [penwidth=2];
+									|    node [shape = record, height=.1, width=.1, penwidth=2, style=filled, fillcolor=white];
+									|
+									|""".stripMargin
+
+		def internalnode( n: N, id: N => String, emit: String => Unit ) = {
+			val buf = new StringBuilder( id(n) + """[label = "<b0> &bull;""" )
+
+			emit( id(n) + ":b0" + " -> " + id(getBranch(n, 0)) + ";" )
+
+			for ((k, i) <- getKeys(n) zipWithIndex) {
+				buf ++= " | " + k + " | <b" + (i + 1) + "> &bull;"
+				emit( id(n) + ":b" + (i + 1) + " -> " + id(getBranch(n, i + 1)) + ";" )
+			}
+
+			buf ++= """"];"""
+			buf toString
+		}
+
+		// 		def leafnode( n: N, id: N => String ) = id(n) + """[label = "<prev> &bull; | """ + (getKeys(n) mkString " | ") + """ | <next> &bull;"];"""
+		def leafnode( n: N, id: N => String ) = id(n) + """[label = """" + (getKeys(n) mkString " | ") + """"];"""
+
+		val file = new PrintWriter( name + ".dot" )
+
+		file.println( serialize(before, "    ", internalnode, leafnode, "}") )
+		file.close
+		s"dot -Tsvg $name.dot -o $name.svg".!
+		s"convert $name.svg $name.png".!
 	}
 
 }
