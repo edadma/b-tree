@@ -4,9 +4,8 @@ import org.scalatest._
 import prop.PropertyChecks
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-
 class DeletionTests extends FreeSpec with PropertyChecks with Matchers {
-	
+
 	val order3 =
 		Table(
 			("object generator", 													"storage"),
