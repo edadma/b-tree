@@ -2,7 +2,7 @@ name := "b-tree"
 
 version := "0.5"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.13.7"
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
 
@@ -13,8 +13,8 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
 
 libraryDependencies ++= Seq(
-	"org.scalatest" %% "scalatest" % "3.0.0" % "test",
-	"org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
+	"org.scalatest" %% "scalatest" % "3.0.9" % "test",
+	"org.scalacheck" %% "scalacheck" % "1.15.4" % "test"
 )
 
 mainClass in (Compile, run) := Some( "xyz.hyperreal." + "btree" + ".TestMain" )
